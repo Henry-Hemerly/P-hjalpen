@@ -2,6 +2,12 @@ import * as React from 'react';
 import { Button, View, Text, Image, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import MapView, {Marker} from 'react-native-maps';
+import Geocoder from 'react-native-geocoding';
+import { API_KEY } from 'react-native-dotenv';
+
+console.log(API_KEY);
+
 
 function SplashScreen({ navigation }) {
   setTimeout(() => {
@@ -14,7 +20,6 @@ function SplashScreen({ navigation }) {
       <Text>
         PARKING APP!!!!
       </Text>
-      
     </SafeAreaView>
   );
 }
@@ -43,7 +48,7 @@ function Onboarding2({ navigation }) {
       />
       <Button
         title="Hoppa över"
-        onPress={() => navigation.navigate('Onboarding3')}
+        onPress={() => navigation.navigate('Home')}
       />
     </View>
   );
@@ -65,13 +70,36 @@ function Onboarding3({ navigation }) {
     </View>
   );
 }
+Geocoder.init(API_KEY);
+const initialRegion = {
+  latitude: 59.3324,
+  longitude: 18.0645,
+  latitudeDelta: 0.0062,
+  longitudeDelta: 0.0015
+};
 
 function Home({ navigation }) {
   return (
-    <View style={{ backgroundColor: '#fff', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>MAP!!!</Text>
-    </View>
+      <MapView onMarkerDragEnd={async (e) => {
+        //this.setNewMarkerLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude);
+        console.log(await getLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude))
+      }}
+        style={{height:'100%'}}
+        initialRegion={initialRegion}> 
+        <Marker draggable
+            coordinate={initialRegion}
+            title='Din plats'
+            description={'poop hej'}
+        />  
+      </MapView>
   );
+}
+
+async function getLocation(lat, long) {
+  const address = await Geocoder.from(lat, long)
+    .then(json => json.results[0]['formatted_address'])
+    .catch(error => console.warn(error));
+  return address;
 }
 
 const Stack = createStackNavigator();
