@@ -1,62 +1,35 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+import * as React from 'react';
+import { View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import React ,{Component} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  Image
-} from 'react-native';
-
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import Onboarding from 'react-native-onboarding-swiper';
-
-export default function App() {
+function HomeScreen() {
   return (
-    <>
-    <Onboarding
-      onDone={()=> startPage()}
-      pages={[
-      {
-        backgroundColor: '#fff',
-        image: <Image source={require('./images/circle.png')} />,
-        title: 'Onboarding',
-        subtitle: 'Done with React Native Onboarding Swiper',
-      },
-      {
-        backgroundColor: '#fff',
-        image: <Image source={require('./images/circle.png')} />,
-        title: '2nd page',
-        subtitle: 'Done with React Native Onboarding Swiper',
-      }
-    ]}
-  />
-</>
-  )
-}
-function startPage() {
-  console.log('pooop');
-  
-  return <Text>Poop</Text>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
+    </View>
+  );
 }
 
+function DetailsScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+    </View>
+  );
+}
 
+const Stack = createStackNavigator();
 
-const styles = StyleSheet.create({
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
-});
+export default App;
