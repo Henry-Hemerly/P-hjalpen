@@ -71,28 +71,32 @@ function Onboarding3({ navigation }) {
 }
 
 Geocoder.init(API_KEY);
-let initialRegion = {
+
+const initialPosition = {
   latitude: 59.3324,
   longitude: 18.0645,
-  latitudeDelta: 100.0062,
-  longitudeDelta: 100.0015
+  latitudeDelta: 0.8062,
+  longitudeDelta: 0.8015,
 };
 
 function Home() {
-  const [currentPosition, setCurrentPosition] = React.useState(initialRegion);
+  const [region, setRegion] = React.useState(initialPosition);
+  const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
+  const [currentPositionCar, setCurrentPositionCar] = React.useState(initialPosition);
 
   React.useEffect(() => {
     setInterval(() => {
       setGeo();
     }, 500)
   }, []);
-
+  
   function setGeo() {
     Geolocation.getCurrentPosition(
-      info => {
-        const newPosition = { ...initialRegion };
+      async info => {
+        const newPosition = { ...newPosition };
         newPosition.latitude = info.coords.latitude;
         newPosition.longitude = info.coords.longitude;
+        newPosition.adress = await getLocation(newPosition.latitude, newPosition.longitude);
         setCurrentPosition(newPosition);
       }, error => console.log(error.message), 
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
@@ -100,20 +104,30 @@ function Home() {
   }
 
   return (
-      <MapView onMarkerDragEnd={ async (e) => {
-        console.log(await getLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude).catch(err => console.log(err)));
-      }}
-        style={{height:'100%'}}
-        initialRegion={initialRegion}>
+      <MapView 
+        onMarkerDragEnd={ async (e) => {
+          const newPositionCar = { ...currentPositionCar };
+          newPositionCar.latitude = e.nativeEvent.coordinate.latitude;
+          newPositionCar.longitude = e.nativeEvent.coordinate.longitude;
+          newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude)
+          setCurrentPositionCar(newPositionCar);
+        }}
+        onMapReady={ async () => {
+          const newPositionCar = { ...currentPositionCar };
+          newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude);
+          setCurrentPositionCar(newPositionCar);
+          console.log(currentPositionCar)
+        }}
+        style={{height:'100%'}}>
         <Marker
             coordinate={currentPosition}
             title='Din plats'
-            description={'Här är du'}
+            description={currentPosition.adress}
         />
         <Marker draggable
-            coordinate={initialRegion}
+            coordinate={currentPositionCar}
             title='Din bil'
-            description={'Här är din bil'}
+            description={currentPositionCar.adress}
         />
       </MapView>
   );
