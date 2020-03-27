@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MapView, {Marker} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
+import Geolocation from '@react-native-community/geolocation';
 import { API_KEY } from 'react-native-dotenv';
 
 // console.log(API_KEY);
@@ -80,9 +81,9 @@ const initialRegion = {
 
 function Home({ navigation }) {
   return (
-      <MapView onMarkerDragEnd={async (e) => {
+      <MapView onMarkerDragEnd={ (e) => {
         //this.setNewMarkerLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude);
-        getGeo();
+        //getGeo();
         // console.log(await getLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude).catch(err => console.log(err)));
       }}
         style={{height:'100%'}}
@@ -105,15 +106,17 @@ async function getLocation(lat, long) {
 
 function getGeo() {
   // console.log('Hej');
-  navigator.geolocation.getCurrentPosition(
-    position => {
-      const location = JSON.stringify(position);
-      return location;
-    },
-    error => console.log(error.message),
-    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-  );
+  // let location;
+  // navigator.geolocation.getCurrentPosition(
+  //   position => {
+  //      location = JSON.stringify(position);
+  //      return location;
+  //   },
+  //   error => console.log(error.message),
+  //   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+  // );
 }
+Geolocation.getCurrentPosition(info => console.log(info));
 
 const Stack = createStackNavigator();
 

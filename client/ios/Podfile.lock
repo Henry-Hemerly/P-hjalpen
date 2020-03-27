@@ -186,6 +186,8 @@ PODS:
     - React
     - react-native-ble-plx-swift
   - react-native-ble-plx-swift (1.1.1)
+  - react-native-geolocation (2.0.2):
+    - React
   - react-native-maps (0.27.1):
     - React
   - react-native-safe-area-context (0.7.3):
@@ -254,6 +256,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
   - react-native-ble-plx-swift (from `../node_modules/react-native-ble-plx`)
+  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -310,6 +313,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-ble-plx"
   react-native-ble-plx-swift:
     :path: "../node_modules/react-native-ble-plx"
+  react-native-geolocation:
+    :path: "../node_modules/@react-native-community/geolocation"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-safe-area-context:
@@ -363,6 +368,7 @@ SPEC CHECKSUMS:
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-ble-plx: 304c7bee074a05581672c9990f375b3906808718
   react-native-ble-plx-swift: eb64f02b988becb84a60164aba9fab5d6ddb6dc8
+  react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-safe-area-context: 8260e5157617df4b72865f44006797f895b2ada7
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
@@ -381,6 +387,6 @@ SPEC CHECKSUMS:
   RNScreens: b5c0e1b2b04512919e78bd3898e144a157ce2363
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: 2e6137fa76c3d1e3d5944dde332965bb5145a48b
+PODFILE CHECKSUM: 4e7b85a78ce1f4af88dc2bef66368ea3cbd6605e
 
 COCOAPODS: 1.9.1
