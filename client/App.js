@@ -6,8 +6,7 @@ import MapView, {Marker} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import { API_KEY } from 'react-native-dotenv';
 
-console.log(API_KEY);
-
+// console.log(API_KEY);
 
 function SplashScreen({ navigation }) {
   setTimeout(() => {
@@ -70,19 +69,21 @@ function Onboarding3({ navigation }) {
     </View>
   );
 }
+
 Geocoder.init(API_KEY);
 const initialRegion = {
   latitude: 59.3324,
   longitude: 18.0645,
-  latitudeDelta: 0.0062,
-  longitudeDelta: 0.0015
+  latitudeDelta: 0.2062,
+  longitudeDelta: 0.1015
 };
 
 function Home({ navigation }) {
   return (
       <MapView onMarkerDragEnd={async (e) => {
         //this.setNewMarkerLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude);
-        console.log(await getLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude))
+        getGeo();
+        // console.log(await getLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude).catch(err => console.log(err)));
       }}
         style={{height:'100%'}}
         initialRegion={initialRegion}> 
@@ -100,6 +101,18 @@ async function getLocation(lat, long) {
     .then(json => json.results[0]['formatted_address'])
     .catch(error => console.warn(error));
   return address;
+}
+
+function getGeo() {
+  // console.log('Hej');
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const location = JSON.stringify(position);
+      return location;
+    },
+    error => console.log(error.message),
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+  );
 }
 
 const Stack = createStackNavigator();
