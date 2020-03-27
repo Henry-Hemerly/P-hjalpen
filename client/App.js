@@ -72,27 +72,65 @@ function Onboarding3({ navigation }) {
 }
 
 Geocoder.init(API_KEY);
-const initialRegion = {
+let initialRegion = {
   latitude: 59.3324,
   longitude: 18.0645,
-  latitudeDelta: 0.2062,
-  longitudeDelta: 0.1015
+  latitudeDelta: 100.0062,
+  longitudeDelta: 100.0015
 };
 
+// let currentPosition = {
+//   latitude: 59.3224,
+//   longitude: 18.0445,
+//   latitudeDelta: 0.2062,
+//   longitudeDelta: 0.1015
+// };
+
 function Home({ navigation }) {
+  const [currentPosition, setCurrentPosition] = React.useState(initialRegion);
+
+  React.useEffect(() => {
+    setInterval(() => {
+      setGeo();
+    }, 2000)
+  }, []);
+
+  async function setGeo() {
+    // console.log('Hej');
+    // let location;
+    // navigator.geolocation.getCurrentPosition(
+    //   position => {
+    //      location = JSON.stringify(position);
+    //      return location;
+    //   },
+    //   error => console.log(error.message),
+    //   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    // );
+    Geolocation.getCurrentPosition(info => {
+      const newPosition = initialRegion;
+      newPosition.latitude = info.coords.latitude;
+      newPosition.longitude = info.coords.longitude;
+      setCurrentPosition(newPosition);
+    })
+  }
+
   return (
-      <MapView onMarkerDragEnd={ (e) => {
+      <MapView onMarkerDragEnd={ async (e) => {
         //this.setNewMarkerLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude);
-        //getGeo();
-        // console.log(await getLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude).catch(err => console.log(err)));
+        console.log(await getLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude).catch(err => console.log(err)));
       }}
         style={{height:'100%'}}
-        initialRegion={initialRegion}> 
+        initialRegion={initialRegion}>
+        <Marker
+            coordinate={currentPosition}
+            title='Din plats'
+            description={'Här är du'}
+        />
         <Marker draggable
             coordinate={initialRegion}
-            title='Din plats'
-            description={'poop hej'}
-        />  
+            title='Din bil'
+            description={'Här är din bil'}
+        />
       </MapView>
   );
 }
@@ -103,20 +141,6 @@ async function getLocation(lat, long) {
     .catch(error => console.warn(error));
   return address;
 }
-
-function getGeo() {
-  // console.log('Hej');
-  // let location;
-  // navigator.geolocation.getCurrentPosition(
-  //   position => {
-  //      location = JSON.stringify(position);
-  //      return location;
-  //   },
-  //   error => console.log(error.message),
-  //   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-  // );
-}
-Geolocation.getCurrentPosition(info => console.log(info));
 
 const Stack = createStackNavigator();
 
