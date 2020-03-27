@@ -6,8 +6,7 @@ import MapView, {Marker} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import Geolocation from '@react-native-community/geolocation';
 import { API_KEY } from 'react-native-dotenv';
-
-// console.log(API_KEY);
+// import { set } from 'react-native-reanimated';
 
 function SplashScreen({ navigation }) {
   setTimeout(() => {
@@ -79,44 +78,29 @@ let initialRegion = {
   longitudeDelta: 100.0015
 };
 
-// let currentPosition = {
-//   latitude: 59.3224,
-//   longitude: 18.0445,
-//   latitudeDelta: 0.2062,
-//   longitudeDelta: 0.1015
-// };
-
-function Home({ navigation }) {
+function Home() {
   const [currentPosition, setCurrentPosition] = React.useState(initialRegion);
 
   React.useEffect(() => {
     setInterval(() => {
       setGeo();
-    }, 2000)
+    }, 500)
   }, []);
 
-  async function setGeo() {
-    // console.log('Hej');
-    // let location;
-    // navigator.geolocation.getCurrentPosition(
-    //   position => {
-    //      location = JSON.stringify(position);
-    //      return location;
-    //   },
-    //   error => console.log(error.message),
-    //   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    // );
-    Geolocation.getCurrentPosition(info => {
-      const newPosition = initialRegion;
-      newPosition.latitude = info.coords.latitude;
-      newPosition.longitude = info.coords.longitude;
-      setCurrentPosition(newPosition);
-    })
+  function setGeo() {
+    Geolocation.getCurrentPosition(
+      info => {
+        const newPosition = { ...initialRegion };
+        newPosition.latitude = info.coords.latitude;
+        newPosition.longitude = info.coords.longitude;
+        setCurrentPosition(newPosition);
+      }, error => console.log(error.message), 
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    )
   }
 
   return (
       <MapView onMarkerDragEnd={ async (e) => {
-        //this.setNewMarkerLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude);
         console.log(await getLocation(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude).catch(err => console.log(err)));
       }}
         style={{height:'100%'}}
