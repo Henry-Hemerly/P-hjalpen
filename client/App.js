@@ -77,6 +77,7 @@ const initialPosition = {
   longitude: 18.0645,
   latitudeDelta: 0.8062,
   longitudeDelta: 0.8015,
+  adress: ''
 };
 
 function Home() {
@@ -117,8 +118,11 @@ function Home() {
           newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude);
           setCurrentPositionCar(newPositionCar);
           console.log(currentPositionCar)
+          this.region={region} // We want to do this not on every render
         }}
-        style={{height:'100%'}}>
+        style={{height:'100%'}}
+        onRegionChangeComplete={region => setRegion(region)}
+      >
         <Marker
             coordinate={currentPosition}
             title='Din plats'
