@@ -18,30 +18,21 @@ async function run() {
   db.on('reconnect', () => { process.stdout.write('reconnected\n'); });
   // const response = await axios.get(API_URL)
   // .catch((error) => console.log(error))  
-  
-
   // streets.insertMany(response.data.features, (err, res) => {
   //   client.close();
-
   //   if (err) return process.stdout.write(err.message);
-
   //   return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
   // });
 }
 
-
-
 run();
 
 app.get('/api/:location', async (req,res) => {
-  streets.findOne({'properties.STREET_NAME':'Knäckepilsgränd'}, (err, response) => {
-    client.close();
+  streets.findOne({'properties.STREET_NAME':req.params.location}, (err, response) => {
+    // client.close();
     if (err) return process.stdout.write(err.message);
     res.send(response);
   });
-
-
-    
 });
 
 app.listen(8080, () => console.log('server running on port 8080'));

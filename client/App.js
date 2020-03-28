@@ -7,6 +7,7 @@ import Geocoder from 'react-native-geocoding';
 import Geolocation from '@react-native-community/geolocation';
 import { API_KEY } from 'react-native-dotenv';
 // import { set } from 'react-native-reanimated';
+import axios from 'axios';
 
 function SplashScreen({ navigation }) {
   setTimeout(() => {
@@ -72,6 +73,8 @@ function Onboarding3({ navigation }) {
 
 Geocoder.init(API_KEY);
 
+const apiUrl = 'http://localhost:8080/api/';
+
 const initialPosition = {
   latitude: 59.3324,
   longitude: 18.0645,
@@ -113,6 +116,12 @@ function Home() {
           newPositionCar.longitude = e.nativeEvent.coordinate.longitude;
           newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude)
           setCurrentPositionCar(newPositionCar);
+          console.log(`${apiUrl}${newPositionCar.adress}`);
+          await axios.get(`${apiUrl}${newPositionCar.adress}`)
+            .then(res => {
+              console.log(res.data.properties.ADDRESS);
+            })
+            .catch(err => console.log(err));
         }}
         onMapReady={ async () => {
           const newPositionCar = { ...currentPositionCar };
@@ -126,8 +135,8 @@ function Home() {
       >
         <Marker
             coordinate={currentPosition}
-            title='Din plats'
-            description={currentPosition.adress}
+            title={currentPosition.adress}
+            description='...'
         />
         <Marker draggable
             coordinate={currentPositionCar}
@@ -140,7 +149,7 @@ function Home() {
 
 async function getLocation(lat, long) {
   const address = await Geocoder.from(lat, long)
-    .then(json => json.results[0]['formatted_address'])
+    .then(json => json.results[0].address_components[1].long_name)
     .catch(error => console.warn(error));
   return address;
 }
