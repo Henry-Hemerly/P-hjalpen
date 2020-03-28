@@ -106,6 +106,7 @@ function Home() {
 
   return (
       <MapView 
+        initialRegion={region}
         onMarkerDragEnd={ async (e) => {
           const newPositionCar = { ...currentPositionCar };
           newPositionCar.latitude = e.nativeEvent.coordinate.latitude;

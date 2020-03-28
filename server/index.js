@@ -2,37 +2,46 @@ const express = require('express');
 const app = express();
 const axios = require('axios');
 const { MongoClient } = require('mongodb');
-
-const url = 'mongodb+srv://henry:parking@park-app-otn0c.gcp.mongodb.net/test?retryWrites=true&w=majority';
+const mongodbPassword = process.env.mongodbPassword;
+const url = "mongodb+srv://not-null:fcUH7yXw6HQoDuBk@cluster0-qp1je.mongodb.net/test?retryWrites=true&w=majority";
+//const url = 'mongodb+srv://henry:parking@park-app-otn0c.gcp.mongodb.net/test?retryWrites=true&w=majority';
 const dbName = 'parkingDB';
+const API_URL = 'https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/weekday/måndag?outputFormat=json&apiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a';
+let client;
+let streets; 
 
 async function run() {
-  const client = await MongoClient.connect(url, { useNewUrlParser: true });
+  client = await MongoClient.connect(url, { useNewUrlParser: true }, { useUnifiedTopology: true });
   const db = client.db(dbName);
-
+  streets = db.collection('test');
   db.on('close', () => { process.stdout.write('closed connection\n'); });
   db.on('reconnect', () => { process.stdout.write('reconnected\n'); });
+  // const response = await axios.get(API_URL)
+  // .catch((error) => console.log(error))  
+  
 
-  const streets = db.collection('test');
+  // streets.insertMany(response.data.features, (err, res) => {
+  //   client.close();
 
-  streets.insertOne({a: 'youpy'}, (err, res) => {
-    client.close();
+  //   if (err) return process.stdout.write(err.message);
 
-    if (err) return process.stdout.write(err.message);
-
-    return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
-  });
+  //   return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
+  // });
 }
+
+
 
 run();
 
-const API_URL = 'https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/weekday/måndag?outputFormat=json&apiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a';
-
 app.get('/api/:location', async (req,res) => {
-    const response = await axios.get(API_URL)
-    //.then((response) => JSON.parse(response))
-    .catch((error) => console.log(error))
-    res.send((response.data.features[3]));
+  streets.findOne({'properties.STREET_NAME':'Knäckepilsgränd'}, (err, response) => {
+    client.close();
+    if (err) return process.stdout.write(err.message);
+    res.send(response);
+  });
+
+
+    
 });
 
 app.listen(8080, () => console.log('server running on port 8080'));
