@@ -25,6 +25,7 @@ async function run() {
   // });
 }
 
+
 run();
 
 app.get('/api/:location', async (req,res) => {
