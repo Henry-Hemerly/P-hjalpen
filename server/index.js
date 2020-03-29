@@ -2,8 +2,10 @@ const express = require('express');
 const app = express();
 const axios = require('axios');
 const { MongoClient } = require('mongodb');
-const mongodbPassword = process.env.mongodbPassword;
-const url = "mongodb+srv://not-null:fcUH7yXw6HQoDuBk@cluster0-qp1je.mongodb.net/test?retryWrites=true&w=majority";
+require('dotenv').config()
+console.log();
+
+const url = "mongodb+srv://not-null:"+process.env.mongodbPassword+"@cluster0-qp1je.mongodb.net/test?retryWrites=true&w=majority";
 //const url = 'mongodb+srv://henry:parking@park-app-otn0c.gcp.mongodb.net/test?retryWrites=true&w=majority';
 const dbName = 'parkingDB';
 const API_URL = 'https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/weekday/måndag?outputFormat=json&apiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a';
