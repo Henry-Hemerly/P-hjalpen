@@ -8,6 +8,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { API_KEY } from 'react-native-dotenv';
 // import { set } from 'react-native-reanimated';
 import axios from 'axios';
+import SlidingUpPanel from 'rn-sliding-up-panel';
 
 
 function SplashScreen({ navigation }) {
@@ -76,6 +77,18 @@ Geocoder.init(API_KEY);
 
 const apiUrl = 'http://localhost:8080/api/';
 
+const styles = {
+  container: {
+    //flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '50%',
+    position: 'relative',
+    top: '50%'
+  }
+}
+
 const initialPosition = {
   latitude: 59.3324,
   longitude: 18.0645,
@@ -92,7 +105,7 @@ function Home() {
   React.useEffect(() => {
     setInterval(() => {
       setGeo();
-    }, 500)
+    }, 30000)
   }, []);
   
   function setGeo() {
@@ -111,7 +124,7 @@ function Home() {
   return (
     <View
         style={{
-          // height: "100%",
+          //height: "60%",
           // backgroundColor: '#676',
           flex: 1
         }}
@@ -155,20 +168,29 @@ function Home() {
             description={currentPositionCar.adress}
         />
       </MapView>
+      
       <View
         style={{
-          backgroundColor: '#fff',
-          position: 'relative',
-          bottom: 250,
-          height: "100%",
-          width: "100%",
-          borderWidth: 0,
-          borderColor: '#F56',
-          borderRadius: 30
+        backgroundColor: '#fff',
+        position: 'relative',
+        bottom: 70,
+        height: "10%",
+        width: "100%",
+        borderWidth: 0,
+        borderColor: '#F56',
+        borderRadius: 30
         }}
-      >
-      <Text>Parked</Text>
-    </View>
+        >
+          <Button title='Show panel' onPress={() => this._panel.show()} />
+        <SlidingUpPanel ref={c => this._panel = c}>
+          <View style={styles.container}>
+            <Text>Here is the content inside panel</Text>
+            <Button title='Hide' onPress={() => this._panel.hide()} />
+          </View>
+        </SlidingUpPanel>
+      </View>
+        
+        
   </View>
   );
 }
@@ -200,5 +222,23 @@ function App() {
     </NavigationContainer>
   );
 }
+
+
+
+// function Panel() {
+//   return (
+//     <View style={styles.container}>
+//         <Button title='Show panel' onPress={() => console.log('show panel')} />
+//         <SlidingUpPanel ref={c => this._panel = c}>
+//           <View style={styles.container}>
+//             <Text>Here is the content inside panel</Text>
+//             <Button title='Hide' onPress={() => console.log('hide panel')} />
+//           </View>
+//         </SlidingUpPanel>
+//       </View>
+//   )
+// }
+
+
 
 export default App;
