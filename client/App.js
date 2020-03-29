@@ -9,6 +9,7 @@ import { API_KEY } from 'react-native-dotenv';
 // import { set } from 'react-native-reanimated';
 import axios from 'axios';
 
+
 function SplashScreen({ navigation }) {
   setTimeout(() => {
     navigation.navigate('Onboarding1');
