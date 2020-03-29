@@ -1,14 +1,9 @@
 import * as React from 'react';
-import { Button, View, Text, Image, SafeAreaView } from 'react-native';
+import { Text, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import MapView, {Marker} from 'react-native-maps';
-import Geocoder from 'react-native-geocoding';
-import Geolocation from '@react-native-community/geolocation';
-import { API_KEY } from 'react-native-dotenv';
-// import { set } from 'react-native-reanimated';
-import axios from 'axios';
-import SlidingUpPanel from 'rn-sliding-up-panel';
+import { Onboarding1, Onboarding2 ,Onboarding3 } from './components/Onboarding';
+import Home from './components/Home';
 
 
 function SplashScreen({ navigation }) {
@@ -24,182 +19,6 @@ function SplashScreen({ navigation }) {
       </Text>
     </SafeAreaView>
   );
-}
-
-function Onboarding1({ navigation }) {
-  return (
-    <SafeAreaView style={{ backgroundColor: '#fff', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Inga fler P-böter</Text>
-      <Text>Vi påminner dig...</Text>
-      <Button
-        title="Nästa"
-        onPress={() => navigation.navigate('Onboarding2')}
-      />
-    </SafeAreaView>
-  );
-}
-
-function Onboarding2({ navigation }) {
-  return (
-    <View style={{ backgroundColor: '#fff', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Aktivera notiser</Text>
-      <Text>Så att vi kan påminna dig...</Text>
-      <Button
-        title="Aktivera"
-        onPress={() => navigation.navigate('Onboarding3')}
-      />
-      <Button
-        title="Hoppa över"
-        onPress={() => navigation.navigate('Home')}
-      />
-    </View>
-  );
-}
-
-function Onboarding3({ navigation }) {
-  return (
-    <View style={{ backgroundColor: '#fff', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Välj bil</Text>
-      <Text>För att vi ska kunna...</Text>
-      <Button
-        title="Bil1"
-        onPress={() => navigation.navigate('Home')}
-      />
-      <Button
-        title="Parkoppla senare"
-        onPress={() => navigation.navigate('Home')}
-      />
-    </View>
-  );
-}
-
-Geocoder.init(API_KEY);
-
-const apiUrl = 'http://localhost:8080/api/';
-
-const styles = {
-  container: {
-    //flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '50%',
-    position: 'relative',
-    top: '50%'
-  }
-}
-
-const initialPosition = {
-  latitude: 59.3324,
-  longitude: 18.0645,
-  latitudeDelta: 0.8062,
-  longitudeDelta: 0.8015,
-  adress: ''
-};
-
-function Home() {
-  const [region, setRegion] = React.useState(initialPosition);
-  const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
-  const [currentPositionCar, setCurrentPositionCar] = React.useState(initialPosition);
-
-  React.useEffect(() => {
-    setInterval(() => {
-      setGeo();
-    }, 30000)
-  }, []);
-  
-  function setGeo() {
-    Geolocation.getCurrentPosition(
-      async info => {
-        const newPosition = { ...newPosition };
-        newPosition.latitude = info.coords.latitude;
-        newPosition.longitude = info.coords.longitude;
-        newPosition.adress = await getLocation(newPosition.latitude, newPosition.longitude);
-        setCurrentPosition(newPosition);
-      }, error => console.log(error.message), 
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    )
-  }
-
-  return (
-    <View
-        style={{
-          //height: "60%",
-          // backgroundColor: '#676',
-          flex: 1
-        }}
-      >
-      <MapView
-        style={{
-          flex: 1
-        }}
-        initialRegion={region}
-        onMarkerDragEnd={ async (e) => {
-          const newPositionCar = { ...currentPositionCar };
-          newPositionCar.latitude = e.nativeEvent.coordinate.latitude;
-          newPositionCar.longitude = e.nativeEvent.coordinate.longitude;
-          newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude)
-          setCurrentPositionCar(newPositionCar);
-          console.log(`${apiUrl}${newPositionCar.adress}`);
-          await axios.get(`${apiUrl}${newPositionCar.adress}`)
-            .then(res => {
-              console.log(res.data.properties.ADDRESS);
-            })
-            .catch(err => console.log(err));
-        }}
-        onMapReady={ async () => {
-          const newPositionCar = { ...currentPositionCar };
-          newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude);
-          setCurrentPositionCar(newPositionCar);
-          console.log(currentPositionCar)
-          this.region={region} // We want to do this not on every render
-        }}
-        style={{height:'100%'}}
-        onRegionChangeComplete={region => setRegion(region)}
-      >
-        <Marker
-            coordinate={currentPosition}
-            title={currentPosition.adress}
-            description='...'
-        />
-        <Marker draggable
-            coordinate={currentPositionCar}
-            title='Din bil'
-            description={currentPositionCar.adress}
-        />
-      </MapView>
-      
-      <View
-        style={{
-        backgroundColor: '#fff',
-        position: 'relative',
-        bottom: 70,
-        height: "10%",
-        width: "100%",
-        borderWidth: 0,
-        borderColor: '#F56',
-        borderRadius: 30
-        }}
-        >
-          <Button title='Show panel' onPress={() => this._panel.show()} />
-        <SlidingUpPanel ref={c => this._panel = c}>
-          <View style={styles.container}>
-            <Text>Here is the content inside panel</Text>
-            <Button title='Hide' onPress={() => this._panel.hide()} />
-          </View>
-        </SlidingUpPanel>
-      </View>
-        
-        
-  </View>
-  );
-}
-
-async function getLocation(lat, long) {
-  const address = await Geocoder.from(lat, long)
-    .then(json => json.results[0].address_components[1].long_name)
-    .catch(error => console.warn(error));
-  return address;
 }
 
 const Stack = createStackNavigator();
@@ -222,23 +41,5 @@ function App() {
     </NavigationContainer>
   );
 }
-
-
-
-// function Panel() {
-//   return (
-//     <View style={styles.container}>
-//         <Button title='Show panel' onPress={() => console.log('show panel')} />
-//         <SlidingUpPanel ref={c => this._panel = c}>
-//           <View style={styles.container}>
-//             <Text>Here is the content inside panel</Text>
-//             <Button title='Hide' onPress={() => console.log('hide panel')} />
-//           </View>
-//         </SlidingUpPanel>
-//       </View>
-//   )
-// }
-
-
 
 export default App;
