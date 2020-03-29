@@ -45,10 +45,24 @@ function setGeo() {
   }
 
 function Home() {
+
   const [region, setRegion] = React.useState(initialPosition);
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
   const [currentPositionCar, setCurrentPositionCar] = React.useState(initialPosition);
-  const [followUser, setFollowUser] = React.useState(false);
+
+function follow (){
+Geolocation.getCurrentPosition(
+    async info => {
+        this.map.animateToRegion({
+            latitude: info.coords.latitude,
+            longitude: info.coords.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005
+            })
+    }, error => console.log(error.message), 
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    )
+}
 
   return (
     <View
@@ -57,6 +71,7 @@ function Home() {
         }}
       >
       <MapView
+      ref={c => this.map = c}
         style={{
           flex: 1
         }}
@@ -104,12 +119,7 @@ function Home() {
             alignSelf: 'flex-end' //for align to right
         }}
     >
-        <Button title="You" onPress={()=> {
-            console.log(followUser);
-            setFollowUser(true)
-            console.log(followUser);
-            }
-        }
+        <Button title="You" onPress={()=> follow()}
          />
     </View>
       <View
