@@ -108,7 +108,17 @@ function Home() {
   }
 
   return (
-      <MapView 
+    <View
+        style={{
+          // height: "100%",
+          // backgroundColor: '#676',
+          flex: 1
+        }}
+      >
+      <MapView
+        style={{
+          flex: 1
+        }}
         initialRegion={region}
         onMarkerDragEnd={ async (e) => {
           const newPositionCar = { ...currentPositionCar };
@@ -144,6 +154,21 @@ function Home() {
             description={currentPositionCar.adress}
         />
       </MapView>
+      <View
+        style={{
+          backgroundColor: '#fff',
+          position: 'relative',
+          bottom: 250,
+          height: "100%",
+          width: "100%",
+          borderWidth: 0,
+          borderColor: '#F56',
+          borderRadius: 30
+        }}
+      >
+      <Text>Parked</Text>
+    </View>
+  </View>
   );
 }
 
