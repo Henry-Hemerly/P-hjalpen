@@ -50,11 +50,30 @@ async function populateDatabase(coll, data) {
 
 getApiData();
 
-
-
-app.get('/api/:location', (req,res) => {
+app.get('/api/:location', async (req,res) => {
+  const streetName = req.params.location.match(/([a-zA-ZåäöÅÄÖ]+)/)[0];
+  const streetNumber = req.params.location.match(/([0-9]+)/)[0];
   const db = client.db(dbName);
-  db.collection(coll).find({'properties.STREET_NAME':req.params.location}).toArray((err, response) => res.send(response))
+  await db.collection(coll).find({'properties.STREET_NAME':streetName}).toArray((err, streets) => {
+    const resultStreets = [];
+    for (let i = 0; i < streets.length; i++) {
+      const addressParts = streets[i].properties.ADDRESS.split(' ');
+      if (addressParts[addressParts.length - 2] === '-') {
+        const lowerNum = parseInt((addressParts[addressParts.length - 3]).replace(/([a-zA-ZåäöÅÄÖ]+)/, ''));
+        const higherNum = parseInt((addressParts[addressParts.length - 1]).replace(/([a-zA-ZåäöÅÄÖ]+)/, ''));
+        for (let j = lowerNum; j < higherNum + 1; j += 2) {
+          if (j.toString() === streetNumber) {
+            resultStreets.push(streets[i]);
+          };
+        }
+      } else {
+          if (addressParts[addressParts.length - 1].replace(/([a-zA-ZåäöÅÄÖ]+)/, '') === streetNumber) {
+            resultStreets.push(streets[i]);
+        }
+      }
+    }
+    res.send(resultStreets);
+  });
 });
 
 app.listen(8080, () => console.log('server running on port 8080'));
