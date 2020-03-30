@@ -7,9 +7,6 @@ import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
-console.log(API_KEY);
-
-
 Geocoder.init(API_KEY);
 
 const apiUrl = 'http://localhost:8080/api/';
@@ -74,7 +71,7 @@ function Home() {
           newPositionCar.longitude = e.nativeEvent.coordinate.longitude;
           newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude)
           setCurrentPositionCar(newPositionCar);
-          console.log(`${apiUrl}${newPositionCar.adress}`);
+          // console.log(`${apiUrl}${newPositionCar.adress}`);
           await axios.get(`${apiUrl}${newPositionCar.adress}`)
             .then(res => {
               console.log(res.data.properties.ADDRESS)})
