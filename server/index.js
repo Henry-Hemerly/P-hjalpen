@@ -21,7 +21,7 @@ async function dropCollection() {
   streets = db.collection(coll);
   db.on('close', () => { process.stdout.write('closed connection\n'); });
   db.on('reconnect', () => { process.stdout.write('reconnected\n'); });
-  streets.drop();
+  //streets.drop();
 }
 
 async function getApiData() {
@@ -41,41 +41,20 @@ async function populateDatabase(coll, data) {
   streets = db.collection(coll);
   db.on('close', () => { process.stdout.write('closed connection\n'); });
   db.on('reconnect', () => { process.stdout.write('reconnected\n'); });
-  streets.insertMany(data, (err, res) => {
-    // client.close();
-    if (err) return process.stdout.write(err.message);
-    return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
-  });
+  // streets.insertMany(data, (err, res) => {
+  //   // client.close();
+  //   if (err) return process.stdout.write(err.message);
+  //   return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
+  // });
 }
 
 getApiData();
 
-// app.get('/api/:location', (req,res) => {
-//   const db = client.db(dbName);
-//   const days = {};
-//   for (let i = 0; i < weekdayArr.length; i ++) {
-//     db.collection(weekdayArr[i]).findOne({'properties.STREET_NAME':req.params.location}, (err, response) => {
-//       if (response && response.data) {
-//         days[weekdayArr[i]] = response.data;
-//       }
-//       // client.close();
-//       if (err) return process.stdout.write(err.message);
-//     });
-//   }
-//   console.log(days);
-//   res.send(days);
-// });
+
 
 app.get('/api/:location', (req,res) => {
   const db = client.db(dbName);
-  db.collection('Hej').find({'properties.STREET_NAME':req.params.location}, (err, response) => {
-    res.send(response[2]);
-    // client.close();
-    if (err) return process.stdout.write(err.message);
-  });
+  db.collection(coll).find({'properties.STREET_NAME':req.params.location}).toArray((err, response) => res.send(response))
 });
 
 app.listen(8080, () => console.log('server running on port 8080'));
-
-// https://openstreetgs.stockholm.se/home/Parking
-// ApiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a
