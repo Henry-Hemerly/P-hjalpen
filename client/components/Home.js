@@ -7,6 +7,9 @@ import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
+console.log(API_KEY);
+
+
 Geocoder.init(API_KEY);
 
 const apiUrl = 'http://localhost:8080/api/';
@@ -26,6 +29,7 @@ function Home() {
   const [currentPositionCar, setCurrentPositionCar] = React.useState(initialPosition);
 
   function userLocation (){
+    console.log('userLocation Called');
     Geolocation.getCurrentPosition(
       async info => {
           this.map.animateToRegion({
@@ -38,8 +42,17 @@ function Home() {
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
     )
   }
+  function carLocation (){
+    this.map.animateToRegion({
+      latitude: currentPositionCar.latitude,
+      longitude: currentPositionCar.longitude,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005
+    })
+  }
 
   async function getLocation(lat, long) {
+    console.log('getLocation Called');
     const address = await Geocoder.from(lat, long)
       .then(json => json.results[0].address_components[1].long_name)
       .catch(error => console.warn(error));
@@ -84,6 +97,7 @@ function Home() {
       </MapView>
       <View style={styles.userLocation}>
         <Button title="You" onPress={()=> userLocation()}/>
+        <Button title="Car" onPress={()=> carLocation()}/>
       </View>
         <SlidingUpPanel ref={c => this._panel = c}
         draggableRange={{top:300, bottom:0}}
