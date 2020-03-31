@@ -3,7 +3,6 @@ const app = express();
 const axios = require('axios');
 const { MongoClient } = require('mongodb');
 require('dotenv').config()
-console.log();
 
 const url = "mongodb+srv://not-null:"+process.env.mongodbPassword+"@cluster0-qp1je.mongodb.net/test?retryWrites=true&w=majority";
 const dbName = 'parkingDB';
@@ -11,7 +10,7 @@ const dbName = 'parkingDB';
 let client;
 let streets;
 
-const weekdayArr = ['måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag', 'söndag'];
+const weekdayArr = ['söndag','måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag'];
 
 let coll = 'Hej';
 
@@ -51,10 +50,13 @@ async function populateDatabase(coll, data) {
 getApiData();
 
 app.get('/api/:location', async (req,res) => {
+  
   const streetName = req.params.location.match(/([a-zA-ZåäöÅÄÖ]+)/)[0];
   const streetNumber = req.params.location.match(/([0-9]+)/)[0];
+
+
   const db = client.db(dbName);
-  await db.collection(coll).find({'properties.STREET_NAME':streetName}).toArray((err, streets) => {
+  await db.collection(coll).find({'properties.ADDRESS':{$regex: new RegExp(streetName)}}).toArray((err, streets) => {
     const resultStreets = [];
     for (let i = 0; i < streets.length; i++) {
       const addressParts = streets[i].properties.ADDRESS.split(' ');
@@ -72,8 +74,45 @@ app.get('/api/:location', async (req,res) => {
         }
       }
     }
-    res.send(resultStreets);
+    
+    res.send(calculateWhen(resultStreets));
   });
 });
+
+function sortWeek() {
+  const day = new Date().getDay()
+  let sortedWeek = weekdayArr.slice()
+  sortedWeek.push(...sortedWeek.splice(0,day))
+  return sortedWeek;
+}
+
+function calculateWhen(results) {
+  const resultsArr = [];
+  
+  for (let i = 0; i < 7; i++) {
+    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[0] ){
+      resultsArr.push(`Här får du inte parkera idag mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
+    }
+    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[1] ){
+      resultsArr.push(`Här får du inte parkera imorgon mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
+    }
+    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[2] ){
+      resultsArr.push(`Här får du inte parkera ${sortWeek()[2]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
+    }
+    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[3] ){
+      resultsArr.push(`Här får du inte parkera ${sortWeek()[3]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
+    }
+    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[4] ){
+      resultsArr.push(`Här får du inte parkera ${sortWeek()[4]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
+    }
+    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[5] ){
+      resultsArr.push(`Här får du inte parkera ${sortWeek()[5]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
+    }
+    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[6] ){
+      resultsArr.push(`Här får du inte parkera ${sortWeek()[6]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
+    }
+  }
+  return resultsArr;
+}
 
 app.listen(8080, () => console.log('server running on port 8080'));

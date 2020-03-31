@@ -22,7 +22,7 @@ const initialPosition = {
 function Home() {
 
   const [region, setRegion] = React.useState(initialPosition);
-  const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
+  const [panelData, setPanelData] = React.useState("");
   const [currentPositionCar, setCurrentPositionCar] = React.useState(initialPosition);
 
   function userLocation (){
@@ -51,7 +51,7 @@ function Home() {
   async function getLocation(lat, long) {
     console.log('getLocation Called');
     const address = await Geocoder.from(lat, long)
-      .then(json => json.results[0].address_components[1].long_name)
+      .then(json => json.results[0].formatted_address.split(',')[0])
       .catch(error => console.warn(error));
     return address;
   }
@@ -71,10 +71,10 @@ function Home() {
           newPositionCar.longitude = e.nativeEvent.coordinate.longitude;
           newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude)
           setCurrentPositionCar(newPositionCar);
-          // console.log(`${apiUrl}${newPositionCar.adress}`);
           await axios.get(`${apiUrl}${newPositionCar.adress}`)
             .then(res => {
-              console.log(res.data.properties.ADDRESS)})
+              setPanelData(res.data)
+              })
               .catch(err => console.log(err));
         }}
         onMapReady={ async () => {
