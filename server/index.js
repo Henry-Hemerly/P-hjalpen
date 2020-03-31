@@ -114,7 +114,6 @@ function calculateWhen(results) {
         if(startTimeString.length ===  4){
           startTimeHours = parseInt(startTimeString.substring(0,2));
           startTimeMin = parseInt(startTimeString.substring(2));
-          console.log(startTimeHours,startTimeMin);
           startTimeObject = new Date();
           startTimeObject.setHours(startTimeHours+2,startTimeMin);
         }
@@ -135,16 +134,28 @@ function calculateWhen(results) {
           endTimeObject = new Date();
           endTimeObject.setHours(endTimeHours+2,0)
         }
-        console.log("start",startTimeObject);
-        console.log("end",endTimeObject);
         let nowTimeObj = new Date()
         nowTimeObj.setHours(new Date().getHours()+2,new Date().getMinutes());
-        console.log("Today", nowTimeObj)
+
+        
+        console.log(endTimeObject, startTimeObject);
+
         resultsArr.push(`Här får du inte parkera ${sortWeek()[i]} mellan ${results[j].properties.START_TIME} och ${results[j].properties.END_TIME}`)
       }
     }
   }
   return resultsArr;
 }
-
+function duration(t0, t1){
+  let d = (new Date(t1)) - (new Date(t0));
+  let weekdays     = Math.floor(d/1000/60/60/24/7);
+  let days         = Math.floor(d/1000/60/60/24 - weekdays*7);
+  let hours        = Math.floor(d/1000/60/60    - weekdays*7*24            - days*24);
+  let minutes      = Math.floor(d/1000/60       - weekdays*7*24*60         - days*24*60         - hours*60);
+  let seconds      = Math.floor(d/1000          - weekdays*7*24*60*60      - days*24*60*60      - hours*60*60      - minutes*60);
+  let milliseconds = Math.floor(d               - weekdays*7*24*60*60*1000 - days*24*60*60*1000 - hours*60*60*1000 - minutes*60*1000 - seconds*1000);
+  let t = {};
+  ['weekdays', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'].forEach(q=>{ if (eval(q)>0) { t[q] = eval(q); } });
+  return t;
+}
 app.listen(8080, () => console.log('server running on port 8080'));
