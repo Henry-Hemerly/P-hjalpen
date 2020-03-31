@@ -88,28 +88,60 @@ function sortWeek() {
 
 function calculateWhen(results) {
   const resultsArr = [];
-  
+  let startTimeHours;
+  let startTimeMin;
+  let endTimeHours;
+  let endTimeMin;
+  let startTimeObject;
+  let endTimeObject;
   for (let i = 0; i < 7; i++) {
-    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[0] ){
-      resultsArr.push(`Här får du inte parkera idag mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
-    }
-    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[1] ){
-      resultsArr.push(`Här får du inte parkera imorgon mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
-    }
-    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[2] ){
-      resultsArr.push(`Här får du inte parkera ${sortWeek()[2]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
-    }
-    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[3] ){
-      resultsArr.push(`Här får du inte parkera ${sortWeek()[3]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
-    }
-    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[4] ){
-      resultsArr.push(`Här får du inte parkera ${sortWeek()[4]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
-    }
-    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[5] ){
-      resultsArr.push(`Här får du inte parkera ${sortWeek()[5]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
-    }
-    if(results[i] && results[i].properties.START_WEEKDAY === sortWeek()[6] ){
-      resultsArr.push(`Här får du inte parkera ${sortWeek()[6]} mellan ${results[i].properties.START_TIME} och ${results[i].properties.END_TIME}`)
+    for (let j = 0; j < results.length; j++) {
+      if(results[j] && results[j].properties.START_WEEKDAY === sortWeek()[i] ){
+        let startTimeString = results[j].properties.START_TIME.toString();
+        let endTimeString = results[j].properties.END_TIME.toString();
+        if(startTimeString.length === 3 ){
+          startTimeHours = parseInt(startTimeString.substring(0,1));
+          startTimeMin = parseInt(startTimeString.substring(1));
+          startTimeObject = new Date();
+          startTimeObject.setHours(startTimeHours+2,startTimeMin);
+        }
+        if(endTimeString.length ===  3){
+          endTimeHours = parseInt(endTimeString.substring(0,1));
+          endTimeMin = parseInt(endTimeString.substring(1));
+          endTimeObject = new Date();
+          endTimeObject.setHours(endTimeHours+2,endTimeMin)
+        }
+        if(startTimeString.length ===  4){
+          startTimeHours = parseInt(startTimeString.substring(0,2));
+          startTimeMin = parseInt(startTimeString.substring(2));
+          console.log(startTimeHours,startTimeMin);
+          startTimeObject = new Date();
+          startTimeObject.setHours(startTimeHours+2,startTimeMin);
+        }
+        if(endTimeString.length ===  4){
+          endTimeHours = parseInt(endTimeString.substring(0,2));
+          endTimeMin = parseInt(endTimeString.substring(2));
+          endTimeObject = new Date();
+          endTimeObject.setHours(endTimeHours+2,endTimeMin)
+        }
+        if(startTimeString.length ===  1){
+          startTimeHours = parseInt(startTimeString.substring(0,1));
+          console.log(startTimeHours);
+          startTimeObject = new Date();
+          startTimeObject.setHours(startTimeHours+2,0);
+        }
+        if(endTimeString.length ===  1){
+          endTimeHours = parseInt(endTimeString.substring(0,1));
+          endTimeObject = new Date();
+          endTimeObject.setHours(endTimeHours+2,0)
+        }
+        console.log("start",startTimeObject);
+        console.log("end",endTimeObject);
+        let nowTimeObj = new Date()
+        nowTimeObj.setHours(new Date().getHours()+2,new Date().getMinutes());
+        console.log("Today", nowTimeObj)
+        resultsArr.push(`Här får du inte parkera ${sortWeek()[i]} mellan ${results[j].properties.START_TIME} och ${results[j].properties.END_TIME}`)
+      }
     }
   }
   return resultsArr;

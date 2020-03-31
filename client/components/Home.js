@@ -22,7 +22,7 @@ const initialPosition = {
 function Home() {
 
   const [region, setRegion] = React.useState(initialPosition);
-  const [panelData, setPanelData] = React.useState("");
+  const [panelData, setPanelData] = React.useState("Hej");
   const [currentPositionCar, setCurrentPositionCar] = React.useState(initialPosition);
 
   function userLocation (){
@@ -73,7 +73,8 @@ function Home() {
           setCurrentPositionCar(newPositionCar);
           await axios.get(`${apiUrl}${newPositionCar.adress}`)
             .then(res => {
-              setPanelData(res.data)
+              setPanelData(res.data[0])
+              console.log(panelDate);
               })
               .catch(err => console.log(err));
         }}
@@ -100,11 +101,8 @@ function Home() {
         draggableRange={{top:300, bottom:0}}
         backdropOpacity={0}>
         <View style={styles.slidingUpPanel}>
-          {/* <Button title='' onPress={() => this._panel.show()} /> */}
-          </View>
-          <View style={styles.container}>
-            <Text>Here is the content inside panel</Text>
-            {/* <Button title='Hide' onPress={() => this._panel.hide()} /> */}
+        <Text></Text>
+        <Text>{panelData}</Text>
           </View>
         </SlidingUpPanel>
   </View>
@@ -128,7 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     position: 'relative',
     bottom: 130,
-    height: "10%",
+    height: "50%",
     width: "100%",
     borderWidth: 0,
     borderColor: '#F56',
