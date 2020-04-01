@@ -6,6 +6,8 @@ import { API_KEY } from 'react-native-dotenv';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
 
 Geocoder.init(API_KEY);
 
@@ -18,7 +20,7 @@ const initialPosition = {
   longitudeDelta: 0.0515,
   adress: ''
 };
-
+const Drawer = createDrawerNavigator();
 function Home() {
 
   const [region, setRegion] = React.useState(initialPosition);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, SafeAreaView } from 'react-native';
+import { Text, SafeAreaView, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Onboarding1, Onboarding2 ,Onboarding3 } from './components/Onboarding';
@@ -10,14 +10,16 @@ function SplashScreen({ navigation }) {
   setTimeout(() => {
     navigation.navigate('Onboarding1');
     return;
-    }, 5000)
+    }, 3000)
 
   return (
-    <SafeAreaView style={{ backgroundColor: '#fff', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>
-        P
+    <SafeAreaView style={{ backgroundColor: '#001736', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style= {{fontSize: 130, fontWeight: 'bold', color: 'white'}}>
+      P
       </Text>
-      <Text>
+      <View style= {{backgroundColor: '#F5C932', height: 11, width: 138, marginBottom: 25}}>
+      </View>
+      <Text style= {{fontSize: 40, fontWeight: 'bold', color: 'white'}}>
         Hjälpen
       </Text>
     </SafeAreaView>
