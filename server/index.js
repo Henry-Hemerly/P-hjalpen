@@ -88,17 +88,20 @@ function sortWeek() {
 
 function calculateWhen(results) {
   const resultsArr = [];
+  const daysIndex = [];
   let startTimeHours;
   let startTimeMin;
   let endTimeHours;
   let endTimeMin;
   let startTimeObject;
   let endTimeObject;
+  let durationObj;
   for (let i = 0; i < 7; i++) {
     for (let j = 0; j < results.length; j++) {
       if(results[j] && results[j].properties.START_WEEKDAY === sortWeek()[i] ){
         let startTimeString = results[j].properties.START_TIME.toString();
         let endTimeString = results[j].properties.END_TIME.toString();
+
         if(startTimeString.length === 3 ){
           startTimeHours = parseInt(startTimeString.substring(0,1));
           startTimeMin = parseInt(startTimeString.substring(1));
@@ -134,18 +137,42 @@ function calculateWhen(results) {
           endTimeObject = new Date();
           endTimeObject.setHours(endTimeHours+2,0)
         }
+        daysIndex.push(sortWeek()[i])
         let nowTimeObj = new Date()
+        startTimeObject.setDate(startTimeObject.getDate() + sortWeek().indexOf(daysIndex[0]))
+        endTimeObject.setDate(endTimeObject.getDate() + sortWeek().indexOf(daysIndex[0]))
         nowTimeObj.setHours(new Date().getHours()+2,new Date().getMinutes());
 
-        
-        console.log(endTimeObject, startTimeObject);
+        if (endTimeObject > nowTimeObj && startTimeObject < nowTimeObj ) {
+             durationObj = duration(nowTimeObj,endTimeObject)
+             resultsArr.push(`Här får du inte parkera idag förrän om ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
+             return resultsArr;
+          }
+          if (endTimeObject < nowTimeObj && sortWeek()[i] === sortWeek()[sortWeek().indexOf(daysIndex[0])]) {
+            if (daysIndex.length === 1) {
+              startTimeObject.setDate(startTimeObject.getDate() + sortWeek().indexOf(daysIndex[0]))
+              durationObj = duration(nowTimeObj,startTimeObject)
+              resultsArr.push(`Här får du inte parkera på nästa ${daysIndex[0]}  6 dagar ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
+              return resultsArr
+            } else {
+              startTimeObject.setDate(startTimeObject.getDate() + sortWeek().indexOf(daysIndex[1]))
+              durationObj = duration(nowTimeObj,startTimeObject)
+              resultsArr.push(`Här får du inte parkera ${daysIndex[1]} om ${durationObj.days} ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
+              return resultsArr
+            }
+         }
 
-        resultsArr.push(`Här får du inte parkera ${sortWeek()[i]} mellan ${results[j].properties.START_TIME} och ${results[j].properties.END_TIME}`)
+        durationObj = duration(nowTimeObj,startTimeObject)
+        resultsArr.push(`Här får du inte parkera ${sortWeek()[i]} om ${durationObj.days} dagar, ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
       }
+      
     }
+   
   }
   return resultsArr;
 }
+
+
 function duration(t0, t1){
   let d = (new Date(t1)) - (new Date(t0));
   let weekdays     = Math.floor(d/1000/60/60/24/7);
