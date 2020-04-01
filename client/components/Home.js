@@ -22,7 +22,7 @@ const initialPosition = {
 function Home() {
 
   const [region, setRegion] = React.useState(initialPosition);
-  const [panelData, setPanelData] = React.useState("Hej");
+  const [panelData, setPanelData] = React.useState("Parkeringsinfo");
   const [currentPositionCar, setCurrentPositionCar] = React.useState(initialPosition);
 
   function userLocation (){
@@ -73,7 +73,7 @@ function Home() {
           setCurrentPositionCar(newPositionCar);
           await axios.get(`${apiUrl}${newPositionCar.adress}`)
             .then(res => {
-              setPanelData(res.data[0])
+              setPanelData(res.data[0] ? res.data[0]: "Inget planerat underhåll på denna adress")
               console.log(panelDate);
               })
               .catch(err => console.log(err));

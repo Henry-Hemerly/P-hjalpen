@@ -10,12 +10,15 @@ function SplashScreen({ navigation }) {
   setTimeout(() => {
     navigation.navigate('Onboarding1');
     return;
-    }, 2000)
+    }, 5000)
 
   return (
     <SafeAreaView style={{ backgroundColor: '#fff', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>
-        PARKING APP!!!!
+        P
+      </Text>
+      <Text>
+        Hjälpen
       </Text>
     </SafeAreaView>
   );
