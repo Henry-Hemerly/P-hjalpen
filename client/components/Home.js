@@ -6,8 +6,7 @@ import { API_KEY } from 'react-native-dotenv';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+
 
 Geocoder.init(API_KEY);
 
@@ -20,7 +19,7 @@ const initialPosition = {
   longitudeDelta: 0.0515,
   adress: ''
 };
-const Drawer = createDrawerNavigator();
+
 function HomeScreen({navigation}) {
 
   const [region, setRegion] = React.useState(initialPosition);
@@ -60,6 +59,7 @@ function HomeScreen({navigation}) {
 
   return (
     <View style={{flex: 1 }}>
+
       <MapView
         ref={c => this.map = c}
         style={styles.mapView}
@@ -98,7 +98,7 @@ function HomeScreen({navigation}) {
       <View style={styles.userLocation}>
         <Button title="You" onPress={()=> userLocation()}/>
         <Button title="Car" onPress={()=> carLocation()}/>
-        <Button title="Settings" onPress={()=> navigation.navigate('HomeDetail')}/>
+        <Button title="Settings" onPress={()=> navigation.openDrawer()}/>
       </View>
         <SlidingUpPanel ref={c => this._panel = c}
         draggableRange={{top:300, bottom:0}}

@@ -35,11 +35,7 @@ function CutomHeader({isHome, navigation}) {
       <View style={{ flex: 1, justifyContent: 'center'}}>
      {
        isHome ? 
-       <TouchableOpacity 
-      onPress={()=> navigation.openDrawer()}
-      style={{ flexDirection: 'row', height:50 }}>
-       <Text>Button</Text>
-       </TouchableOpacity>
+          null
       : <TouchableOpacity 
       onPress={()=> navigation.goBack()}
       style={{ flexDirection: 'row', height:50 }}>
@@ -48,8 +44,7 @@ function CutomHeader({isHome, navigation}) {
      } 
           
     <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'center' }}>
-    </View>
-
+      </View>
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     </View>
     </View>
@@ -57,12 +52,12 @@ function CutomHeader({isHome, navigation}) {
   );
 }
 
-function HomeScreenDetail({navigation}) {
+function SettingsScreen({navigation}) {
   return (
     <SafeAreaView style={{ flex: 1}}>
       <CutomHeader navigation={navigation}/>
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home Detail!</Text>
+      <Text>Settings!</Text>
 
       </View>
     </SafeAreaView>
@@ -90,7 +85,6 @@ function HomeStack() {
   return (
       <StackHome.Navigator initialRouteName="Home">
         <StackHome.Screen name="Home" component={HomeScreen} options={navOptionHandler} />
-        <StackHome.Screen name="HomeDetail" component={HomeScreenDetail} options={navOptionHandler} />
       </StackHome.Navigator>
   );
 }
@@ -107,6 +101,9 @@ function CutomDrawerContent(props) {
       <TouchableOpacity onPress={()=> props.navigation.navigate('Notifications')}>
         <Text>Notifications</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={()=> props.navigation.navigate('Settings')}>
+        <Text>SettingsScreen</Text>
+      </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -119,6 +116,7 @@ function DrawerNavigator() {
     >
       <Drawer.Screen name="Home" component={HomeStack} />
       <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+      <Drawer.Screen name="Settings" component={SettingsScreen} />
     </Drawer.Navigator>
   )
 }
