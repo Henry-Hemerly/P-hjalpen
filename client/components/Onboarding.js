@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, TextInput,SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
 
   ////////// New pages in onboarding
 
@@ -56,6 +56,58 @@ function Onboarding1({ navigation }) {
         </Text>
         <Text style={style.description}>P-hjälpen är skapad av bilägare för bilägare i syfte spara dina pengar till något vettigare.
         </Text>
+        <TouchableOpacity
+          style={style.nextButton}
+          onPress={() => navigation.navigate('Onboarding4')}>
+            <Text style={style.nextButtonText} >
+              Nästa
+            </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('HomeApp')}
+        >
+          <Text style={style.skipButton}>
+            Hoppa över
+          </Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+  function Onboarding4({ navigation }) {
+    return (
+      <SafeAreaView style={style.background}>
+        <Text style={style.heading}>Välj din bils Bluetooth uppkoppling
+        </Text>
+        <Text style={style.description}>Bil 1 Parkoppla
+        </Text>
+        <Text style={style.description}>Bil 2 Parkoppla
+        </Text>
+        <Text style={style.description}>Bil 3 Parkoppla
+        </Text>
+        <TouchableOpacity
+          style={style.nextButton}
+          onPress={() => navigation.navigate('Onboarding5')}>
+            <Text style={style.nextButtonText} >
+              Nästa
+            </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('HomeApp')}
+        >
+          <Text style={style.skipButton}>
+            Hoppa över
+          </Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+  function Onboarding5({ navigation }) {
+    return (
+      <SafeAreaView style={style.background}>
+        <Text style={style.heading}>Fyll i din bils registreringsnummer
+        </Text>
+        <TextInput style={{height:60, backgroundColor:'white', width:'80%', alignSelf: 'center',marginVertical:20}}>
+        </TextInput>
         <TouchableOpacity
           style={style.nextButton}
           onPress={() => navigation.navigate('HomeApp')}>
@@ -116,4 +168,4 @@ const style = StyleSheet.create({
   }
 });
 
-module.exports = {Onboarding1,Onboarding2,Onboarding3}
+module.exports = {Onboarding1,Onboarding2,Onboarding3,Onboarding4,Onboarding5}

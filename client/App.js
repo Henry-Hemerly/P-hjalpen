@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {  SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Onboarding1, Onboarding2 ,Onboarding3 } from './components/Onboarding';
+import { Onboarding1, Onboarding2 ,Onboarding3, Onboarding4, Onboarding5 } from './components/Onboarding';
 import HomeScreen from './components/Home';
 
 
@@ -135,6 +135,8 @@ export default function App() {
           <StackApp.Screen name="Onboarding1" component={Onboarding1} options={navOptionHandler}/>
           <StackApp.Screen name="Onboarding2" component={Onboarding2} options={navOptionHandler}/>
           <StackApp.Screen name="Onboarding3" component={Onboarding3} options={navOptionHandler}/>
+          <StackApp.Screen name="Onboarding4" component={Onboarding4} options={navOptionHandler}/>
+          <StackApp.Screen name="Onboarding5" component={Onboarding5} options={navOptionHandler}/>
       </StackApp.Navigator>
     </NavigationContainer>
   );
