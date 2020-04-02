@@ -16,7 +16,7 @@ function Onboarding1({ navigation }) {
             </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('HomeApp')}
         >
           <Text style={style.skipButton}>
             Hoppa över
@@ -39,7 +39,7 @@ function Onboarding1({ navigation }) {
             </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('HomeApp')}
         >
           <Text style={style.skipButton}>
             Hoppa över
@@ -58,13 +58,13 @@ function Onboarding1({ navigation }) {
         </Text>
         <TouchableOpacity
           style={style.nextButton}
-          onPress={() => navigation.navigate('Home')}>
+          onPress={() => navigation.navigate('HomeApp')}>
             <Text style={style.nextButtonText} >
               Nästa
             </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('HomeApp')}
         >
           <Text style={style.skipButton}>
             Hoppa över

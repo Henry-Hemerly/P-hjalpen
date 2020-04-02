@@ -21,7 +21,7 @@ const initialPosition = {
   adress: ''
 };
 const Drawer = createDrawerNavigator();
-function Home() {
+function HomeScreen({navigation}) {
 
   const [region, setRegion] = React.useState(initialPosition);
   const [panelData, setPanelData] = React.useState("Parkeringsinfo");
@@ -98,6 +98,7 @@ function Home() {
       <View style={styles.userLocation}>
         <Button title="You" onPress={()=> userLocation()}/>
         <Button title="Car" onPress={()=> carLocation()}/>
+        <Button title="Settings" onPress={()=> navigation.navigate('HomeDetail')}/>
       </View>
         <SlidingUpPanel ref={c => this._panel = c}
         draggableRange={{top:300, bottom:0}}
@@ -145,4 +146,4 @@ const styles = StyleSheet.create({
 
 
 
-export default Home;
+export default HomeScreen;

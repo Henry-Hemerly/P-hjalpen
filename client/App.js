@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { Text, SafeAreaView, View } from 'react-native';
+import { Text, View , ScrollView} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import {  SafeAreaView } from 'react-native-safe-area-context';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Onboarding1, Onboarding2 ,Onboarding3 } from './components/Onboarding';
-import Home from './components/Home';
+import HomeScreen from './components/Home';
 
 
 function SplashScreen({ navigation }) {
@@ -26,25 +29,114 @@ function SplashScreen({ navigation }) {
   );
 }
 
-const Stack = createStackNavigator();
+function CutomHeader({isHome, navigation}) {
+  return (
+    <View style={{ flexDirection: 'row', height:50 }}>
+      <View style={{ flex: 1, justifyContent: 'center'}}>
+     {
+       isHome ? 
+       <TouchableOpacity 
+      onPress={()=> navigation.openDrawer()}
+      style={{ flexDirection: 'row', height:50 }}>
+       <Text>Button</Text>
+       </TouchableOpacity>
+      : <TouchableOpacity 
+      onPress={()=> navigation.goBack()}
+      style={{ flexDirection: 'row', height:50 }}>
+        <Text>Back</Text>
+        </TouchableOpacity>
+     } 
+          
+    <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'center' }}>
+    </View>
 
-function App() {
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    </View>
+    </View>
+    </View>
+  );
+}
+
+function HomeScreenDetail({navigation}) {
+  return (
+    <SafeAreaView style={{ flex: 1}}>
+      <CutomHeader navigation={navigation}/>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Home Detail!</Text>
+
+      </View>
+    </SafeAreaView>
+  );
+}
+
+
+function NotificationsScreen({ navigation }) {
+  return (
+    <SafeAreaView style={{ flex: 1}}>
+      <CutomHeader navigation={navigation}/>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Notifications screen</Text>
+
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const navOptionHandler = () => ({
+  headerShown: false
+})
+const StackHome = createStackNavigator();
+function HomeStack() {
+  return (
+      <StackHome.Navigator initialRouteName="Home">
+        <StackHome.Screen name="Home" component={HomeScreen} options={navOptionHandler} />
+        <StackHome.Screen name="HomeDetail" component={HomeScreenDetail} options={navOptionHandler} />
+      </StackHome.Navigator>
+  );
+}
+// DRAWER NAVIGATION
+const Drawer = createDrawerNavigator();
+
+function CutomDrawerContent(props) {
+  return (
+    <SafeAreaView style={{ flex: 1,backgroundColor:'white' }}>
+      <ScrollView>
+      <TouchableOpacity onPress={()=> props.navigation.navigate('Home')}>
+        <Text>Menu Tab</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={()=> props.navigation.navigate('Notifications')}>
+        <Text>Notifications</Text>
+      </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+function DrawerNavigator() {
+  return (
+    <Drawer.Navigator initialRouteName="Home"
+    drawerContent={props => CutomDrawerContent(props)}
+    >
+      <Drawer.Screen name="Home" component={HomeStack} />
+      <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+    </Drawer.Navigator>
+  )
+}
+
+// ONBOARDING NAVIGATION
+const StackApp = createStackNavigator();
+
+export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-        initialRouteName="SplashScreen"
-        screenOptions={{
-          headerShown: false
-        }}
-      >
-        <Stack.Screen name="SplashScreen" component={SplashScreen} />
-        <Stack.Screen name="Onboarding1" component={Onboarding1} />
-        <Stack.Screen name="Onboarding2" component={Onboarding2} />
-        <Stack.Screen name="Onboarding3" component={Onboarding3} />
-        <Stack.Screen name="Home" component={Home} />
-      </Stack.Navigator>
+        <StackApp.Navigator initialRouteName="SplashScreen">
+          <StackApp.Screen name="HomeApp" component={DrawerNavigator} options={navOptionHandler}/>
+          <StackApp.Screen name="SplashScreen" component={SplashScreen} options={navOptionHandler}/>
+          <StackApp.Screen name="Onboarding1" component={Onboarding1} options={navOptionHandler}/>
+          <StackApp.Screen name="Onboarding2" component={Onboarding2} options={navOptionHandler}/>
+          <StackApp.Screen name="Onboarding3" component={Onboarding3} options={navOptionHandler}/>
+      </StackApp.Navigator>
     </NavigationContainer>
   );
 }
 
-export default App;
