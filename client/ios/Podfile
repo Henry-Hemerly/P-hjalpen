@@ -47,9 +47,5 @@ end
 target 'client-tvOS' do
   # Pods for client-tvOS
 
-  target 'client-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
 
 end
