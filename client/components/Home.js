@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, View, Text, StyleSheet } from 'react-native';
+import { Button, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import { API_KEY } from 'react-native-dotenv';
@@ -103,10 +103,17 @@ function HomeScreen({navigation}) {
         <SlidingUpPanel ref={c => this._panel = c}
         draggableRange={{top:300, bottom:0}}
         backdropOpacity={0}>
-        <View style={styles.slidingUpPanel}>
-        <Text></Text>
-        <Text>{panelData}</Text>
-          </View>
+          <View style={styles.slidingUpPanel}>
+          <Text></Text>
+          <Text>{panelData}</Text>
+          <TouchableOpacity
+            style={styles.parkingButton}
+            >
+              <Text style={styles.parkingButtonText}>
+                Parkera här
+              </Text>
+          </TouchableOpacity>
+            </View>
         </SlidingUpPanel>
   </View>
   );
@@ -141,6 +148,24 @@ const styles = StyleSheet.create({
     top: '10%', 
     right: '10%',
     alignSelf: 'flex-end'
+  },
+  parkingButton: {
+    alignSelf: 'stretch',
+    backgroundColor: '#001E39',
+    borderRadius: 34,
+    borderWidth: 1,
+    marginHorizontal: 22,
+    height: 68,
+    position:'absolute',
+    bottom: 50,
+    width: 370
+
+  },
+  parkingButtonText: {
+    alignSelf: 'center',
+    paddingVertical: 21,
+    fontSize: 22,
+    color: '#F5C932'
   }
 });
 
