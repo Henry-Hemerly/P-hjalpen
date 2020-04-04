@@ -9,6 +9,8 @@ import { Onboarding1, Onboarding2 ,Onboarding3, Onboarding4, Onboarding5 } from 
 import HomeScreen from './components/Home';
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
+import { connect } from 'react-redux';
+
 
 
 
@@ -163,7 +165,7 @@ function DrawerNavigator() {
 // ONBOARDING NAVIGATION
 const StackApp = createStackNavigator();
 
-export default function App() {
+function App() {
   return (
     <NavigationContainer>
         <StackApp.Navigator initialRouteName="SplashScreen">
@@ -178,4 +180,6 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+export default connect()(App)
 

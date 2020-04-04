@@ -76,7 +76,7 @@ function HomeScreen({navigation}) {
           await axios.get(`${apiUrl}${newPositionCar.adress}`)
             .then(res => {
               setPanelData(res.data[0] ? res.data[0]: "Inget planerat underhåll på denna adress")
-              console.log(panelDate);
+              console.log(panelData);
               })
               .catch(err => console.log(err));
         }}
