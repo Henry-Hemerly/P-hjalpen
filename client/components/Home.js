@@ -132,7 +132,7 @@ function HomeScreen({navigation}) {
             style={styles.parkingButton}
             >
               <Text style={styles.parkingButtonText}>
-            { parked ? 'Avsluta parkering' : 'Parkera här' }
+            { parked ? 'Avsluta parkering' : 'Parkera här ' }
               </Text>
           </TouchableOpacity>
             </View>
