@@ -145,29 +145,51 @@ function calculateWhen(results) {
 
         if (endTimeObject > nowTimeObj && startTimeObject < nowTimeObj ) {
              durationObj = duration(nowTimeObj,endTimeObject)
-             resultsArr.push(`Här får du inte parkera idag förrän om ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
+             resultsArr.push({
+               startTimeObject, 
+               endTimeObject, 
+               day: 'idag', 
+               hours: startTimeObject.getHours() - 2,
+               minutes: startTimeObject.getMinutes()
+              });
              return resultsArr;
           }
           if (endTimeObject < nowTimeObj && sortWeek()[i] === sortWeek()[sortWeek().indexOf(daysIndex[0])]) {
             if (daysIndex.length === 1) {
               startTimeObject.setDate(startTimeObject.getDate() + sortWeek().indexOf(daysIndex[0]))
               durationObj = duration(nowTimeObj,startTimeObject)
-              resultsArr.push(`Här får du inte parkera på nästa ${daysIndex[0]}  6 dagar ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
+              resultsArr.push({
+                startTimeObject, 
+                endTimeObject, 
+                day: daysIndex[0],
+                hours: startTimeObject.getHours() - 2,
+                minutes: startTimeObject.getMinutes()
+               });
               return resultsArr
             } else {
               startTimeObject.setDate(startTimeObject.getDate() + sortWeek().indexOf(daysIndex[1]))
               durationObj = duration(nowTimeObj,startTimeObject)
-              resultsArr.push(`Här får du inte parkera ${daysIndex[1]} om ${durationObj.days} ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
+              resultsArr.push({
+                startTimeObject, 
+                endTimeObject, 
+                day: daysIndex[1],
+                hours: (startTimeObject.getHours() - 2),
+                minutes: startTimeObject.getMinutes()
+               });
               return resultsArr
             }
          }
-
         durationObj = duration(nowTimeObj,startTimeObject)
-        resultsArr.push(`Här får du inte parkera ${sortWeek()[i]} om ${durationObj.days} dagar, ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
+        // resultsArr.push(`Här får du inte parkera ${sortWeek()[i]} om ${durationObj.days} dagar, ${durationObj.hours} timmar och ${durationObj.minutes} minuter`)
+        resultsArr.push({
+          startTimeObject, 
+          endTimeObject, 
+          day: sortWeek()[i],
+          hours: startTimeObject.getHours() - 2,
+          minutes: startTimeObject.getMinutes()
+         });
       }
-      
     }
-   
   }
   return resultsArr;
 }

@@ -12,9 +12,6 @@ import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { connect } from 'react-redux';
 
 
-
-
-
 PushNotification.configure({
   // (optional) Called when Token is generated 
   onRegister: function(token) {
@@ -40,11 +37,19 @@ PushNotification.configure({
 
   requestPermissions: true
 });
+
 function sendNotification() {
   PushNotification.localNotification({
-    /* iOS and Android properties */
     title: "My Notification Title", // (optional)
     message: "My Notification Message", // (required)
+  });
+}
+
+function sendScheduledNotification() {
+  PushNotification.localNotificationSchedule({
+    title: "My Notification Title", // (optional)
+    message: "My Notification Message", // (required)
+    date: new Date(Date.now() + 10 * 1000) // in 60 secs
   });
 }
 
@@ -54,7 +59,7 @@ function NotificationsScreen({ navigation }) {
       <CutomHeader navigation={navigation}/>
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Notifications screen</Text>
-      <Button title="Send notification!" onPress={()=> sendNotification()}/>
+      <Button title="Send notification!" onPress={()=> sendScheduledNotification()}/>
       </View>
     </SafeAreaView>
   );

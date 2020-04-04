@@ -8,7 +8,7 @@ import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import { getDistance } from 'geolib';
 import { connect } from 'react-redux';
-import { changeCount } from '../actions/counts.js';
+import { changeCount, changeParkedPos } from '../actions/counts.js';
 
 Geocoder.init(API_KEY);
 
@@ -22,12 +22,12 @@ const initialPosition = {
   adress: ''
 };
 
-function HomeScreen({navigation,count,changeCount}) {
+function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
   const [region, setRegion] = React.useState(initialPosition);
   const [panelData, setPanelData] = React.useState("Parkeringsinfo");
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
-  const [parkedPosition, setParkedPosition] = React.useState(currentPosition);
-  const [parked, setParked] = React.useState(false);
+  // const [parkedPosition, setParkedPosition] = React.useState(currentPosition);
+  // const [parked, setParked] = React.useState(false);
 
   function userLocation (){
     Geolocation.getCurrentPosition(
@@ -77,8 +77,8 @@ function HomeScreen({navigation,count,changeCount}) {
           setCurrentPosition(newPosition);
           await axios.get(`${apiUrl}${newPosition.adress}`)
             .then(res => {
-              setPanelData(res.data[0] ? res.data[0]: "Inget planerat underhåll på denna adress")
-              console.log(panelDate);
+              console.log(res.data.length)
+              setPanelData(res.data.length ? `${res.data[0].day} kl. ${res.data[0].hours}:${res.data[0].minutes}` : "")
               })
               .catch(err => console.log(err));
         }}
@@ -97,7 +97,7 @@ function HomeScreen({navigation,count,changeCount}) {
           coordinate={currentPosition}
         />
         <Marker
-          coordinate={parked ? parkedPosition : currentPosition}
+          coordinate={count.parked ? count.parkedPosition : currentPosition}
         />
       </MapView>
       <View style={styles.userLocation}>
@@ -112,36 +112,37 @@ function HomeScreen({navigation,count,changeCount}) {
           <View style={{ alignItems: "center" }}>
             <View style ={{  marginVertical: 10, height: 4, width: '50%', backgroundColor: 'lightgrey', opacity: 0.3 }}/>
           </View>
-          <Text style={styles.panelHeader}>{parked ? 'Parkerad' : 'Ej parkerad'}</Text>
-          <Text style={styles.text}>{parked ? parkedPosition.adress : currentPosition.adress}</Text>
+          <Text style={styles.panelHeader}>{count.parked ? 'Parkerad' : 'Ej parkerad'}</Text>
+          <Text style={styles.text}>{count.parked ? count.parkedPosition.adress : currentPosition.adress}</Text>
           <View style ={{  marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }}/>
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
-            <Text style={styles.text}>Städgata</Text>
-            <Text style={styles.text}>{panelData}</Text>
+      <Text style={styles.text}>{panelData ? 'Flytta senast': 'Parkering tillåten'}</Text>
+            <Text style={styles.text}>{panelData ? panelData : ''}</Text>
           </View>
           <View style ={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3  }}/>
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
             <Text style={styles.text}>Taxeområde</Text>
             <Text style={styles.text}>X</Text>
           </View>
-          <Text>{getDistance(
-                    { latitude: parkedPosition.latitude, longitude: parkedPosition.longitude },
-                    { latitude: currentPosition.latitude, longitude: currentPosition.longitude }
-                  )}
+          <Text>{count.parkedPosition.latitude ? getDistance(
+                    { latitude: count.parkedPosition.latitude, longitude: count.parkedPosition.longitude },
+                    { latitude: currentPosition.latitude, longitude: currentPosition.longitude } 
+                  )
+                  :
+                  '0'
+                }
               </Text>
 
-          <Text>{count.count}</Text>
+          {/* <Text>{ count.parkedPosition.latitude.toString() }</Text> */}
           <TouchableOpacity
             onPress={() => {
-              parked ? setParked(false) : setParked(true)
-              setParkedPosition(currentPosition);
-              changeCount(30)
-
+              count.parked ? changeCount(false) : changeCount(true)
+              changeParkedPos(currentPosition);
             }}
             style={styles.parkingButton}
             >
               <Text style={styles.parkingButtonText}>
-            { parked ? 'Avsluta parkering' : 'Parkera här ' }
+            { count.parked ? 'Avsluta parkering' : 'Parkera här ' }
               </Text>
           </TouchableOpacity>
             </View>
@@ -152,11 +153,13 @@ function HomeScreen({navigation,count,changeCount}) {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: Dimensions.get('screen').height * 0.025
+    fontSize: Dimensions.get('screen').height * 0.025,
+    color: '#001E39'
   },
   panelHeader: {
     fontSize: Dimensions.get('screen').height * 0.04,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: '#001E39'
   },
   container: {
     backgroundColor: 'white',
@@ -210,14 +213,15 @@ const styles = StyleSheet.create({
 
 function mapStateToProps (state) {
   return {
-    count: state.count
+    count: state.count,
   }
 }
+
 const mapDispatchToProps = dispatch => ({
   changeCount: count => dispatch(changeCount(count)),
+  changeParkedPos: parkedPosition => dispatch(changeParkedPos(parkedPosition)),
 })
 
-
 export default connect(
-  mapStateToProps,mapDispatchToProps
+mapStateToProps, mapDispatchToProps
 )(HomeScreen)
