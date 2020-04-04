@@ -10,7 +10,6 @@ import { getDistance } from 'geolib';
 import { connect } from 'react-redux';
 import { changeCount } from '../actions/counts.js';
 
-
 Geocoder.init(API_KEY);
 
 const apiUrl = 'http://localhost:8080/api/';
@@ -107,10 +106,13 @@ function HomeScreen({navigation,count,changeCount}) {
         <Button title="Settings" onPress={()=> navigation.openDrawer()}/>
       </View>
         <SlidingUpPanel ref={c => this._panel = c}
-        draggableRange={{top:Dimensions.get('screen').height * 0.3, bottom:0}}
+        draggableRange={{top:Dimensions.get('screen').height * 0.25, bottom:0}}
         backdropOpacity={0}>
           <View style={styles.slidingUpPanel}>
-      <Text style={styles.panelHeader}>{parked ? 'Parkerad' : 'Din position'}</Text>
+          <View style={{ alignItems: "center" }}>
+            <View style ={{  marginVertical: 10, height: 4, width: '50%', backgroundColor: 'lightgrey', opacity: 0.3 }}/>
+          </View>
+          <Text style={styles.panelHeader}>{parked ? 'Parkerad' : 'Ej parkerad'}</Text>
           <Text style={styles.text}>{parked ? parkedPosition.adress : currentPosition.adress}</Text>
           <View style ={{  marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }}/>
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
@@ -150,10 +152,11 @@ function HomeScreen({navigation,count,changeCount}) {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: Dimensions.get('screen').height * 0.03
+    fontSize: Dimensions.get('screen').height * 0.025
   },
   panelHeader: {
     fontSize: Dimensions.get('screen').height * 0.04,
+    fontWeight: 'bold'
   },
   container: {
     backgroundColor: 'white',
@@ -170,13 +173,14 @@ const styles = StyleSheet.create({
   slidingUpPanel:{
     backgroundColor: '#fff',
     position: 'relative',
-    bottom: '10%',
-    height: "50%",
+    bottom: '15%',
+    height: "40%",
     width: "100%",
     borderWidth: 0,
     borderColor: '#F56',
     borderRadius: 30,
-    padding: 20
+    paddingVertical: 5,
+    paddingHorizontal: 20
   },
   userLocation:{
     backgroundColor:'#fff',
