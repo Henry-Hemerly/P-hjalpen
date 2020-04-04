@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { Text, TextInput,SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
   ////////// New pages in onboarding
 
 function Onboarding1({ navigation }) {
     return (
       <SafeAreaView style={style.background}>
+        <View style={{marginTop: 50}}>
         <Text style={style.heading}>Nu är det slut på{"\n"}P-böter!</Text>
         <Text style={style.description}>Våra tester som vi utfört på bilägare i Stockholm visar att de minskade risken för att få P-böter upp till 70%.</Text>
+        </View>
+        <View style={{marginBottom: 20 }}>
         <TouchableOpacity
           style={style.nextButton}
           onPress={() => navigation.navigate('Onboarding2')}>
@@ -22,6 +25,7 @@ function Onboarding1({ navigation }) {
             Hoppa över
           </Text>
         </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -29,8 +33,11 @@ function Onboarding1({ navigation }) {
   function Onboarding2({ navigation }) {
     return (
       <SafeAreaView style={style.background}>
+        <View style={{marginTop: 50}}>
         <Text style={style.heading}>Glömt städgata igen?</Text>
         <Text style={style.description}>P-hjälpen glömmer inte när det är dags att flytta på bilen. Välj när du vill bli påmind.</Text>
+        </View>
+        <View style={{marginBottom: 20 }}>
         <TouchableOpacity
           style={style.nextButton}
           onPress={() => navigation.navigate('Onboarding3')}>
@@ -45,6 +52,7 @@ function Onboarding1({ navigation }) {
             Hoppa över
           </Text>
         </TouchableOpacity>
+      </View>
       </SafeAreaView>
     );
   };
@@ -52,10 +60,13 @@ function Onboarding1({ navigation }) {
   function Onboarding3({ navigation }) {
     return (
       <SafeAreaView style={style.background}>
+        <View style={{marginTop: 50}}>
         <Text style={style.heading}>P-hjälpen påminner dig när det är dags!
         </Text>
         <Text style={style.description}>P-hjälpen är skapad av bilägare för bilägare i syfte spara dina pengar till något vettigare.
         </Text>
+        </View>
+        <View style={{marginBottom: 20 }}>
         <TouchableOpacity
           style={style.nextButton}
           onPress={() => navigation.navigate('Onboarding4')}>
@@ -70,12 +81,14 @@ function Onboarding1({ navigation }) {
             Hoppa över
           </Text>
         </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
   function Onboarding4({ navigation }) {
     return (
       <SafeAreaView style={style.background}>
+        <View style={{marginTop: 50}}>
         <Text style={style.heading}>Välj din bils Bluetooth uppkoppling
         </Text>
         <Text style={style.description}>Bil 1 Parkoppla
@@ -84,6 +97,8 @@ function Onboarding1({ navigation }) {
         </Text>
         <Text style={style.description}>Bil 3 Parkoppla
         </Text>
+        </View>
+        <View style={{marginBottom: 20 }}>
         <TouchableOpacity
           style={style.nextButton}
           onPress={() => navigation.navigate('Onboarding5')}>
@@ -98,16 +113,20 @@ function Onboarding1({ navigation }) {
             Hoppa över
           </Text>
         </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
   function Onboarding5({ navigation }) {
     return (
       <SafeAreaView style={style.background}>
+        <View style={{marginTop: 50}}>
         <Text style={style.heading}>Fyll i din bils registreringsnummer
         </Text>
         <TextInput style={{height:60, backgroundColor:'white', width:'80%', alignSelf: 'center',marginVertical:20}}>
         </TextInput>
+        </View>
+    <View style={{marginBottom: 20 }}>
         <TouchableOpacity
           style={style.nextButton}
           onPress={() => navigation.navigate('HomeApp')}>
@@ -122,6 +141,7 @@ function Onboarding1({ navigation }) {
             Hoppa över
           </Text>
         </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -136,14 +156,16 @@ const style = StyleSheet.create({
     marginRight: 90 
   },
   description: {
-    color: 'white', 
+    color: 'white',
     fontSize: 22, 
     marginHorizontal:28, 
-    lineHeight: 36
+    lineHeight: 36,
+    marginTop: 20
   },
   background: {
     backgroundColor: '#001736', 
-    flex: 1
+    flex: 1,
+    justifyContent: "space-between"
   },
   nextButton: {
     alignSelf: 'stretch',

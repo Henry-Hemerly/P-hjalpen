@@ -10,11 +10,8 @@ import HomeScreen from './components/Home';
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 
-
-
-
 PushNotification.configure({
-  // (optional) Called when Token is generated 
+  // (optional) Called when Token is generated
   onRegister: function(token) {
     console.log("TOKEN:", token);
   },
@@ -113,9 +110,6 @@ function SettingsScreen({navigation}) {
   );
 }
 
-
-
-
 const navOptionHandler = () => ({
   headerShown: false
 })
@@ -178,4 +172,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-

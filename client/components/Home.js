@@ -6,7 +6,7 @@ import { API_KEY } from 'react-native-dotenv';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
-
+// import EStyleSheet from 'react-native-extended-stylesheet';
 
 Geocoder.init(API_KEY);
 
@@ -89,10 +89,9 @@ function HomeScreen({navigation}) {
         }}
         onRegionChangeComplete={region => setRegion(region)}
       >
-        <Marker draggable
+        <Marker
+            // coordinate={parked ? parkedPosition : currentPositionCar}
             coordinate={currentPositionCar}
-            title='Din bil'
-            description={currentPositionCar.adress}
         />
       </MapView>
       <View style={styles.userLocation}>
@@ -101,11 +100,21 @@ function HomeScreen({navigation}) {
         <Button title="Settings" onPress={()=> navigation.openDrawer()}/>
       </View>
         <SlidingUpPanel ref={c => this._panel = c}
-        draggableRange={{top:300, bottom:0}}
+        draggableRange={{top:Dimensions.get('screen').height * 0.3, bottom:0}}
         backdropOpacity={0}>
           <View style={styles.slidingUpPanel}>
-          <Text></Text>
-          <Text>{panelData}</Text>
+          <Text style={styles.panelHeader}>Din bil är här</Text>
+          <Text style={styles.text}>{currentPositionCar.adress}</Text>
+          <View style ={{  marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }}/>
+          <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
+            <Text style={styles.text}>Städgata</Text>
+            <Text style={styles.text}>{panelData}</Text>
+          </View>
+          <View style ={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3  }}/>
+          <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
+            <Text style={styles.text}>Taxeområde</Text>
+            <Text style={styles.text}>X</Text>
+          </View>
           <TouchableOpacity
             style={styles.parkingButton}
             >
@@ -120,6 +129,12 @@ function HomeScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
+  text: {
+    fontSize: Dimensions.get('screen').height * 0.03
+  },
+  panelHeader: {
+    fontSize: Dimensions.get('screen').height * 0.04,
+  },
   container: {
     backgroundColor: 'white',
     alignItems: 'center',
@@ -135,12 +150,13 @@ const styles = StyleSheet.create({
   slidingUpPanel:{
     backgroundColor: '#fff',
     position: 'relative',
-    bottom: 130,
+    bottom: '10%',
     height: "50%",
     width: "100%",
     borderWidth: 0,
     borderColor: '#F56',
-    borderRadius: 30
+    borderRadius: 30,
+    padding: 20
   },
   userLocation:{
     backgroundColor:'#fff',
@@ -154,21 +170,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#001E39',
     borderRadius: 34,
     borderWidth: 1,
-    marginHorizontal: 22,
-    height: 68,
-    position:'absolute',
-    bottom: 50,
-    width: 370
-
+    // marginHorizontal: '5%',
+    height: '14%',
+    // position:'absolute',
+    // bottom: '28%',
+    width: '100%',
+    justifyContent: 'center'  
   },
-  parkingButtonText: {
+    parkingButtonText: {
     alignSelf: 'center',
-    paddingVertical: 21,
     fontSize: 22,
     color: '#F5C932'
-  }
+    }
 });
-
 
 
 export default HomeScreen;
