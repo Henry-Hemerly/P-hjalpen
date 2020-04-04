@@ -6,7 +6,7 @@ import { API_KEY } from 'react-native-dotenv';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
-// import EStyleSheet from 'react-native-extended-stylesheet';
+import { getDistance } from 'geolib';
 
 Geocoder.init(API_KEY);
 
@@ -15,19 +15,19 @@ const apiUrl = 'http://localhost:8080/api/';
 const initialPosition = {
   latitude: 59.3324,
   longitude: 18.0645,
-  latitudeDelta: 0.0562,
-  longitudeDelta: 0.0515,
+  latitudeDelta: 0.003,
+  longitudeDelta: 0.002,
   adress: ''
 };
 
 function HomeScreen({navigation}) {
-
   const [region, setRegion] = React.useState(initialPosition);
   const [panelData, setPanelData] = React.useState("Parkeringsinfo");
-  const [currentPositionCar, setCurrentPositionCar] = React.useState(initialPosition);
+  const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
+  const [parkedPosition, setParkedPosition] = React.useState(currentPosition);
+  const [parked, setParked] = React.useState(false);
 
   function userLocation (){
-    console.log('userLocation Called');
     Geolocation.getCurrentPosition(
       async info => {
           this.map.animateToRegion({
@@ -42,8 +42,8 @@ function HomeScreen({navigation}) {
   }
   function carLocation (){
     this.map.animateToRegion({
-      latitude: currentPositionCar.latitude,
-      longitude: currentPositionCar.longitude,
+      latitude: currentPosition.latitude,
+      longitude: currentPosition.longitude,
       latitudeDelta: 0.005,
       longitudeDelta: 0.005
     })
@@ -64,16 +64,16 @@ function HomeScreen({navigation}) {
         ref={c => this.map = c}
         style={styles.mapView}
         showsPointsOfInterest={false}
-        followsUserLocation={true}
-        showsUserLocation={true}
+        // followsUserLocation={true}
+        // showsUserLocation={true}
         initialRegion={region}
         onMarkerDragEnd={ async (e) => {
-          const newPositionCar = { ...currentPositionCar };
-          newPositionCar.latitude = e.nativeEvent.coordinate.latitude;
-          newPositionCar.longitude = e.nativeEvent.coordinate.longitude;
-          newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude)
-          setCurrentPositionCar(newPositionCar);
-          await axios.get(`${apiUrl}${newPositionCar.adress}`)
+          const newPosition = { ...currentPosition };
+          newPosition.latitude = e.nativeEvent.coordinate.latitude;
+          newPosition.longitude = e.nativeEvent.coordinate.longitude;
+          newPosition.adress = await getLocation(newPosition.latitude, newPosition.longitude)
+          setCurrentPosition(newPosition);
+          await axios.get(`${apiUrl}${newPosition.adress}`)
             .then(res => {
               setPanelData(res.data[0] ? res.data[0]: "Inget planerat underhåll på denna adress")
               console.log(panelDate);
@@ -81,17 +81,21 @@ function HomeScreen({navigation}) {
               .catch(err => console.log(err));
         }}
         onMapReady={ async () => {
-          const newPositionCar = { ...currentPositionCar };
-          newPositionCar.adress = await getLocation(newPositionCar.latitude, newPositionCar.longitude);
-          setCurrentPositionCar(newPositionCar);
-          console.log(currentPositionCar)
+          const newPosition = { ...currentPosition };
+          newPosition.adress = await getLocation(newPosition.latitude, newPosition.longitude);
+          setCurrentPosition(newPosition);
+          console.log(currentPosition)
           this.region={region}
         }}
         onRegionChangeComplete={region => setRegion(region)}
       >
         <Marker
-            // coordinate={parked ? parkedPosition : currentPositionCar}
-            coordinate={currentPositionCar}
+        image={require('../images/circle.png')}
+          draggable
+          coordinate={currentPosition}
+        />
+        <Marker
+          coordinate={parked ? parkedPosition : currentPosition}
         />
       </MapView>
       <View style={styles.userLocation}>
@@ -103,8 +107,8 @@ function HomeScreen({navigation}) {
         draggableRange={{top:Dimensions.get('screen').height * 0.3, bottom:0}}
         backdropOpacity={0}>
           <View style={styles.slidingUpPanel}>
-          <Text style={styles.panelHeader}>Din bil är här</Text>
-          <Text style={styles.text}>{currentPositionCar.adress}</Text>
+      <Text style={styles.panelHeader}>{parked ? 'Parkerad' : 'Din position'}</Text>
+          <Text style={styles.text}>{parked ? parkedPosition.adress : currentPosition.adress}</Text>
           <View style ={{  marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }}/>
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
             <Text style={styles.text}>Städgata</Text>
@@ -115,11 +119,20 @@ function HomeScreen({navigation}) {
             <Text style={styles.text}>Taxeområde</Text>
             <Text style={styles.text}>X</Text>
           </View>
+          <Text>{getDistance(
+                    { latitude: parkedPosition.latitude, longitude: parkedPosition.longitude },
+                    { latitude: currentPosition.latitude, longitude: currentPosition.longitude }
+                  )}
+              </Text>
           <TouchableOpacity
+            onPress={() => {
+              parked ? setParked(false) : setParked(true)
+              setParkedPosition(currentPosition);
+            }}
             style={styles.parkingButton}
             >
               <Text style={styles.parkingButtonText}>
-                Parkera här
+            { parked ? 'Avsluta parkering' : 'Parkera här' }
               </Text>
           </TouchableOpacity>
             </View>
