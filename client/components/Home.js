@@ -7,6 +7,9 @@ import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import { getDistance } from 'geolib';
+import { connect } from 'react-redux';
+import { changeCount } from '../actions/counts.js';
+
 
 Geocoder.init(API_KEY);
 
@@ -20,7 +23,7 @@ const initialPosition = {
   adress: ''
 };
 
-function HomeScreen({navigation}) {
+function HomeScreen({navigation,count,changeCount}) {
   const [region, setRegion] = React.useState(initialPosition);
   const [panelData, setPanelData] = React.useState("Parkeringsinfo");
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
@@ -124,10 +127,14 @@ function HomeScreen({navigation}) {
                     { latitude: currentPosition.latitude, longitude: currentPosition.longitude }
                   )}
               </Text>
+
+          <Text>{count.count}</Text>
           <TouchableOpacity
             onPress={() => {
               parked ? setParked(false) : setParked(true)
               setParkedPosition(currentPosition);
+              changeCount(30)
+
             }}
             style={styles.parkingButton}
             >
@@ -197,5 +204,16 @@ const styles = StyleSheet.create({
     }
 });
 
+function mapStateToProps (state) {
+  return {
+    count: state.count
+  }
+}
+const mapDispatchToProps = dispatch => ({
+  changeCount: count => dispatch(changeCount(count)),
+})
 
-export default HomeScreen;
+
+export default connect(
+  mapStateToProps,mapDispatchToProps
+)(HomeScreen)
