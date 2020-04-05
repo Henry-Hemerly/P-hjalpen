@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { Button, View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import MapView, {Marker, Polyline} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import { API_KEY } from 'react-native-dotenv';
@@ -41,11 +41,11 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
   }
   function carLocation (){
     this.map.animateToRegion({
-      latitude: currentPosition.latitude,
-      longitude: currentPosition.longitude,
+      latitude: count.parkedPosition.latitude,
+      longitude: count.parkedPosition.longitude,
       latitudeDelta: 0.005,
       longitudeDelta: 0.005
-    })
+    });
   }
 
   async function getLineCoords(lat, long) {
@@ -110,10 +110,11 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
         />
         ))}
         <Marker
-        image={require('../images/mag.png')}
           draggable
           coordinate={currentPosition}
-        />
+        >
+          <Image source={require('../images/mag.png')} style={{height: 35, width:35 }} />
+        </Marker>
         <Marker
           coordinate={count.parked ? count.parkedPosition : currentPosition}
         />
