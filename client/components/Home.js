@@ -30,6 +30,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
   const [panelData, setPanelData] = React.useState("Parkeringsinfo");
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
   const [lineCoords, setLineCoords] = React.useState(initialLineCoords)
+  const [justUpdated, setJustUpdated] = React.useState(false);
   // const [parkedPosition, setParkedPosition] = React.useState(currentPosition);
   // const [parked, setParked] = React.useState(false);
 
@@ -64,12 +65,18 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
   }
 
   async function getLineCoords(lat, long) {
-    await axios.get(`${apiRegionUrl}${lat},${long}`)
-      .then(res => {
-        console.log(res.data);
-        setLineCoords(res.data);
-      })
-      .catch(err => console.log(err));
+    if (!justUpdated) {
+      setJustUpdated(true);
+      setTimeout(() => {
+        setJustUpdated(false);
+      }, 1000)
+      await axios.get(`${apiRegionUrl}${lat},${long}`)
+        .then(res => {
+          console.log('API used for Line coords!!!');
+          setLineCoords(res.data);
+        })
+        .catch(err => console.log(err));
+      }
   }
 
   async function getLocation(lat, long) {
@@ -107,9 +114,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
           const newPosition = { ...currentPosition };
           newPosition.adress = await getLocation(newPosition.latitude, newPosition.longitude);
           setCurrentPosition(newPosition);
-          console.log(currentPosition)
           this.region={region}
-          console.log(region.latitude, region.longitude)
         }}
         onRegionChangeComplete={region => {
           setRegion(region);
