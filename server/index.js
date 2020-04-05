@@ -51,9 +51,12 @@ getApiData();
 
 app.get('/api/adresses/:adress', async (req,res) => {
   
-  const streetName = req.params.adress.match(/([a-zA-ZåäöÅÄÖ]+)/)[0];
+
+  let streetName = req.params.adress.match(/([a-zA-ZåäöÅÄÖ]+)/)[0];
   const streetNumber = req.params.adress.match(/([0-9]+)/)[0];
 
+  //streetName = streetName.toLowerCase().charAt(0).toUpperCase() solve first char to uppercase
+  console.log(streetName);
   const db = client.db(dbName);
   await db.collection(coll).find({'properties.ADDRESS':{$regex: new RegExp(streetName)}}).toArray((err, streets) => {
     const resultStreets = [];

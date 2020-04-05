@@ -5,8 +5,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {  SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Onboarding1, Onboarding2 ,Onboarding3, Onboarding4, Onboarding5 } from './components/Onboarding';
+import { Onboarding1, Onboarding2 ,Onboarding3, Onboarding4 } from './components/Onboarding';
+import Onboarding5 from './components/Onboarding';
 import HomeScreen from './components/Home';
+import MyCarScreen from './components/MyCar';
+import SettingsScreen from './components/Settings';
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { connect } from 'react-redux';
@@ -56,7 +59,7 @@ function sendScheduledNotification() {
 function NotificationsScreen({ navigation }) {
   return (
     <SafeAreaView style={{ flex: 1}}>
-      <CutomHeader navigation={navigation}/>
+      <CustomHeader navigation={navigation}/>
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Notifications screen</Text>
       <Button title="Send notification!" onPress={()=> sendScheduledNotification()}/>
@@ -85,7 +88,7 @@ function SplashScreen({ navigation }) {
   );
 }
 
-function CutomHeader({isHome, navigation}) {
+export function CustomHeader({isHome, navigation}) {
   return (
     <View style={{ flexDirection: 'row', height:50 }}>
       <View style={{ flex: 1, justifyContent: 'center'}}>
@@ -107,20 +110,6 @@ function CutomHeader({isHome, navigation}) {
     </View>
   );
 }
-
-function SettingsScreen({navigation}) {
-  return (
-    <SafeAreaView style={{ flex: 1}}>
-      <CutomHeader navigation={navigation}/>
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-
-      </View>
-    </SafeAreaView>
-  );
-}
-
-
 
 
 const navOptionHandler = () => ({
@@ -148,7 +137,10 @@ function CutomDrawerContent(props) {
         <Text>Notifications</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={()=> props.navigation.navigate('Settings')}>
-        <Text>SettingsScreen</Text>
+        <Text>Inställningar</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={()=> props.navigation.navigate('MyCar')}>
+        <Text>Min bil</Text>
       </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -163,6 +155,7 @@ function DrawerNavigator() {
       <Drawer.Screen name="Home" component={HomeStack} />
       <Drawer.Screen name="Notifications" component={NotificationsScreen} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
+      <Drawer.Screen name="MyCar" component={MyCarScreen}/>
     </Drawer.Navigator>
   )
 }

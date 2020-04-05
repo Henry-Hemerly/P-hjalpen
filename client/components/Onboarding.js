@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View, Image} from 'react-native';
+import { connect } from 'react-redux';
+import { changeRegNumber  } from '../actions/counts.js';
 
   ////////// New pages in onboarding
 
-function Onboarding1({ navigation }) {
+  export function Onboarding1({ navigation }) {
     return (
       <SafeAreaView style={style.background}>
         <View style={{marginTop: 50}}>
@@ -30,7 +32,7 @@ function Onboarding1({ navigation }) {
     );
   }
   
-  function Onboarding2({ navigation }) {
+  export function Onboarding2({ navigation }) {
     return (
       <SafeAreaView style={style.background}>
         <View style={{marginTop: 50}}>
@@ -57,7 +59,7 @@ function Onboarding1({ navigation }) {
     );
   };
   
-  function Onboarding3({ navigation }) {
+  export function Onboarding3({ navigation }) {
     return (
       <SafeAreaView style={style.background}>
         <View style={{marginTop: 50}}>
@@ -85,89 +87,130 @@ function Onboarding1({ navigation }) {
       </SafeAreaView>
     );
   }
-  function Onboarding4({ navigation }) {
+  export function Onboarding4({ navigation }) {
     return (
-      <SafeAreaView style={style.background}>
-        <View style={{marginTop: 50}}>
-        <Text style={style.heading}>Välj din bils Bluetooth uppkoppling
-        </Text>
-        <Text style={style.description}>Bil 1 Parkoppla
-        </Text>
-        <Text style={style.description}>Bil 2 Parkoppla
-        </Text>
-        <Text style={style.description}>Bil 3 Parkoppla
-        </Text>
-        </View>
-        <View style={{marginBottom: 20 }}>
-        <TouchableOpacity
-          style={style.nextButton}
-          onPress={() => navigation.navigate('Onboarding5')}>
-            <Text style={style.nextButtonText} >
-              Nästa
-            </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('HomeApp')}
-        >
-          <Text style={style.skipButton}>
-            Hoppa över
-          </Text>
-        </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+    <SafeAreaView style={style.background}>
+    <View style={{marginTop: 50}}>
+    <Text style={style.headingTwoLast}>Välj din bils Bluetooth uppkoppling
+    </Text>
+    <View style= {{flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%'}}>
+    <Text style={style.description}>Bil 1
+    </Text>
+    <Text style={style.descriptionAdd}> Lägg till >
+    </Text>
+    </View>
+    <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
+    <Text style={style.description}>Bil 2
+    </Text>
+    <Text style={style.descriptionAdd}> Lägg till >
+    </Text>
+    </View>
+    <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
+    <Text style={style.description}>Bil 3
+    </Text>
+    <Text style={style.descriptionAdd}> Lägg till >
+    </Text>
+    </View>
+    </View>
+    <View style={{marginBottom: 20 }}>
+    <TouchableOpacity
+    style={style.nextButton}
+    onPress={() => navigation.navigate('Onboarding5')}>
+    <Text style={style.nextButtonText} >
+    Nästa
+    </Text>
+    </TouchableOpacity>
+    <TouchableOpacity
+    onPress={() => navigation.navigate('HomeApp')}
+    >
+    <Text style={style.skipButton}>
+    Hoppa över
+    </Text>
+    </TouchableOpacity>
+    </View>
+    </SafeAreaView>
     );
-  }
-  function Onboarding5({ navigation }) {
+    }
+
+   function Onboarding5({ navigation, changeRegNumber }) {
+
+    const [value, setValue] = React.useState("")
     return (
       <SafeAreaView style={style.background}>
         <View style={{marginTop: 50}}>
-        <Text style={style.heading}>Fyll i din bils registreringsnummer
+        <Text style={style.headingTwoLast}>Fyll i din bils registreringsnummer
         </Text>
-        <TextInput style={{height:60, backgroundColor:'white', width:'80%', alignSelf: 'center',marginVertical:20}}>
+        <View  style={{flexDirection:'row', marginLeft:'6%',marginTop:'3%'}}>
+        <Image
+          style={{width:'16%', height:'40%', transform: [{ rotate: '90deg'}], position:'relative', top:30 ,left:13}}
+          source={require('../images/eu.png')}/>
+        <TextInput style={style.regNumInput} ref={c => this.text = c}
+        style={{height:60, backgroundColor:'white', width:'70%', marginVertical:20}}
+          onChangeText={(text)=> setValue(text)} 
+        >
         </TextInput>
+          </View>
         </View>
     <View style={{marginBottom: 20 }}>
         <TouchableOpacity
           style={style.nextButton}
-          onPress={() => navigation.navigate('HomeApp')}>
+          placeholder="REGNR"
+          onPress={() => {
+            changeRegNumber(value)
+            navigation.navigate('HomeApp')
+          }}
+          >
             <Text style={style.nextButtonText} >
-              Nästa
+              Spara och fortsätt
             </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('HomeApp')}
-        >
-          <Text style={style.skipButton}>
-            Hoppa över
-          </Text>
-        </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+onPress={() => navigation.navigate('HomeApp')}
+>
+<Text style={style.skipButton}>
+Hoppa över
+</Text>
+</TouchableOpacity>
+</View>
+</SafeAreaView>
     );
   }
 
-const style = StyleSheet.create({
-  heading: {
+  const style = StyleSheet.create({
+    heading: {
     color: '#F5C932',
     fontSize: 57,
     textAlign: 'left',
-    fontWeight: '700', 
-    marginLeft: 28, 
-    marginRight: 90 
-  },
-  description: {
+    fontWeight: '700',
+    marginLeft: 28,
+    marginRight: 90
+    },
+    headingTwoLast:{
+    color: '#F5C932',
+    fontSize: 32,
+    textAlign: 'center',
+    fontWeight: '700'
+    },
+    description: {
     color: 'white',
-    fontSize: 22, 
-    marginHorizontal:28, 
+    fontSize: 22,
+    marginHorizontal:'10%',
     lineHeight: 36,
     marginTop: 20
-  },
-  background: {
-    backgroundColor: '#001736', 
+    },
+    descriptionAdd: {
+    color: '#F5C932',
+    fontSize: 22,
+    marginHorizontal:'10%',
+    lineHeight: 36,
+    marginTop: 20
+    },
+    background: {
+    backgroundColor: '#001736',
     flex: 1,
     justifyContent: "space-between"
-  },
-  nextButton: {
+    },
+    nextButton: {
     alignSelf: 'stretch',
     backgroundColor: '#F5C932',
     borderRadius: 34,
@@ -175,19 +218,40 @@ const style = StyleSheet.create({
     marginHorizontal: 22,
     height: 68
     },
-  nextButtonText: {
+    nextButtonText: {
     alignSelf: 'center',
     paddingVertical: 21,
     fontSize: 22,
     color: '#1E2657'
-  },
-  skipButton: {
+    },
+    skipButton: {
     color: '#fff',
     fontSize: 16,
     alignSelf: 'center',
     lineHeight: 30,
     marginTop: 22
+    },
+    regNumInput: {
+    height:'20%',
+    backgroundColor:'white',
+    width:'80%',
+    alignSelf: 'center',
+    marginTop: '20%',
+    borderRadius:10,
+    borderColor: 'black',
+    borderWidth: 2
+    }
+    });
+function mapStateToProps (state) {
+  return {
+    count: state,
   }
-});
+}
+const mapDispatchToProps = dispatch => ({
+  changeRegNumber: regNumber => dispatch(changeRegNumber(regNumber)),
+})
 
-module.exports = {Onboarding1,Onboarding2,Onboarding3,Onboarding4,Onboarding5}
+export default connect(
+  mapStateToProps,
+ mapDispatchToProps
+)(Onboarding5)
