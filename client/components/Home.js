@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, Polyline} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import { API_KEY } from 'react-native-dotenv';
 import Geolocation from '@react-native-community/geolocation';
@@ -12,13 +12,16 @@ import { changeCount, changeParkedPos } from '../actions/counts.js';
 
 Geocoder.init(API_KEY);
 
-const apiUrl = 'http://localhost:8080/api/';
+const apiUrl = 'http://localhost:8080/api/adresses/';
+const apiRegionUrl = 'http://localhost:8080/api/regions/';
+
+const initialLineCoords = [[{"latitude":59.332833,"longitude":18.062041},{"latitude":59.332679,"longitude":18.061457},{"latitude":59.332372,"longitude":18.060292}],[{"latitude":59.332568,"longitude":18.061027},{"latitude":59.332506,"longitude":18.060793}],[{"latitude":59.333084,"longitude":18.062875},{"latitude":59.333061,"longitude":18.062798}],[{"latitude":59.330799,"longitude":18.066596},{"latitude":59.330919,"longitude":18.066472}],[{"latitude":59.332372,"longitude":18.06798},{"latitude":59.332338,"longitude":18.067985},{"latitude":59.332254,"longitude":18.068},{"latitude":59.332169,"longitude":18.068014},{"latitude":59.332078,"longitude":18.06803},{"latitude":59.331938,"longitude":18.068055},{"latitude":59.331814,"longitude":18.068075},{"latitude":59.331782,"longitude":18.068081},{"latitude":59.331754,"longitude":18.068086}],[{"latitude":59.331773,"longitude":18.066712},{"latitude":59.331983,"longitude":18.066678},{"latitude":59.331984,"longitude":18.066677},{"latitude":59.332072,"longitude":18.066661},{"latitude":59.332272,"longitude":18.066624},{"latitude":59.332273,"longitude":18.066624},{"latitude":59.332472,"longitude":18.066584},{"latitude":59.33268,"longitude":18.066542},{"latitude":59.332681,"longitude":18.066541},{"latitude":59.333,"longitude":18.066462},{"latitude":59.333001,"longitude":18.066462},{"latitude":59.333015,"longitude":18.066458},{"latitude":59.333015,"longitude":18.066458},{"latitude":59.333318,"longitude":18.066376},{"latitude":59.333319,"longitude":18.066376},{"latitude":59.333671,"longitude":18.066259}],[{"latitude":59.332284,"longitude":18.066395},{"latitude":59.33246,"longitude":18.06636},{"latitude":59.332667,"longitude":18.066318},{"latitude":59.332879,"longitude":18.066265}],[{"latitude":59.33241,"longitude":18.066587},{"latitude":59.332471,"longitude":18.066574},{"latitude":59.332679,"longitude":18.066532},{"latitude":59.332681,"longitude":18.066532},{"latitude":59.332712,"longitude":18.066524}],[{"latitude":59.332867,"longitude":18.066253},{"latitude":59.332984,"longitude":18.066223},{"latitude":59.332999,"longitude":18.066219},{"latitude":59.3333,"longitude":18.066138},{"latitude":59.333633,"longitude":18.066028}],[{"latitude":59.333698,"longitude":18.065818},{"latitude":59.333561,"longitude":18.065265},{"latitude":59.333363,"longitude":18.064468},{"latitude":59.333139,"longitude":18.063565}]]
 
 const initialPosition = {
   latitude: 59.3324,
   longitude: 18.0645,
-  latitudeDelta: 0.003,
-  longitudeDelta: 0.002,
+  latitudeDelta: 0.006,
+  longitudeDelta: 0.004,
   adress: ''
 };
 
@@ -26,22 +29,31 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
   const [region, setRegion] = React.useState(initialPosition);
   const [panelData, setPanelData] = React.useState("Parkeringsinfo");
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
+  const [lineCoords, setLineCoords] = React.useState(initialLineCoords)
   // const [parkedPosition, setParkedPosition] = React.useState(currentPosition);
   // const [parked, setParked] = React.useState(false);
 
   function userLocation (){
-    Geolocation.getCurrentPosition(
-      async info => {
-          this.map.animateToRegion({
-              latitude: info.coords.latitude,
-              longitude: info.coords.longitude,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005
-            })
-        }, error => console.log(error.message), 
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    )
+    this.map.animateToRegion({
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005
+      })
   }
+  // function userLocation (){
+  //   Geolocation.getCurrentPosition(
+  //     async info => {
+  //         this.map.animateToRegion({
+  //             latitude: info.coords.latitude,
+  //             longitude: info.coords.longitude,
+  //             latitudeDelta: 0.005,
+  //             longitudeDelta: 0.005
+  //           })
+  //       }, error => console.log(error.message), 
+  //     { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+  //   )
+  // }
   function carLocation (){
     this.map.animateToRegion({
       latitude: currentPosition.latitude,
@@ -49,6 +61,15 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
       latitudeDelta: 0.005,
       longitudeDelta: 0.005
     })
+  }
+
+  async function getLineCoords(lat, long) {
+    await axios.get(`${apiRegionUrl}${lat},${long}`)
+      .then(res => {
+        console.log(res.data);
+        setLineCoords(res.data);
+      })
+      .catch(err => console.log(err));
   }
 
   async function getLocation(lat, long) {
@@ -88,12 +109,63 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
           setCurrentPosition(newPosition);
           console.log(currentPosition)
           this.region={region}
+          console.log(region.latitude, region.longitude)
         }}
         onRegionChangeComplete={region => {
           setRegion(region);
-          console.log(region);
+          getLineCoords(region.latitude, region.longitude)
         }}
       >
+        <Polyline 
+          coordinates={lineCoords[0]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[1]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[2]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[3]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[4]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[5]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[6]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[7]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[8]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
+        <Polyline 
+          coordinates={lineCoords[9]}
+          strokeColor="#FFA500"
+          strokeWidth={4}
+        />
         <Marker
         image={require('../images/circle.png')}
           draggable
