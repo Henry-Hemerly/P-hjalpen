@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View , ScrollView, Button} from 'react-native';
+import { Text, View , ScrollView, Button, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {  SafeAreaView } from 'react-native-safe-area-context';
@@ -128,21 +128,40 @@ const Drawer = createDrawerNavigator();
 
 function CutomDrawerContent(props) {
   return (
-    <SafeAreaView style={{ flex: 1,backgroundColor:'white' }}>
-      <ScrollView>
-      <TouchableOpacity onPress={()=> props.navigation.navigate('Home')}>
-        <Text>Menu Tab</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={()=> props.navigation.navigate('Notifications')}>
-        <Text>Notifications</Text>
-      </TouchableOpacity>
+    <SafeAreaView style={{ flex: 1, justifyContent: "space-between", backgroundColor:'white'}}>
+      <View></View>
+      <View>
       <TouchableOpacity onPress={()=> props.navigation.navigate('Settings')}>
-        <Text>Inställningar</Text>
+        <Text style={{ 
+          fontSize: Dimensions.get('screen').height * 0.02,
+          color: '#001E39' 
+      }}>Inställningar</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={()=> props.navigation.navigate('MyCar')}>
-        <Text>Min bil</Text>
+        <Text style={{ 
+          fontSize: Dimensions.get('screen').height * 0.02,
+          color: '#001E39' 
+      }}>Min bil</Text>
       </TouchableOpacity>
-      </ScrollView>
+      <TouchableOpacity onPress={()=> props.navigation.navigate('How')}>
+        <Text style={{ 
+          fontSize: Dimensions.get('screen').height * 0.02,
+          color: '#001E39' 
+      }}>Hur fungerar det?</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={()=> props.navigation.navigate('Contacts')}>
+        <Text style={{ 
+          fontSize: Dimensions.get('screen').height * 0.02,
+          color: '#001E39' 
+      }}>Kontakt</Text>
+      </TouchableOpacity>
+      </View>
+      <View></View>
+      <View style={{ paddingHorizontal: '20%' }}>
+        <Text>P hjälpen</Text>
+        <Text>P-hjälpen är skapad av bilägare för bilägare i syfte att spara dina pengar till något vettigare.</Text>
+        <Text>v. 1.0.1</Text>
+      </View>
     </SafeAreaView>
   );
 }
