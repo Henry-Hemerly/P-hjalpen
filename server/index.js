@@ -49,11 +49,10 @@ async function populateDatabase(coll, data) {
 
 getApiData();
 
-app.get('/api/:location', async (req,res) => {
+app.get('/api/adresses/:adress', async (req,res) => {
   
-  const streetName = req.params.location.match(/([a-zA-ZåäöÅÄÖ]+)/)[0];
-  const streetNumber = req.params.location.match(/([0-9]+)/)[0];
-
+  const streetName = req.params.adress.match(/([a-zA-ZåäöÅÄÖ]+)/)[0];
+  const streetNumber = req.params.adress.match(/([0-9]+)/)[0];
 
   const db = client.db(dbName);
   await db.collection(coll).find({'properties.ADDRESS':{$regex: new RegExp(streetName)}}).toArray((err, streets) => {
@@ -193,6 +192,22 @@ function calculateWhen(results) {
   }
   return resultsArr;
 }
+
+app.get('/api/regions/:region', async (req,res) => {
+  
+  const lat = req.params.region.split(',')[0]
+  const long = req.params.region.split(',')[1]
+  
+  const locUrl = `https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/within?radius=500&lat=${lat}&lng=${long}&maxFeatures=50&outputFormat=json&apiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a`
+
+  const response = await axios.get(locUrl).catch((error) => console.log(error))
+  console.log(response.data.features)
+  const responses = []
+  for (let i = 0; i < response.data.features.length; i++) {
+    responses.push(response.data.features[i].geometry.coordinates)
+  }
+  res.send(responses);
+});
 
 
 function duration(t0, t1){

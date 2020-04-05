@@ -89,7 +89,10 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
           console.log(currentPosition)
           this.region={region}
         }}
-        onRegionChangeComplete={region => setRegion(region)}
+        onRegionChangeComplete={region => {
+          setRegion(region);
+          console.log(region);
+        }}
       >
         <Marker
         image={require('../images/circle.png')}
