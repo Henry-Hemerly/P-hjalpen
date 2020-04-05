@@ -1,4 +1,4 @@
-import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE } from '../constants';
+import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE,REMINDER_TIME_CHANGE } from '../constants';
 const initialState = {
   parked: false,
   parkedPosition: {},
@@ -6,7 +6,8 @@ const initialState = {
   connectedToCar: false,
   reminderInvalidParking: false,
   reminderTopay:false,
-  reminderStoppay:false
+  reminderStoppay:false,
+  remindTime: 30
 };
 const countReducer = (state = initialState, action) => {
   switch(action.type) {
@@ -45,6 +46,11 @@ const countReducer = (state = initialState, action) => {
           ...state,
           reminderStoppay: action.payload
         };
+      case REMINDER_TIME_CHANGE:
+        return {
+          ...state,
+          remindTime: action.payload
+        };       
     default:
       return state;
   }

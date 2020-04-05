@@ -1,5 +1,5 @@
 
-import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE } from '../constants';
+import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE,REMINDER_TIME_CHANGE } from '../constants';
 
 export function changeCount(isParked) {
   return {
@@ -46,5 +46,12 @@ export function changeReminderStopPay(isStopPayReminder) {
   return {
     type: REMINDER_STOP_PAY_CHANGE,
     payload: isStopPayReminder
+  }
+}
+
+export function changeReminderTime(timeInMin) {
+  return {
+    type: REMINDER_TIME_CHANGE,
+    payload: timeInMin
   }
 }
