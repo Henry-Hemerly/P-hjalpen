@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View, Image} from 'react-native';
+import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View, Image, Dimensions} from 'react-native';
 import { connect } from 'react-redux';
 import { changeRegNumber  } from '../actions/counts.js';
+import rem from 'pr-unit';
 
   ////////// New pages in onboarding
 
@@ -90,24 +91,23 @@ import { changeRegNumber  } from '../actions/counts.js';
   export function Onboarding4({ navigation }) {
     return (
     <SafeAreaView style={style.background}>
-    <View style={{marginTop: 50}}>
-    <Text style={style.headingTwoLast}>Välj din bils Bluetooth uppkoppling
+      <View style={{marginTop: '15%'}}>
+        <Text style={style.headingTwoLast}>Välj din bils Bluetooth uppkoppling</Text>
+    <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
+    <Text style={style.descriptionBil}>Bil 1
     </Text>
-    <View style= {{flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%'}}>
-    <Text style={style.description}>Bil 1
-    </Text>
-    <Text style={style.descriptionAdd}> Lägg till >
-    </Text>
+      <Text style={style.descriptionAdd}> Lägg till >
+      </Text>
     </View>
     <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
-    <Text style={style.description}>Bil 2
+    <Text style={style.descriptionBil}>Bil 2
     </Text>
-    <Text style={style.descriptionAdd}> Lägg till >
-    </Text>
+      <Text style={style.descriptionAdd}> Lägg till >
+      </Text>
     </View>
     <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
-    <Text style={style.description}>Bil 3
-    </Text>
+      <Text style={style.descriptionBil}>Bil 3
+      </Text>
     <Text style={style.descriptionAdd}> Lägg till >
     </Text>
     </View>
@@ -140,13 +140,15 @@ import { changeRegNumber  } from '../actions/counts.js';
         <View style={{marginTop: 50}}>
         <Text style={style.headingTwoLast}>Fyll i din bils registreringsnummer
         </Text>
-        <View  style={{flexDirection:'row', marginLeft:'6%',marginTop:'3%'}}>
+        <View  style={{flexDirection:'row', justifyContent: 'center'}}>
         <Image
-          style={{width:'16%', height:'40%', transform: [{ rotate: '90deg'}], position:'relative', top:30 ,left:13}}
-          source={require('../images/eu.png')}/>
-        <TextInput style={style.regNumInput} ref={c => this.text = c}
-        style={{height:60, backgroundColor:'white', width:'70%', marginVertical:20}}
-          onChangeText={(text)=> setValue(text)} 
+          style={{height: Dimensions.get('screen').height * 0.07, width: Dimensions.get('screen').height * 0.04, position:'relative', top:20, borderTopLeftRadius: 10, borderBottomLeftRadius: 10}}
+          source={require('../images/sweden.png')}/>
+        <TextInput style={style.regNumInput} ref={c => this.text = c} maxLength={6}
+        style={{height:60, backgroundColor:'white', width:'70%', marginVertical:20, borderTopRightRadius: 10, borderBottomRightRadius: 10, fontSize: 45, fontWeight: 'bold', textAlign: 'center'}}
+          onChangeText={(text)=> {
+            setValue(text);
+          }} 
         >
         </TextInput>
           </View>
@@ -183,27 +185,34 @@ Hoppa över
     textAlign: 'left',
     fontWeight: '700',
     marginLeft: 28,
-    marginRight: 90
+    marginRight: 90,
     },
     headingTwoLast:{
     color: '#F5C932',
     fontSize: 32,
     textAlign: 'center',
-    fontWeight: '700'
+    fontWeight: '700',
+    marginBottom: '20%',
     },
     description: {
     color: 'white',
     fontSize: 22,
-    marginHorizontal:'10%',
+    marginHorizontal:'7%',
     lineHeight: 36,
-    marginTop: 20
+    marginTop: '20%',
+    },
+    descriptionBil: {
+      color: 'white',
+      fontSize: 22,
+      marginHorizontal:'7%',
+      lineHeight: 36,
+      marginBottom: '5%',
     },
     descriptionAdd: {
     color: '#F5C932',
     fontSize: 22,
     marginHorizontal:'10%',
     lineHeight: 36,
-    marginTop: 20
     },
     background: {
     backgroundColor: '#001736',
@@ -216,13 +225,14 @@ Hoppa över
     borderRadius: 34,
     borderWidth: 1,
     marginHorizontal: 22,
-    height: 68
+    height: 68,
     },
     nextButtonText: {
     alignSelf: 'center',
     paddingVertical: 21,
     fontSize: 22,
-    color: '#1E2657'
+    color: '#1E2657',
+    fontSize: Dimensions.get('screen').height * 0.022,
     },
     skipButton: {
     color: '#fff',
@@ -237,9 +247,9 @@ Hoppa över
     width:'80%',
     alignSelf: 'center',
     marginTop: '20%',
-    borderRadius:10,
+    borderRadius:50,
     borderColor: 'black',
-    borderWidth: 2
+    borderWidth: 2,
     }
     });
 function mapStateToProps (state) {

@@ -110,7 +110,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
         />
         ))}
         <Marker
-        image={require('../images/circle.png')}
+        image={require('../images/mag.png')}
           draggable
           coordinate={currentPosition}
         />
