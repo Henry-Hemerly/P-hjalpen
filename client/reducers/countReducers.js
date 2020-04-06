@@ -1,15 +1,16 @@
-import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE,REMINDER_TIME_CHANGE ,INVALID_TIME_SET } from '../constants';
+import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE,REMINDER_TIME_CHANGE ,INVALID_TIME_SET ,BLUETOOTH_NAME_SET} from '../constants';
 const initialState = {
   parked: false,
   parkedPosition: {},
   registrationNumber: "",
-  connectedToCar: true,
+  connectedToCar: false,
+  bluetoothName: "",
   invalidParkingTime: undefined,
   payParkingTime:{},
   reminderInvalidParking: true,
   reminderTopay:true,
   reminderStoppay:true,
-  remindTime: 30
+  remindTime: 30,
 };
 const countReducer = (state = initialState, action) => {
   switch(action.type) {
@@ -57,6 +58,11 @@ const countReducer = (state = initialState, action) => {
         return {
           ...state,
           invalidParkingTime: action.payload
+        };  
+      case BLUETOOTH_NAME_SET:
+        return {
+          ...state,
+          bluetoothName: action.payload
         };       
     default:
       return state;

@@ -1,5 +1,5 @@
 
-import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE,REMINDER_TIME_CHANGE,INVALID_TIME_SET } from '../constants';
+import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE,REMINDER_TIME_CHANGE,INVALID_TIME_SET ,BLUETOOTH_NAME_SET} from '../constants';
 
 export function changeCount(isParked) {
   return {
@@ -60,5 +60,12 @@ export function setInvalidTime(time) {
   return {
     type: INVALID_TIME_SET,
     payload: time
+  }
+}
+
+export function setBluetooth(connection) {
+  return {
+    type: BLUETOOTH_NAME_SET,
+    payload: connection
   }
 }

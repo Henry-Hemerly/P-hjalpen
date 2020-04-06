@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View, Image, Dimensions} from 'react-native';
 import { connect } from 'react-redux';
-import { changeRegNumber  } from '../actions/counts.js';
+import { changeRegNumber , changeCarConnection, setBluetooth } from '../actions/counts.js';
 import rem from 'pr-unit';
 
   ////////// New pages in onboarding
@@ -88,49 +88,6 @@ import rem from 'pr-unit';
       </SafeAreaView>
     );
   }
-  export function Onboarding4({ navigation }) {
-    return (
-    <SafeAreaView style={style.background}>
-      <View style={{marginTop: '15%'}}>
-        <Text style={style.headingTwoLast}>Välj din bils Bluetooth uppkoppling</Text>
-    <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
-    <Text style={style.descriptionBil}>Bil 1
-    </Text>
-      <Text style={style.descriptionAdd}> Lägg till >
-      </Text>
-    </View>
-    <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
-    <Text style={style.descriptionBil}>Bil 2
-    </Text>
-      <Text style={style.descriptionAdd}> Lägg till >
-      </Text>
-    </View>
-    <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
-      <Text style={style.descriptionBil}>Bil 3
-      </Text>
-    <Text style={style.descriptionAdd}> Lägg till >
-    </Text>
-    </View>
-    </View>
-    <View style={{marginBottom: 20 }}>
-    <TouchableOpacity
-    style={style.nextButton}
-    onPress={() => navigation.navigate('Onboarding5')}>
-    <Text style={style.nextButtonText} >
-    Nästa
-    </Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-    onPress={() => navigation.navigate('HomeApp')}
-    >
-    <Text style={style.skipButton}>
-    Hoppa över
-    </Text>
-    </TouchableOpacity>
-    </View>
-    </SafeAreaView>
-    );
-    }
 
    function Onboarding5({ navigation, changeRegNumber }) {
 

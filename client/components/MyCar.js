@@ -48,10 +48,12 @@ function MyCarScreen({ navigation ,count, changeRegNumber}) {
         )
     }
     function  remove(){
+      console.log(count.connectedToCar.toString())
         return (
             <View>
                 <Text>Parkopplad bil</Text>
                 <Text >{count.registrationNumber}</Text>
+                <Text >{count.bluetoothName}</Text>
                 <Button title="Ta bort" onPress={() => changeRegNumber("")}/>
             </View>
         )
