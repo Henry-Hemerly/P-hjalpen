@@ -15,7 +15,7 @@ function SettingsScreen({ navigation, count, changeReminderInvalid, changeRemind
         <View style={{ borderColor: '#1E2657', borderWidth: 1, opacity: 0.05 }}></View>
         <Text style={{ fontSize: 14, fontWeight: '700', marginTop: 50, marginLeft: 25, color: '#4878D3', letterSpacing: 1.5, marginBottom: 20, marginBottom: 25 }}>PÅMINNELSER</Text>
         <View style={styles.view}>
-          <Text style={{ fontSize: 20, color: '#1E2657', fontWeight: '500' }}>Städgata {count.reminderInvalidParking.toString()}</Text>
+          <Text style={{ fontSize: 20, color: '#1E2657', fontWeight: '500' }}>Städgata</Text>
           <Switch value={count.reminderInvalidParking} onValueChange={(v) => changeReminderInvalid(v)} />
         </View>
         <View>

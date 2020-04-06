@@ -165,7 +165,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
         {lineCoords.map((c, i) => (
           <Polyline key={i}
             coordinates={c}
-            strokeColor="#FFA500"
+            strokeColor="rgb(235, 141, 141)"
             strokeWidth={4}
           />
         ))}
