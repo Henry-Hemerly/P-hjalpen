@@ -16,7 +16,7 @@ let coll = 'ParkingData'; //Change name
 
 const timeBetweenDatabaseFill = 86400000;
 
-// getApiData();
+//getApiData();
 
 setInterval(() => getApiData(), timeBetweenDatabaseFill);
 
@@ -46,11 +46,11 @@ async function populateDatabase(coll, data) {
   streets = db.collection(coll);
   db.on('close', () => { process.stdout.write('closed connection\n'); });
   db.on('reconnect', () => { process.stdout.write('reconnected\n'); });
-  streets.insertMany(data, (err, res) => {
-    // client.close();
-    if (err) return process.stdout.write(err.message);
-    return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
-  });
+  // streets.insertMany(data, (err, res) => {
+  //   //client.close();
+  //   if (err) return process.stdout.write(err.message);
+  //   return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
+  // });
 }
 
 app.get('/api/adresses/:adress', async (req,res) => {
