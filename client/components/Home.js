@@ -115,7 +115,6 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
       }, 1000)
       await axios.get(`${apiRegionUrl}${lat},${long}`)
         .then(res => {
-          console.log('API used for Line coords!!!');
           setLineCoords(res.data);
         })
         .catch(err => console.log(err));
@@ -123,7 +122,6 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
   }
 
   async function getLocation(lat, long) {
-    console.log('getLocation Called');
     const address = await Geocoder.from(lat, long)
       .then(json => json.results[0].formatted_address.split(',')[0])
       .catch(error => console.warn(error));
@@ -240,7 +238,6 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
                     onPress={() => {
                     changeCount(true)
                     changeParkedPos(currentPosition);
-                    console.log(count.invalidParkingTime)
                     if (count.invalidParkingTime) { sendScheduledNotification() }
                    }}
                     style={styles.parkingButton}
