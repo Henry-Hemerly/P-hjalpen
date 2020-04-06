@@ -3,7 +3,7 @@ const initialState = {
   parked: false,
   parkedPosition: {},
   registrationNumber: "",
-  connectedToCar: false,
+  connectedToCar: true,
   invalidParkingTime: undefined,
   payParkingTime:{},
   reminderInvalidParking: false,

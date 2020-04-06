@@ -16,7 +16,7 @@ let coll = 'ParkingData'; //Change name
 
 const timeBetweenDatabaseFill = 86400000;
 
-getApiData();
+// getApiData();
 
 setInterval(() => getApiData(), timeBetweenDatabaseFill);
 

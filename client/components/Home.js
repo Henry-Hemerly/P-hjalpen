@@ -3,55 +3,48 @@ import { Button, View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } f
 import MapView, {Marker, Polyline} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import { API_KEY } from 'react-native-dotenv';
-import Geolocation from '@react-native-community/geolocation';
+// import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import { getDistance } from 'geolib';
 import { connect } from 'react-redux';
-import { changeCount, changeParkedPos , setInvalidTime} from '../actions/counts.js';
+import { changeCount, changeParkedPos, setInvalidTime, changeCarConnection} from '../actions/counts.js';
 import { initialLineCoords } from '../constants/coords'
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 
 PushNotification.configure({
-  // (optional) Called when Token is generated 
   onRegister: function(token) {
     console.log("TOKEN:", token);
   },
 
-  // (required) Called when a remote or local notification is opened or received
   onNotification: function(notification) {
     console.log("NOTIFICATION:", notification);
-    // process the notification
-    // required on iOS only 
     notification.finish(PushNotificationIOS.FetchResult.NoData);
   },
 
-  // IOS ONLY 
   permissions: {
     alert: true,
     badge: true,
     sound: true
   },
-  // Should the initial notification be popped automatically
   popInitialNotification: true,
-
   requestPermissions: true
 });
 
-function sendNotification() {
+function sendNotification(message) {
   PushNotification.localNotification({
-    title: "My Notification Title", // (optional)
-    message: "My Notification Message", // (required)
+    // title: "Påminnelse från P-hjälpen", // (optional)
+    message: message, // (required)
   });
 }
 
 function sendScheduledNotification(startTime, min) {
-    PushNotification.localNotificationSchedule({
-      title: "My Notification Title", // (optional)
-      message: "My Notification Message", // (required)
-      date: new Date(Date.now() +0.1 * 60000) // in 60 secs
-    });
+  PushNotification.localNotificationSchedule({
+    title: "Dags att flytta bilen?", // (optional)
+    message: `Parkeringen upphör att vara tillåten om ${min} minuter.`, // (required)
+    date: new Date(Date.now() +0.1 * 60000) // in 60 secs
+  });
 }
 
 
@@ -68,15 +61,44 @@ const initialPosition = {
   adress: ''
 };
 
-function HomeScreen({navigation, count, changeCount, changeParkedPos, setInvalidTime}) {
+function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarConnection, setInvalidTime}) {
   const [region, setRegion] = React.useState(initialPosition);
-  const [panelData, setPanelData] = React.useState("Parkeringsinfo");
+  const [panelData, setPanelData] = React.useState("");
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
   const [lineCoords, setLineCoords] = React.useState(initialLineCoords)
   const [justUpdated, setJustUpdated] = React.useState(false);
-
   
-  function userLocation (){
+  React.useEffect(() => {
+    setInterval(() => {
+      if (count.parked) {
+        if (count.connectedToCar && distanceToCar() > 50) {
+            sendNotification('Du har väl inte glömt attbetala p-avgiften?');
+            changeCarConnection(false);
+        }
+      //   changeCarConnection()
+      //   distanceToCar();
+      // //if connection to car and distance high
+      //   //change connection to false
+      //   //fire off notification about paying
+      // //if no connection and distance low
+      //   //change connection to true
+      //   //fire off notification about ending paying
+        
+      //   :
+      //   '0'
+      console.log('Hej')
+      }
+    }, 10000);
+  });
+
+  function distanceToCar() {
+    return getDistance(
+      { latitude: count.parkedPosition.latitude, longitude:count.parkedPosition.longitude },
+      { latitude: currentPosition.latitude, longitude: currentPosition.longitude } 
+    )
+  }
+
+  function userLocation () {
     this.map.animateToRegion({
       latitude: currentPosition.latitude,
       longitude: currentPosition.longitude,
@@ -84,6 +106,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, setInvalid
       longitudeDelta: 0.005
     })
   }
+
   function carLocation (){
     this.map.animateToRegion({
       latitude: count.parkedPosition.latitude,
@@ -132,7 +155,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, setInvalid
           await axios.get(`${apiUrl}${newPosition.adress}`)
             .then(res => {
               console.log(res.data.length)
-              setPanelData(res.data.length ? `${res.data[0].day} kl. ${res.data[0].hours}:${res.data[0].minutes}` : "")
+              setPanelData(res.data.length ? `${res.data[0].day} kl. ${res.data[0].hours}:${res.data[0].minutes}` : '')
               setInvalidTime(res.data[0].startTimeObject ? res.data[0].startTimeObject: undefined              )
               })
               .catch(err => console.log(err));
@@ -158,18 +181,39 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, setInvalid
         <Marker
           draggable
           coordinate={currentPosition}
-        >
-          <Image source={require('../images/mag.png')} style={{height: 35, width:35 }} />
+        > 
+          <Image source={require('../images/hamburger2x.png')} style={{height: 70, width: 70, resizeMode:'contain' }} />
         </Marker>
         <Marker
           coordinate={count.parked ? count.parkedPosition : currentPosition}
-        />
+        >
+          <Image source={require('../images/parked_car2x.png')} style={{height: 70, width: 70, resizeMode:'contain', position: 'relative', bottom: 40 }} />
+        </Marker>
       </MapView>
-      <View style={styles.userLocation}>
-        <Button title="You" onPress={()=> userLocation()}/>
-        <Button title="Car" onPress={()=> carLocation()}/>
-        <Button title="Settings" onPress={()=> navigation.openDrawer()}/>
+      
+      <View style= {{backgroundColor: 'white', position: "absolute", top: '7%', right: '5%', width: 50, height:50, alignContent:"center", justifyContent: "center", borderRadius: 9}}>
+        <TouchableOpacity onPress={()=> userLocation()}>
+          <Image source={require('../images/position2x.png')} style = {{width:'50%', alignSelf: "center", resizeMode: "contain"}} />
+        </TouchableOpacity>
       </View>
+      {
+        count.parked ? 
+      <View style= {{backgroundColor: 'white', position: "absolute", top: '15%', right: '5%', width: 50, height:50, alignContent:"center", justifyContent: "center", borderRadius: 9}}>
+        <TouchableOpacity onPress={()=> carLocation()}>
+          <Image source={require('../images/car2x.png')} style = {{alignSelf: "center", resizeMode: "contain", width:'50%'}} />
+        </TouchableOpacity>
+      </View>
+       : null
+      }
+      <View style = {styles.drawerIcon}>
+        <TouchableOpacity 
+        onPress={()=> navigation.openDrawer()}>
+          <Image 
+          source={require('../images/hamburger2x.png')}
+          style= {{width: 50, height:50}}  />
+        </TouchableOpacity>
+      </View>
+
         <SlidingUpPanel ref={c => this._panel = c}
         draggableRange={{top:Dimensions.get('screen').height * 0.25, bottom:0}}
         backdropOpacity={0}>
@@ -186,19 +230,10 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, setInvalid
           </View>
           <View style ={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3  }}/>
           
-          {count.parked ? <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
+          {count.parked && panelData !== '' ? <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
               <Text style={styles.text}>Påminnelse:</Text>
               <Text style={styles.text}>{count.remindTime} min </Text>
           </View> : null}
-
-          <Text>{count.parkedPosition.latitude ? getDistance(
-                    { latitude: count.parkedPosition.latitude, longitude:count.parkedPosition.longitude },
-                    { latitude: currentPosition.latitude, longitude: currentPosition.longitude } 
-                  )
-                  :
-                  '0'
-                }
-              </Text>
               <Text>{count.registrationNumber}</Text>
                 {count.parked ? <TouchableOpacity
                 onPress={() =>{
@@ -215,7 +250,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, setInvalid
                     changeCount(true)
                     changeParkedPos(currentPosition);
                     console.log(count.invalidParkingTime)
-                    sendScheduledNotification()
+                    if (count.invalidParkingTime) { sendScheduledNotification() }
                    }}
                     style={styles.parkingButton}
                  >
@@ -284,6 +319,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 22,
     color: '#F5C932'
+    },
+  drawerIcon: {
+    position: "absolute",
+    top:'7%',
+    left:'5%'
     }
 });
 
@@ -297,6 +337,7 @@ const mapDispatchToProps = dispatch => ({
   changeCount: count => dispatch(changeCount(count)),
   changeParkedPos: parkedPosition => dispatch(changeParkedPos(parkedPosition)),
   setInvalidTime: time => dispatch(setInvalidTime(time)),
+  changeCarConnection: isConnected => dispatch(changeCarConnection(isConnected)),
 })
 
 export default connect(
