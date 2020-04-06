@@ -41,8 +41,8 @@ function sendNotification(message) {
 
 function sendScheduledNotification(startTime, min) {
   PushNotification.localNotificationSchedule({
-    title: "Dags att flytta bilen?", // (optional)
-    message: `Parkeringen upphör att vara tillåten om ${min} minuter.`, // (required)
+    // title: "Dags att flytta bilen?", // (optional)
+    message: `Din parkering upphör snart att vara tillåten.`, // (required)
     date: new Date(Date.now() +0.1 * 60000) // in 60 secs
   });
 }
@@ -239,6 +239,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
                     changeCount(true)
                     changeParkedPos(currentPosition);
                     if (count.invalidParkingTime) { sendScheduledNotification() }
+                    changeCarConnection(true);
                    }}
                     style={styles.parkingButton}
                  >
