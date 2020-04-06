@@ -12,7 +12,13 @@ let streets;
 
 const weekdayArr = ['söndag','måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag'];
 
-let coll = 'Hej';
+let coll = 'Hej'; //Change name
+
+const timeBetweenDatabaseFill = 86400000;
+
+getApiData();
+
+setInterval(() => getApiData(), timeBetweenDatabaseFill);
 
 async function dropCollection() {
   client = await MongoClient.connect(url, { useNewUrlParser: true }, { useUnifiedTopology: true });
@@ -47,11 +53,8 @@ async function populateDatabase(coll, data) {
   // });
 }
 
-getApiData();
-
 app.get('/api/adresses/:adress', async (req,res) => {
   
-
   let streetName = req.params.adress.match(/([a-zA-ZåäöÅÄÖ]+)/)[0];
   const streetNumber = req.params.adress.match(/([0-9]+)/)[0];
 
@@ -79,6 +82,29 @@ app.get('/api/adresses/:adress', async (req,res) => {
     
     res.send(calculateWhen(resultStreets));
   });
+});
+
+app.get('/api/regions/:region', async (req,res) => {
+  
+  const lat = req.params.region.split(',')[0]
+  const long = req.params.region.split(',')[1]
+  
+  const locUrl = `https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/within?radius=300&lat=${lat}&lng=${long}&maxFeatures=50&outputFormat=json&apiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a`
+
+  const response = await axios.get(locUrl).catch((error) => console.log(error))
+  const responses = []
+  for (let i = 0; i < response.data.features.length; i++) {
+    const coordinates = []
+    for (let j = 0; j < response.data.features[i].geometry.coordinates.length; j++) {
+      coordinates.push(
+        {
+        latitude: response.data.features[i].geometry.coordinates[j][1],
+        longitude: response.data.features[i].geometry.coordinates[j][0],
+      })
+    }
+    responses.push(coordinates);
+  }
+  res.send(responses);
 });
 
 function sortWeek() {
@@ -195,30 +221,6 @@ function calculateWhen(results) {
   }
   return resultsArr;
 }
-
-app.get('/api/regions/:region', async (req,res) => {
-  
-  const lat = req.params.region.split(',')[0]
-  const long = req.params.region.split(',')[1]
-  
-  const locUrl = `https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/within?radius=200&lat=${lat}&lng=${long}&maxFeatures=10&outputFormat=json&apiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a`
-
-  const response = await axios.get(locUrl).catch((error) => console.log(error))
-  const responses = []
-  for (let i = 0; i < response.data.features.length; i++) {
-    const coordinates = []
-    for (let j = 0; j < response.data.features[i].geometry.coordinates.length; j++) {
-      coordinates.push(
-        {
-        latitude: response.data.features[i].geometry.coordinates[j][1],
-        longitude: response.data.features[i].geometry.coordinates[j][0],
-      })
-    }
-    responses.push(coordinates);
-  }
-  res.send(responses);
-});
-
 
 function duration(t0, t1){
   let d = (new Date(t1)) - (new Date(t0));

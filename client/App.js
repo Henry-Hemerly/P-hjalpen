@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, View , ScrollView, Button, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {  SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Onboarding1, Onboarding2 ,Onboarding3, Onboarding4 } from './components/Onboarding';
