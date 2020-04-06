@@ -238,6 +238,7 @@ function mapStateToProps (state) {
 const mapDispatchToProps = dispatch => ({
   changeCount: count => dispatch(changeCount(count)),
   changeParkedPos: parkedPosition => dispatch(changeParkedPos(parkedPosition)),
+  setInvalidTime: time => dispatch(setInvalidTime(time)),
 })
 
 export default connect(
