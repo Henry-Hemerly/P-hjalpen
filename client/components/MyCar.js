@@ -5,61 +5,44 @@ import { Button, View, Text, SafeAreaView, Image, Dimensions, TouchableOpacity, 
 import { CustomHeader } from '../App'
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
-function MyCarScreen({ navigation ,count, changeRegNumber}) {
+function MyCarScreen({ navigation ,count, changeRegNumber, changeCarConnection, setBluetooth}) {
   function pair() {
 
-        function Bluetooth({ count, changeCarConnection, setBluetooth}) {
+        function Bluetooth() {
           let devices = ['Audi MMI 335','Beolit 15','Bose Mini Soundlink']
           return (
               <SafeAreaView style={style.background}>
                 <View style={{marginTop: '15%'}}>
                   <Text style={style.headingTwoLast}>Välj din bils Bluetooth uppkoppling</Text>
-              <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text ref={c => this.text = c}
-              style={style.descriptionBil}>{devices[0]}
-              </Text>
-                <TouchableOpacity onPress={() => {
-                  changeCarConnection(true)
-                  setBluetooth(devices[0])
-                  console.log(count);
-                  navigation.navigate('Onboarding5')
-                }}
-                ><Text style={style.descriptionAdd}>Lägg till ></Text>
-                </TouchableOpacity>
-              </View>
-              <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text style={style.descriptionBil}>Beolit 15
-              </Text>
-                <Text style={style.descriptionAdd}> Lägg till >
-                </Text>
-              </View>
-              <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={style.descriptionBil}>Bose Mini Soundlink
-                </Text>
-              <Text style={style.descriptionAdd}> Lägg till >
-              </Text>
-              </View>
+                  {devices.map((dev, index) => (
+                    <View key={index} style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <Text ref={c => this.text = c}
+                        style={style.descriptionBil}>{dev}
+                      </Text>
+                      <TouchableOpacity onPress={() => {
+                        changeCarConnection(true)
+                        setBluetooth(dev)
+                      }}>
+                        <Text style={style.descriptionAdd}>Lägg till ></Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))} 
               </View>
               <View style={{marginBottom: 20 }}>
-              <TouchableOpacity
-              style={style.nextButton}
-              onPress={() => navigation.navigate('Onboarding5')}>
-              <Text style={style.nextButtonText} >
-              Nästa
-              </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-              onPress={() => navigation.navigate('HomeApp')}
-              >
-              <Text style={style.skipButton}>
-              Hoppa över
-              </Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={style.nextButton}
+                  onPress={() => navigation.navigate('Onboarding5')}>
+                    <Text style={style.nextButtonText} >Nästa</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('HomeApp')}>
+                  <Text style={style.skipButton}>Hoppa över</Text>
+                </TouchableOpacity>
               </View>
-              </SafeAreaView>
+            </SafeAreaView>
               );
-        }
-        function RegNumber({changeRegNumber}) {
+            }
+        function RegNumber() {
           const [value, setValue] = React.useState("")
               return (
                 <SafeAreaView style={style.background}>
@@ -79,7 +62,7 @@ function MyCarScreen({ navigation ,count, changeRegNumber}) {
                   </TextInput>
                     </View>
                   </View>
-              <View style={{marginBottom: 20 }}>
+                <View style={{marginBottom: 20 }}>
                   <TouchableOpacity
                     style={style.nextButton}
                     placeholder="REGNR"
@@ -92,14 +75,10 @@ function MyCarScreen({ navigation ,count, changeRegNumber}) {
                         Spara och fortsätt
                       </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-              onPress={() => navigation.navigate('HomeApp')}
-              >
-              <Text style={style.skipButton}>
-              Hoppa över
-              </Text>
-              </TouchableOpacity>
-              </View>
+                  <TouchableOpacity onPress={() => navigation.navigate('HomeApp')}>
+                  <Text style={style.skipButton}>Hoppa över</Text>
+                  </TouchableOpacity>
+                </View>
               </SafeAreaView>
           );
         }
@@ -116,20 +95,8 @@ function MyCarScreen({ navigation ,count, changeRegNumber}) {
               backdropOpacity={0} 
               allowDragging = {false}
               ref={c => this._panel = c}>
-              <View style={{
-                backgroundColor: '#fff',
-                position: 'relative',
-                top: '50%',
-                right: '10%',
-                height: "100%",
-                width: "120%",
-                borderWidth: 0,
-                borderColor: '#F56',
-                borderRadius: 30,
-                paddingVertical: 5,
-                paddingHorizontal: 20
-              }}>
-                {count.bluetoothName === '' ? <Bluetooth /> : <RegNumber />}
+              <View style={style.slide}>
+                {count.bluetoothName == '' ? <Bluetooth/> : <RegNumber />}
               </View>
             </SlidingUpPanel>
           </View>
@@ -142,7 +109,11 @@ function MyCarScreen({ navigation ,count, changeRegNumber}) {
                 <Text>Parkopplad bil</Text>
                 <Text >{count.registrationNumber}</Text>
                 <Text >{count.bluetoothName}</Text>
-                <Button title="Ta bort" onPress={() => changeRegNumber("")}/>
+                <Button title="Ta bort" onPress={() => {
+                      changeRegNumber("") 
+                      setBluetooth("")
+                    }
+                  }/>
             </View>
         )
     }
@@ -174,7 +145,7 @@ function MyCarScreen({ navigation ,count, changeRegNumber}) {
 
 
 const style = StyleSheet.create({
-    heading: {
+  heading: {
     color: '#F5C932',
     fontSize: 57,
     textAlign: 'left',
@@ -182,61 +153,63 @@ const style = StyleSheet.create({
     marginLeft: 28,
     marginRight: 90,
   },
-    headingTwoLast:{
+  headingTwoLast:{
     color: '#F5C932',
     fontSize: 32,
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: '20%',
   },
-    description: {
+  description: {
     color: 'white',
     fontSize: 22,
     marginHorizontal:'7%',
     lineHeight: 36,
     marginTop: '20%',
   },
-    descriptionBil: {
+  descriptionBil: {
       color: 'white',
       fontSize: 22,
       marginHorizontal:'7%',
       lineHeight: 36,
       marginBottom: '5%',
   },
-    descriptionAdd: {
+  descriptionAdd: {
     color: '#F5C932',
     fontSize: 22,
     marginHorizontal:'10%',
     lineHeight: 36,
   },
-    background: {
+  background: {
     backgroundColor: '#001736',
     flex: 1,
     justifyContent: "space-between"
   },
-    nextButton: {
+  nextButton: {
     alignSelf: 'stretch',
     backgroundColor: '#F5C932',
     borderRadius: 34,
     borderWidth: 1,
     marginHorizontal: 22,
     height: 68,
+    position:"relative",
+    bottom:200
   },
-    nextButtonText: {
+  nextButtonText: {
     alignSelf: 'center',
     paddingVertical: 21,
     fontSize: 22,
     color: '#1E2657',
     fontSize: Dimensions.get('screen').height * 0.022,
   },
-    skipButton: {
+  skipButton: {
     color: '#fff',
     fontSize: 16,
     alignSelf: 'center',
     lineHeight: 30,
     marginTop: 22
   },
-    regNumInput: {
+  regNumInput: {
     height:'20%',
     backgroundColor:'white',
     width:'80%',
@@ -245,5 +218,18 @@ const style = StyleSheet.create({
     borderRadius:50,
     borderColor: 'black',
     borderWidth: 2,
+  },
+  slide:{
+    backgroundColor: '#fff',
+    position: 'relative',
+    top: '50%',
+    right: '10%',
+    height: "100%",
+    width: "120%",
+    borderWidth: 0,
+    borderColor: '#F56',
+    borderRadius: 30,
+    paddingVertical: 5,
+    paddingHorizontal: 20
   }
 });

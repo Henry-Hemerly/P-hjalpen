@@ -229,7 +229,6 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
               {count.reminderInvalidParking ? <Text style={styles.text}>{count.remindTime} min innan</Text>: <TouchableOpacity onPress={() => navigation.navigate('Settings')}><Text style={{    fontSize: Dimensions.get('screen').height * 0.025,
     color: 'steelblue'}}>Aktivera</Text></TouchableOpacity>  }
           </View> : null}
-              <Text>{count.registrationNumber}</Text>
                 {count.parked ? <TouchableOpacity
                 onPress={() =>{
                   changeCount(false)

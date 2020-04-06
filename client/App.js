@@ -79,10 +79,11 @@ export function CustomHeader({isHome, navigation}) {
      {
        isHome ? 
           null
-      : <TouchableOpacity 
-      onPress={()=> navigation.goBack()}
-      style={{ flexDirection: 'row', height:50 }}>
-        <Text>Back</Text>
+      : <TouchableOpacity
+      onPress={()=> navigation.goBack()}>
+          <Image
+            source={require('./images/arrow.png')}
+            style={{height:40, width:30, resizeMode: 'center', left: 25, top: 10}} />
         </TouchableOpacity>
      } 
     <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'center' }}>

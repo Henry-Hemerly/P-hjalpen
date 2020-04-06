@@ -10,29 +10,37 @@ function SettingsScreen({ navigation ,count, changeReminderInvalid,changeReminde
     return (
       <SafeAreaView style={{ flex: 1}}>
         <CustomHeader navigation={navigation}/>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Påminnelser</Text>
-
+        <View style={{flex: 1}}>
+        <Text style={{fontSize: 35, fontWeight: '700', letterSpacing: 0.75, marginHorizontal: 25, marginTop: 30, marginBottom: 20, color: '#1E2657'}}>Inställningar</Text>
+        <View style={{borderColor: '#1E2657', borderWidth: 1, opacity: 0.05}}></View>
+        <Text style={{fontSize: 14, fontWeight: '700', marginTop: 50, marginLeft: 25, color: '#4878D3', letterSpacing: 1.5, marginBottom: 20, marginBottom: 25}}>PÅMINNELSER</Text>
         <View style={styles.view}>
-            <Text>Städgata {count.reminderInvalidParking.toString()}</Text>
+            <Text style={{fontSize: 20, color: '#1E2657', fontWeight: '500'}}>Städgata {count.reminderInvalidParking.toString()}</Text>
             <Switch value={count.reminderInvalidParking} onValueChange={(v) =>  changeReminderInvalid(v)}/>
         </View>
-
+        <View>
+          <Text style={{marginLeft: 25, marginRight: 100, marginBottom: 30, color: '#767C9F', fontSize: 14, lineHeight: 21}}>Vi påminner dig när du står parkerad på en plats där du inte längre får stå t.ex. städgata.</Text>
+        </View>
         <View style={styles.view}>
-            <Text>Parkering ej avslutad {count.reminderStoppay.toString()}</Text>
+            <Text style={{fontSize: 20, color: '#1E2657', fontWeight: '500'}}>Parkering ej avslutad</Text>
             <Switch value={count.reminderStoppay} onValueChange={(v) =>  changeReminderStopPay(v)}/>
         </View>
-
+        <View>
+          <Text style={{marginLeft: 25, marginRight: 100, marginBottom: 30, color: '#767C9F', fontSize: 14, lineHeight: 21}}>Vi har all glömt det någon gång. Vi påminner dig att avsluta en pågående betalning om du skulle glömma.</Text>
+        </View>
         <View style={styles.view}>
-            <Text>Betalningsperiod påbörjas {count.reminderTopay.toString()}</Text>
+            <Text style={{fontSize: 20, color: '#1E2657', fontWeight: '500'}}>Betalningsperiod påbörjas</Text>
             <Switch value={count.reminderTopay} onValueChange={(v) =>  changeReminderPay(v)}/>
         </View>
-
+        <View>
+          <Text style={{marginLeft: 25, marginRight: 100, marginBottom: 30, color: '#767C9F', fontSize: 14, lineHeight: 21}}>Om du står parkerad på en plats där en avgift snart börjar gälla.</Text>
+        </View>
         <View style={styles.view}>
-            <Text>Tid för Påminnelser </Text>
+            <Text style={{fontSize: 20, color: '#1E2657', fontWeight: '500'}}>Tid för Påminnelser </Text>
             <View style={{
                         borderColor: 'grey',
                         borderBottomWidth:2,
+                        marginRight: 15,
                     }}>
                 <RNPickerSelect
                     value={count.remindTime}
@@ -54,6 +62,8 @@ function SettingsScreen({ navigation ,count, changeReminderInvalid,changeReminde
   }
   const styles = StyleSheet.create({
     view: {
+        justifyContent: "space-between",
+        marginHorizontal: 25,
         flexDirection:'row'
     }
   });
