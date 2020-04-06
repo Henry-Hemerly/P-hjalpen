@@ -16,9 +16,14 @@ let coll = 'ParkingData'; //Change name
 
 const timeBetweenDatabaseFill = 86400000;
 
+createClient();
 //getApiData();
 
 setInterval(() => getApiData(), timeBetweenDatabaseFill);
+
+async function createClient() {
+  client = await MongoClient.connect(url, { useNewUrlParser: true }, { useUnifiedTopology: true });
+}
 
 async function dropCollection() {
   client = await MongoClient.connect(url, { useNewUrlParser: true }, { useUnifiedTopology: true });
@@ -27,7 +32,7 @@ async function dropCollection() {
   db.on('close', () => { process.stdout.write('closed connection\n'); });
   db.on('reconnect', () => { process.stdout.write('reconnected\n'); });
 }
-// TODO GET ALL DATA IN ONE API  CALL
+// TODO GET ALL DATA IN ONE API CALL
 async function getApiData() {
   const API_URL1 = 'https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/weekday/';
   const API_URL2 = '?outputFormat=json&apiKey='+process.env.openStreet;
@@ -59,7 +64,7 @@ app.get('/api/adresses/:adress', async (req,res) => {
   const streetNumber = req.params.adress.match(/([0-9]+)/)[0];
 
   //streetName = streetName.toLowerCase().charAt(0).toUpperCase() solve first char to uppercase
-  console.log(streetName);
+  // console.log(streetName);
   const db = client.db(dbName);
   await db.collection(coll).find({'properties.ADDRESS':{$regex: new RegExp(streetName)}}).toArray((err, streets) => {
     const resultStreets = [];
