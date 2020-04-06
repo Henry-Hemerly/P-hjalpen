@@ -62,8 +62,9 @@ app.get('/api/adresses/:adress', async (req, res) => {
 
   let streetName = req.params.adress.match(/([a-zA-ZåäöÅÄÖ]+)/)[0];
   const streetNumber = req.params.adress.match(/([0-9]+)/)[0];
-  //streetName = streetName.toLowerCase().charAt(0).toUpperCase() solve first char to uppercase
-  // console.log(streetName);
+
+  //TODO: Capitalize words in street name
+
   const db = client.db(dbName);
   await db.collection(coll).find({ 'properties.ADDRESS': { $regex: new RegExp(streetName) } }).toArray((err, streets) => {
     const resultStreets = [];
@@ -119,6 +120,7 @@ function sortWeek() {
 }
 
 function calculateWhen(results) {
+
   const resultsArr = [];
   const daysIndex = [];
   let startTimeHours;
@@ -128,8 +130,15 @@ function calculateWhen(results) {
   let startTimeObject;
   let endTimeObject;
   let durationObj;
+  let cityDistrict;
+  let parkingDistrict;
+
   for (let i = 0; i < 7; i++) {
     for (let j = 0; j < results.length; j++) {
+
+      cityDistrict = results[j].properties.CITY_DISTRICT;
+      parkingDistrict = results[j].properties.PARKING_DISTRICT;
+
       if (results[j] && results[j].properties.START_WEEKDAY === sortWeek()[i]) {
         let startTimeString = results[j].properties.START_TIME.toString();
         let endTimeString = results[j].properties.END_TIME.toString();
@@ -182,7 +191,9 @@ function calculateWhen(results) {
             endTimeObject,
             day: 'idag',
             hours: startTimeObject.getHours() - 2,
-            minutes: startTimeObject.getMinutes()
+            minutes: startTimeObject.getMinutes(),
+            cityDistrict, 
+            parkingDistrict
           });
           return resultsArr;
         }
@@ -195,7 +206,9 @@ function calculateWhen(results) {
               endTimeObject,
               day: daysIndex[0],
               hours: startTimeObject.getHours() - 2,
-              minutes: startTimeObject.getMinutes()
+              minutes: startTimeObject.getMinutes(),
+              cityDistrict, 
+              parkingDistrict
             });
             return resultsArr
           } else {
@@ -206,7 +219,9 @@ function calculateWhen(results) {
               endTimeObject,
               day: daysIndex[1],
               hours: (startTimeObject.getHours() - 2),
-              minutes: startTimeObject.getMinutes()
+              minutes: startTimeObject.getMinutes(),
+              cityDistrict, 
+              parkingDistrict
             });
             return resultsArr
           }
@@ -217,7 +232,9 @@ function calculateWhen(results) {
           endTimeObject,
           day: sortWeek()[i],
           hours: startTimeObject.getHours() - 2,
-          minutes: startTimeObject.getMinutes()
+          minutes: startTimeObject.getMinutes(),
+          cityDistrict, 
+          parkingDistrict
         });
       }
     }

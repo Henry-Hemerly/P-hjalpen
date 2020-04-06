@@ -13,6 +13,8 @@ import { initialLineCoords } from '../constants/coords'
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 
+const taxa2 = [ 'Norrmalm', 'Vasastaden', 'Kungsholmen' ]
+
 PushNotification.configure({
   onRegister: function (token) {
     console.log("TOKEN:", token);
@@ -66,6 +68,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
   const [lineCoords, setLineCoords] = React.useState(initialLineCoords)
   const [justUpdated, setJustUpdated] = React.useState(false);
+  const [taxeomrade, setTaxeomrade] = React.useState(undefined);
 
   React.useEffect(() => {
     if (count.parked) {
@@ -123,9 +126,20 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
     }
   }
 
+  function checkTaxa(omrade) {
+    if (taxa2.includes(omrade)) {
+      return 'Taxa 2';
+    }
+    return 'Okänt'
+  }
+
   async function getLocation(lat, long) {
     const address = await Geocoder.from(lat, long)
-      .then(json => json.results[0].formatted_address.split(',')[0])
+      .then(json => {
+        setTaxeomrade(json.results[0].address_components[2].long_name)
+        return json;
+      })
+      .then(json => json.results[2].formatted_address.split(',')[0])
       .catch(error => console.warn(error));
     return address;
   }
@@ -208,11 +222,28 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           <Text style={styles.panelHeader}>{count.parked ? 'Parkerad' : 'Ej parkerad'}</Text>
           <Text style={styles.text}>{count.parked ? count.parkedPosition.adress : currentPosition.adress}</Text>
           <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
+          
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
             <Text style={styles.text}>{panelData ? 'Flytta senast' : 'Parkering tillåten'}</Text>
             <Text style={styles.text}>{panelData ? panelData : ''}</Text>
           </View>
+          
           <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
+
+          {
+            taxeomrade ? 
+            <View>
+            <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
+              <Text style={styles.text}>Taxeområde</Text>
+              <Text style={styles.text}>{checkTaxa(taxeomrade)}</Text>
+            </View>
+            
+            <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
+            </View>
+            :
+            null
+          }
+          
           {
             count.parked && panelData !== '' ? <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={styles.text}>Påminnelse</Text>
@@ -242,7 +273,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
                 }}
                 style={styles.parkingButton}
               >
-                <Text style={styles.parkingButtonText}>Parkera här </Text>
+                <Text style={styles.parkingButtonText}>Parkera här</Text>
               </TouchableOpacity>}
         </View>
       </SlidingUpPanel>
