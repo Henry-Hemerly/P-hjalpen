@@ -12,7 +12,7 @@ let streets;
 
 const weekdayArr = ['söndag','måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag'];
 
-let coll = 'Hej'; //Change name
+let coll = 'ParkingData'; //Change name
 
 const timeBetweenDatabaseFill = 86400000;
 
@@ -26,12 +26,12 @@ async function dropCollection() {
   streets = db.collection(coll);
   db.on('close', () => { process.stdout.write('closed connection\n'); });
   db.on('reconnect', () => { process.stdout.write('reconnected\n'); });
-  //streets.drop();
 }
-
+// TODO GET ALL DATA IN ONE API  CALL
 async function getApiData() {
   const API_URL1 = 'https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/weekday/';
-  const API_URL2 = '?outputFormat=json&apiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a';
+  const API_URL2 = '?outputFormat=json&apiKey='+process.env.openStreet;
+  
   dropCollection();
   for (let i = 0; i < weekdayArr.length; i++) {
     const response = await axios.get(API_URL1 + weekdayArr[i] + API_URL2)
@@ -46,11 +46,11 @@ async function populateDatabase(coll, data) {
   streets = db.collection(coll);
   db.on('close', () => { process.stdout.write('closed connection\n'); });
   db.on('reconnect', () => { process.stdout.write('reconnected\n'); });
-  // streets.insertMany(data, (err, res) => {
-  //   // client.close();
-  //   if (err) return process.stdout.write(err.message);
-  //   return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
-  // });
+  streets.insertMany(data, (err, res) => {
+    // client.close();
+    if (err) return process.stdout.write(err.message);
+    return process.stdout.write(`inserted count ${res.insertedCount} documents\n`);
+  });
 }
 
 app.get('/api/adresses/:adress', async (req,res) => {
@@ -89,7 +89,7 @@ app.get('/api/regions/:region', async (req,res) => {
   const lat = req.params.region.split(',')[0]
   const long = req.params.region.split(',')[1]
   
-  const locUrl = `https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/within?radius=300&lat=${lat}&lng=${long}&maxFeatures=50&outputFormat=json&apiKey=231ca8a9-dc1a-41b7-a06f-87f61d585f1a`
+  const locUrl = `https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/within?radius=300&lat=${lat}&lng=${long}&maxFeatures=50&outputFormat=json&apiKey=${process.env.openStreet}`
 
   const response = await axios.get(locUrl).catch((error) => console.log(error))
   const responses = []
