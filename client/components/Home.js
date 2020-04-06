@@ -71,13 +71,19 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
   React.useEffect(() => {
     if (count.parked) {
       if (count.connectedToCar && distanceToCar() > 60) {
-        changeCarConnection(false);
-        sendNotification('Du har väl inte glömt att betala p-avgiften?');
+        if(count.reminderTopay){
+          changeCarConnection(false);
+          sendNotification('Du har väl inte glömt att betala p-avgiften?');
+        }
       }
     
     if (!count.connectedToCar && distanceToCar() < 40) {
-      changeCarConnection(true);
-      sendNotification('Du har väl inte glömt att avsluta p-avgiften?');
+      if(count.reminderStoppay){
+        changeCarConnection(true);
+        sendNotification('Du har väl inte glömt att avsluta p-avgiften?');
+      }
+
+      
     }
     }
   }, [currentPosition]);
@@ -171,12 +177,12 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
           draggable
           coordinate={currentPosition}
         > 
-          <Image source={require('../images/marker.png')} style={{height: 80, width: 80, resizeMode:'contain' }} />
+          <Image source={require('../images/marker.png')} style={{height: 50, width: 50, resizeMode:'contain' }} />
         </Marker>
         <Marker
           coordinate={count.parked ? count.parkedPosition : currentPosition}
         >
-          <Image source={require('../images/parked_car2x.png')} style={{height: 60, width: 60, resizeMode:'contain', position: 'relative', bottom: 40 }} />
+          <Image source={require('../images/parked_car2x.png')} style={{height: 50, width: 50, resizeMode:'contain', position: 'relative', bottom: 40 }} />
         </Marker>
       </MapView>
       
@@ -220,8 +226,9 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
           <View style ={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3  }}/>
           
           {count.parked && panelData !== '' ? <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
-              <Text style={styles.text}>Påminnelse:</Text>
-              <Text style={styles.text}>{count.remindTime} min </Text>
+              <Text style={styles.text}>Påminnelse</Text>
+              {count.reminderInvalidParking ? <Text style={styles.text}>{count.remindTime} min innan</Text>: <TouchableOpacity onPress={() => navigation.navigate('Settings')}><Text style={{    fontSize: Dimensions.get('screen').height * 0.025,
+    color: 'steelblue'}}>Aktivera</Text></TouchableOpacity>  }
           </View> : null}
               <Text>{count.registrationNumber}</Text>
                 {count.parked ? <TouchableOpacity
@@ -238,7 +245,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
                     onPress={() => {
                     changeCount(true)
                     changeParkedPos(currentPosition);
-                    if (count.invalidParkingTime) { sendScheduledNotification() }
+                    if (count.invalidParkingTime && count.reminderInvalidParking) { sendScheduledNotification() }
                     changeCarConnection(true);
                    }}
                     style={styles.parkingButton}

@@ -10,9 +10,12 @@ import Onboarding5 from './components/Onboarding';
 import HomeScreen from './components/Home';
 import MyCarScreen from './components/MyCar';
 import SettingsScreen from './components/Settings';
+import HowScreen from './components/How';
+import ContactsScreen from './components/Contacts';
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { connect } from 'react-redux';
+
 PushNotification.configure({
   // (optional) Called when Token is generated 
   onRegister: function(token) {
@@ -48,17 +51,8 @@ function sendScheduledNotification() {
     date: new Date(Date.now() + 10 * 1000) // in 60 secs
   });
 }
-function NotificationsScreen({ navigation }) {
-  return (
-    <SafeAreaView style={{ flex: 1}}>
-      <CustomHeader navigation={navigation}/>
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Notifications screen</Text>
-      <Button title="Send notification!" onPress={()=> sendScheduledNotification()}/>
-      </View>
-    </SafeAreaView>
-  );
-}
+
+
 function SplashScreen({ navigation }) {
   setTimeout(() => {
     navigation.navigate('Onboarding1');
@@ -172,7 +166,8 @@ function DrawerNavigator() {
     hideStatusBar
     >
       <Drawer.Screen name="Home" component={HomeStack} />
-      <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+      <Drawer.Screen name="How" component={HowScreen} />
+      <Drawer.Screen name="Contacts" component={ContactsScreen} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
       <Drawer.Screen name="MyCar" component={MyCarScreen}/>
     </Drawer.Navigator>

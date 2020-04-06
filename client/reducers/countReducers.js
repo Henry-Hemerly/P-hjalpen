@@ -6,9 +6,9 @@ const initialState = {
   connectedToCar: true,
   invalidParkingTime: undefined,
   payParkingTime:{},
-  reminderInvalidParking: false,
-  reminderTopay:false,
-  reminderStoppay:false,
+  reminderInvalidParking: true,
+  reminderTopay:true,
+  reminderStoppay:true,
   remindTime: 30
 };
 const countReducer = (state = initialState, action) => {
