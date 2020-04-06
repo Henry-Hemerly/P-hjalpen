@@ -22,7 +22,7 @@ createClient();
 setInterval(() => getApiData(), timeBetweenDatabaseFill);
 
 async function createClient() {
-  client = await MongoClient.connect(url, { useNewUrlParser: true }, { useUnifiedTopology: true });
+  client = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 }
 
 async function dropCollection() {

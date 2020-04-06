@@ -47,7 +47,6 @@ function sendScheduledNotification(startTime, min) {
   });
 }
 
-
 Geocoder.init(API_KEY);
 
 const apiUrl = 'http://localhost:8080/api/adresses/';
@@ -73,7 +72,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
       if (count.connectedToCar && distanceToCar() > 60) {
         if(count.reminderTopay){
           changeCarConnection(false);
-          sendNotification('Du har väl inte glömt att betala p-avgiften?');
+          sendNotification(`Du har väl inte glömt att betala p-avgiften?`);
         }
       }
     

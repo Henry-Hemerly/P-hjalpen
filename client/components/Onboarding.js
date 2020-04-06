@@ -209,6 +209,7 @@ Hoppa över
     borderWidth: 2,
     }
     });
+    
 function mapStateToProps (state) {
   return {
     count: state,
