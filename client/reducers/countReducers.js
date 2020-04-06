@@ -1,9 +1,11 @@
-import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE,REMINDER_TIME_CHANGE } from '../constants';
+import { COUNTER_CHANGE, PARKED_POS_CHANGE, REG_NR_CHANGE, CONNECTION_TO_CAR_CHANGE, REMINDER_INVALID_CHANGE, REMINDER_PAY_CHANGE, REMINDER_STOP_PAY_CHANGE,REMINDER_TIME_CHANGE ,INVALID_TIME_SET } from '../constants';
 const initialState = {
   parked: false,
   parkedPosition: {},
   registrationNumber: "",
   connectedToCar: false,
+  invalidParkingTime: undefined,
+  payParkingTime:{},
   reminderInvalidParking: false,
   reminderTopay:false,
   reminderStoppay:false,
@@ -50,6 +52,11 @@ const countReducer = (state = initialState, action) => {
         return {
           ...state,
           remindTime: action.payload
+        }; 
+      case INVALID_TIME_SET:
+        return {
+          ...state,
+          invalidParkingTime: action.payload
         };       
     default:
       return state;
