@@ -69,27 +69,18 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
   const [justUpdated, setJustUpdated] = React.useState(false);
   
   React.useEffect(() => {
-    setInterval(() => {
-      if (count.parked) {
-        if (count.connectedToCar && distanceToCar() > 50) {
-            sendNotification('Du har väl inte glömt attbetala p-avgiften?');
-            changeCarConnection(false);
-        }
-      //   changeCarConnection()
-      //   distanceToCar();
-      // //if connection to car and distance high
-      //   //change connection to false
-      //   //fire off notification about paying
-      // //if no connection and distance low
-      //   //change connection to true
-      //   //fire off notification about ending paying
-        
-      //   :
-      //   '0'
-      console.log('Hej')
+    if (count.parked) {
+      if (count.connectedToCar && distanceToCar() > 60) {
+        changeCarConnection(false);
+        sendNotification('Du har väl inte glömt att betala p-avgiften?');
       }
-    }, 10000);
-  });
+    
+    if (!count.connectedToCar && distanceToCar() < 40) {
+      changeCarConnection(true);
+      sendNotification('Du har väl inte glömt att avsluta p-avgiften?');
+    }
+    }
+  }, [currentPosition]);
 
   function distanceToCar() {
     return getDistance(
@@ -182,12 +173,12 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos, changeCarC
           draggable
           coordinate={currentPosition}
         > 
-          <Image source={require('../images/hamburger2x.png')} style={{height: 70, width: 70, resizeMode:'contain' }} />
+          <Image source={require('../images/marker.png')} style={{height: 80, width: 80, resizeMode:'contain' }} />
         </Marker>
         <Marker
           coordinate={count.parked ? count.parkedPosition : currentPosition}
         >
-          <Image source={require('../images/parked_car2x.png')} style={{height: 70, width: 70, resizeMode:'contain', position: 'relative', bottom: 40 }} />
+          <Image source={require('../images/parked_car2x.png')} style={{height: 60, width: 60, resizeMode:'contain', position: 'relative', bottom: 40 }} />
         </Marker>
       </MapView>
       

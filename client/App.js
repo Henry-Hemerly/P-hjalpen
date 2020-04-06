@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Text, View , ScrollView, Button, Dimensions } from 'react-native';
+import { Text, View , ScrollView, Button, Dimensions, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {  SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Onboarding1, Onboarding2 ,Onboarding3, Onboarding4 } from './components/Onboarding';
@@ -13,14 +13,11 @@ import SettingsScreen from './components/Settings';
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { connect } from 'react-redux';
-
-
 PushNotification.configure({
   // (optional) Called when Token is generated 
   onRegister: function(token) {
     console.log("TOKEN:", token);
   },
-
   // (required) Called when a remote or local notification is opened or received
   onNotification: function(notification) {
     console.log("NOTIFICATION:", notification);
@@ -28,7 +25,6 @@ PushNotification.configure({
     // required on iOS only 
     notification.finish(PushNotificationIOS.FetchResult.NoData);
   },
-
   // IOS ONLY 
   permissions: {
     alert: true,
@@ -37,17 +33,14 @@ PushNotification.configure({
   },
   // Should the initial notification be popped automatically
   popInitialNotification: true,
-
   requestPermissions: true
 });
-
 function sendNotification() {
   PushNotification.localNotification({
     title: "My Notification Title", // (optional)
     message: "My Notification Message", // (required)
   });
 }
-
 function sendScheduledNotification() {
   PushNotification.localNotificationSchedule({
     title: "My Notification Title", // (optional)
@@ -55,7 +48,6 @@ function sendScheduledNotification() {
     date: new Date(Date.now() + 10 * 1000) // in 60 secs
   });
 }
-
 function NotificationsScreen({ navigation }) {
   return (
     <SafeAreaView style={{ flex: 1}}>
@@ -67,13 +59,11 @@ function NotificationsScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
 function SplashScreen({ navigation }) {
   setTimeout(() => {
     navigation.navigate('Onboarding1');
     return;
     }, 3000)
-
   return (
     <SafeAreaView style={{ backgroundColor: '#001736', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text style= {{fontSize: 130, fontWeight: 'bold', color: 'white'}}>
@@ -87,7 +77,6 @@ function SplashScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
 export function CustomHeader({isHome, navigation}) {
   return (
     <View style={{ flexDirection: 'row', height:50 }}>
@@ -101,7 +90,6 @@ export function CustomHeader({isHome, navigation}) {
         <Text>Back</Text>
         </TouchableOpacity>
      } 
-          
     <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'center' }}>
       </View>
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -110,8 +98,6 @@ export function CustomHeader({isHome, navigation}) {
     </View>
   );
 }
-
-
 const navOptionHandler = () => ({
   headerShown: false
 })
@@ -125,51 +111,65 @@ function HomeStack() {
 }
 // DRAWER NAVIGATION
 const Drawer = createDrawerNavigator();
-
 function CutomDrawerContent(props) {
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: "space-between", backgroundColor:'white'}}>
-      <View></View>
-      <View>
-      <TouchableOpacity onPress={()=> props.navigation.navigate('Settings')}>
-        <Text style={{ 
-          fontSize: Dimensions.get('screen').height * 0.02,
-          color: '#001E39' 
-      }}>Inställningar</Text>
+      <View style = {{marginLeft: '10%', top: '20%' }}>
+      <View style= {{flexDirection: 'row', alignItems: 'center'}}>
+        <Image source={require('./images/settings2x.png')} style = {{resizeMode: "contain", width:'10%'}} />
+        <TouchableOpacity onPress={()=> props.navigation.navigate('Settings')}>
+          <Text style={{ 
+            fontSize: Dimensions.get('screen').height * 0.02, fontWeight: '500', marginBottom: '5%',
+            color: '#001E39', marginLeft: '15%', paddingTop:'5%'}}>Inställningar
+          </Text>
+        </TouchableOpacity>
+      </View>
+    <View style= {{flexDirection: 'row', alignItems: 'center'}}>
+        <Image source={require('./images/my_car2x.png')} style = {{resizeMode: "contain", width:'10%'}} />
+        <TouchableOpacity onPress={()=> props.navigation.navigate('MyCar')}>
+          <Text style={{ 
+            fontSize: Dimensions.get('screen').height * 0.02, fontWeight: '500', marginBottom: '5%',
+            color: '#001E39', marginLeft: '20%', paddingTop:'5%'}}>Min bil
+          </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={()=> props.navigation.navigate('MyCar')}>
-        <Text style={{ 
-          fontSize: Dimensions.get('screen').height * 0.02,
-          color: '#001E39' 
-      }}>Min bil</Text>
+      </View>
+      <View style= {{flexDirection: 'row', alignItems: 'center'}}>
+        <Image source={require('./images/how_does_it_work2x.png')} style = {{resizeMode: "contain", width:'10%'}} />
+        <TouchableOpacity onPress={()=> props.navigation.navigate('How')}>
+          <Text style={{ 
+            fontSize: Dimensions.get('screen').height * 0.02, fontWeight: '500', marginBottom: '5%',
+            color: '#001E39', marginLeft: '12%', paddingTop:'5%'}}>Hur fungerar det?
+          </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={()=> props.navigation.navigate('How')}>
-        <Text style={{ 
-          fontSize: Dimensions.get('screen').height * 0.02,
-          color: '#001E39' 
-      }}>Hur fungerar det?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={()=> props.navigation.navigate('Contacts')}>
-        <Text style={{ 
-          fontSize: Dimensions.get('screen').height * 0.02,
-          color: '#001E39' 
-      }}>Kontakt</Text>
+      </View>
+      <View style= {{flexDirection: 'row', alignItems: 'center'}}>
+        <Image source={require('./images/contact2x.png')} style = {{resizeMode: "contain", width:'10%'}} />
+        <TouchableOpacity onPress={()=> props.navigation.navigate('Contacts')}>
+          <Text style={{ 
+            fontSize: Dimensions.get('screen').height * 0.02, fontWeight: '500', marginBottom: '5%',
+            color: '#001E39', marginLeft: '20%'}}>Kontakt
+          </Text>
       </TouchableOpacity>
       </View>
       <View></View>
-      <View style={{ paddingHorizontal: '20%' }}>
-        <Text>P hjälpen</Text>
-        <Text>P-hjälpen är skapad av bilägare för bilägare i syfte att spara dina pengar till något vettigare.</Text>
-        <Text>v. 1.0.1</Text>
+      <View style={{marginRight:'17%', marginTop: '60%', alignContent: "center"}}>
+      <Image source={require('./images/logo2x.png')} style = {{alignSelf: "center", resizeMode: 'center'}} />
+        <Text style = {{textAlign: 'center', lineHeight: 21, color:'#767C9F' }}>P-hjälpen är skapad av bilägare för bilägare i syfte att spara dina pengar till något vettigare.</Text>
+        <Text style = {{textAlign: 'center', marginTop: '10%', lineHeight: 21, color:'#767C9F' }}>v. 1.0.1</Text>
+      </View>
       </View>
     </SafeAreaView>
   );
 }
-
 function DrawerNavigator() {
   return (
-    <Drawer.Navigator initialRouteName="Home"
+    <Drawer.Navigator 
+    drawerStyle={{
+      width:'80%'
+    }}
+    initialRouteName="Home"
     drawerContent={props => CutomDrawerContent(props)}
+    hideStatusBar
     >
       <Drawer.Screen name="Home" component={HomeStack} />
       <Drawer.Screen name="Notifications" component={NotificationsScreen} />
@@ -178,10 +178,8 @@ function DrawerNavigator() {
     </Drawer.Navigator>
   )
 }
-
 // ONBOARDING NAVIGATION
 const StackApp = createStackNavigator();
-
 function App() {
   return (
     <NavigationContainer>
@@ -197,5 +195,4 @@ function App() {
     </NavigationContainer>
   );
 }
-
 export default connect()(App)
