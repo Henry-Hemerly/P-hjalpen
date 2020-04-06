@@ -8,8 +8,52 @@ import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import { getDistance } from 'geolib';
 import { connect } from 'react-redux';
-import { changeCount, changeParkedPos } from '../actions/counts.js';
+import { changeCount, changeParkedPos , setInvalidTime} from '../actions/counts.js';
 import { initialLineCoords } from '../constants/coords'
+var PushNotification = require("react-native-push-notification");
+import PushNotificationIOS from "@react-native-community/push-notification-ios";
+
+PushNotification.configure({
+  // (optional) Called when Token is generated 
+  onRegister: function(token) {
+    console.log("TOKEN:", token);
+  },
+
+  // (required) Called when a remote or local notification is opened or received
+  onNotification: function(notification) {
+    console.log("NOTIFICATION:", notification);
+    // process the notification
+    // required on iOS only 
+    notification.finish(PushNotificationIOS.FetchResult.NoData);
+  },
+
+  // IOS ONLY 
+  permissions: {
+    alert: true,
+    badge: true,
+    sound: true
+  },
+  // Should the initial notification be popped automatically
+  popInitialNotification: true,
+
+  requestPermissions: true
+});
+
+function sendNotification() {
+  PushNotification.localNotification({
+    title: "My Notification Title", // (optional)
+    message: "My Notification Message", // (required)
+  });
+}
+
+function sendScheduledNotification(startTime, min) {
+    PushNotification.localNotificationSchedule({
+      title: "My Notification Title", // (optional)
+      message: "My Notification Message", // (required)
+      date: new Date(Date.now() +0.1 * 60000) // in 60 secs
+    });
+}
+
 
 Geocoder.init(API_KEY);
 
@@ -24,13 +68,14 @@ const initialPosition = {
   adress: ''
 };
 
-function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
+function HomeScreen({navigation, count, changeCount, changeParkedPos, setInvalidTime}) {
   const [region, setRegion] = React.useState(initialPosition);
   const [panelData, setPanelData] = React.useState("Parkeringsinfo");
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
   const [lineCoords, setLineCoords] = React.useState(initialLineCoords)
   const [justUpdated, setJustUpdated] = React.useState(false);
 
+  
   function userLocation (){
     this.map.animateToRegion({
       latitude: currentPosition.latitude,
@@ -88,6 +133,7 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
             .then(res => {
               console.log(res.data.length)
               setPanelData(res.data.length ? `${res.data[0].day} kl. ${res.data[0].hours}:${res.data[0].minutes}` : "")
+              setInvalidTime(res.data[0].startTimeObject ? res.data[0].startTimeObject: undefined              )
               })
               .catch(err => console.log(err));
         }}
@@ -139,10 +185,12 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
             <Text style={styles.text}>{panelData ? panelData : ''}</Text>
           </View>
           <View style ={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3  }}/>
-          <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
-            <Text style={styles.text}>Taxeområde</Text>
-            <Text style={styles.text}>X</Text>
-          </View>
+          
+          {count.parked ? <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between"}}>
+              <Text style={styles.text}>Påminnelse:</Text>
+              <Text style={styles.text}>{count.remindTime} min </Text>
+          </View> : null}
+
           <Text>{count.parkedPosition.latitude ? getDistance(
                     { latitude: count.parkedPosition.latitude, longitude:count.parkedPosition.longitude },
                     { latitude: currentPosition.latitude, longitude: currentPosition.longitude } 
@@ -152,17 +200,27 @@ function HomeScreen({navigation, count, changeCount, changeParkedPos}) {
                 }
               </Text>
               <Text>{count.registrationNumber}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              count.parked ? changeCount(false) : changeCount(true)
-              changeParkedPos(currentPosition);
-            }}
-            style={styles.parkingButton}
-            >
-              <Text style={styles.parkingButtonText}>
-            { count.parked ? 'Avsluta parkering' : 'Parkera här ' }
-              </Text>
-          </TouchableOpacity>
+                {count.parked ? <TouchableOpacity
+                onPress={() =>{
+                  changeCount(false)
+                  PushNotificationIOS.cancelAllLocalNotifications();
+                  setInvalidTime(undefined)
+                }}
+                style={styles.parkingButton}
+                >           
+                <Text style={styles.parkingButtonText}>Avsluta parkering</Text>
+                </TouchableOpacity>: 
+                <TouchableOpacity
+                    onPress={() => {
+                    changeCount(true)
+                    changeParkedPos(currentPosition);
+                    console.log(count.invalidParkingTime)
+                    sendScheduledNotification()
+                   }}
+                    style={styles.parkingButton}
+                 >
+              <Text style={styles.parkingButtonText}>Parkera här </Text>
+          </TouchableOpacity>}
             </View>
         </SlidingUpPanel>
   </View>
