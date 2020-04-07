@@ -23,7 +23,7 @@ function HowScreen({ navigation }) {
           </Text>
         <Text style={{ fontSize: 20, fontWeight: '500', marginTop: 50, marginLeft: 25, color: '#1E2657', letterSpacing: 0.5, marginBottom: 20, marginBottom: 25 }}>Hur vet P-Hjälpen att jag parkerat/åker iväg med min bil?</Text>
         <Text style={{ marginHorizontal: 25, color: '#1E2657', fontSize: 18, lineHeight: 26 }}>
-          För att X ska fungera automatiskt så måste din bil vara utrustad med bluetooth samt parkopplad under Inställningar/Min bil. Om din bil inte har bluetooth går det bra att markera platsen som din bil står parkerad på manuellt.{"\n"}{"\n"}
+          För att P-Hjälpen ska fungera automatiskt så måste din bil vara utrustad med bluetooth samt parkopplad under Inställningar/Min bil. Om din bil inte har bluetooth går det bra att markera platsen som din bil står parkerad på manuellt.{"\n"}{"\n"}
           <Text style={{ marginHorizontal: 25, color: '#1E2657', fontSize: 18, lineHeight: 26, fontStyle: 'italic' }}>
             OBS: funktionen “Parkering avslutad” fungerar bara om din bil har bluetooth.
           </Text>

@@ -1,19 +1,20 @@
 import * as React from 'react';
-import { Text, View, ScrollView, Button, Dimensions, Image } from 'react-native';
+import { Text, View, Dimensions, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Onboarding1, Onboarding2, Onboarding3 } from './components/Onboarding';
+import Onboarding4 from './components/Bluetooth'
 import Onboarding5 from './components/Onboarding';
-import Onboarding4 from './components/Bluetooth';
 import HomeScreen from './components/Home';
 import MyCarScreen from './components/MyCar';
 import SettingsScreen from './components/Settings';
 import HowScreen from './components/How';
 import ContactsScreen from './components/Contacts';
 import { connect } from 'react-redux';
+
 
 function SplashScreen({ navigation }) {
   setTimeout(() => {
