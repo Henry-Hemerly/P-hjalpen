@@ -235,55 +235,81 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
         </TouchableOpacity>
       </View>
       <SlidingUpPanel ref={c => this._panel = c}
-        draggableRange={{ top: Dimensions.get('screen').height * 0.25, bottom: 0 }}
+        draggableRange={{ top: Dimensions.get('screen').height * 0.35, bottom: 0 }}
         backdropOpacity={0}>
         <View style={styles.slidingUpPanel}>
           <View style={{ alignItems: "center" }}>
-            <View style={{ marginVertical: 10, height: 4, width: '50%', backgroundColor: 'lightgrey', opacity: 0.3 }} />
+            <View style={{ marginTop: 6, marginBottom: 20, height: 4, width: '25%', backgroundColor: 'lightgrey', opacity: 0.4 }} />
+            </View>
+          <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
+          <View>
+            <Text style={styles.panelHeader}>{count.parked ? 'Parkerad' : 'Ej parkerad'}</Text>
           </View>
-          <Text style={styles.panelHeader}>{count.parked ? 'Parkerad' : 'Ej parkerad'}</Text>
-          <Text style={styles.text}>{count.parked ? count.parkedPosition.adress : currentPosition.adress}</Text>
-          <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
+            {count.parked ? <Image style={{ marginTop: 9, width: 30, height: 30 }} source={ require('../images/checked.png')} /> : null}
+            </View>
+            <Text style={styles.text}>{count.parked ? count.parkedPosition.adress : currentPosition.adress}</Text>
+          <View style={{ marginTop: 20, marginBottom: 15, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
 
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
-            <View style={{ display: 'flex', flexDirection: "column" }}>
-            <Text style={styles.text}>{panelData ? 'Städgata' : 'Parkering tillåten'}</Text>
-            {timeData ? <Text>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m`:`Börjar om ${timeData.days}d ${timeData.hours}h` }</Text>:null}
+            <View style={{ flexDirection: "row" }} >
+              <Image style={{ height: 24, width: 19, marginRight: 13, marginTop: 2 }} source={ require('../images/cleaning2x.png') } />
+              <View style={{ display: 'flex'}}>
+                <Text style={styles.text}>{panelData ? 'Städgata' : 'Parkering tillåten'}</Text>
+                {timeData ? <Text>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m`:`Börjar om ${timeData.days}d ${timeData.hours}h` }</Text>:null}
+              </View>
             </View>
             <Text style={styles.text}>{panelData ? panelData : ''}</Text>
           </View>
 
-          <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
+          <View style={{ marginTop: 20, marginBottom: 15, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
 
           {
             taxeomrade ?
               <View>
+                
                 <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
-                <View style={{ display: 'flex', flexDirection: "column" }}>
-                  <Text style={styles.text}>Taxeområde</Text>
-                  {<Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <Image 
+                      style={{  height: 22, width: 22, marginRight: 13, marginTop: 2 }} 
+                      source={ require('../images/taxa2x.png') } 
+                      />
+                    <View style={{ display: 'flex' }}>
+                    <Text style={styles.text}>Taxeområde</Text>
+                    {<Text>
                     {checkAvgif(taxeomrade)}
                     </Text>}
                   </View>
-                  <Text style={styles.text}>{checkTaxa(taxeomrade)[0]}</Text>
-                  
+                  </View>
+                  <Text style={styles.text}>{checkTaxa(taxeomrade)[0]}</Text>  
                 </View>
+                
+                <View style={{ marginTop: 20, marginBottom: 15,  height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
 
-                <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
               </View>
               :
               null
           }
 
           {
-            count.parked && panelData !== '' ? <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
-              <Text style={styles.text}>Påminnelse</Text>
-              {count.reminderInvalidParking ? <Text style={styles.text}>{count.remindTime} min innan</Text> : <TouchableOpacity onPress={() => navigation.navigate('Settings')}><Text style={{
-                fontSize: Dimensions.get('screen').height * 0.025,
-                color: 'steelblue'
-              }}>Aktivera</Text>
-              </TouchableOpacity>}
-            </View> : null}
+            count.parked && panelData !== '' ?
+            <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
+              <View style={{ flexDirection: "row" }}>
+                <Image style={{ height: 23, width: 19, marginRight: 13 }} source={ require('../images/reminder2x.png') } />
+                <Text style={styles.text}>Påminnelse</Text>
+              </View>
+              {count.reminderInvalidParking ?
+                <Text style={styles.text}>{count.remindTime} min innan</Text> 
+              :
+                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                  <Text style={{ fontSize: Dimensions.get('screen').height * 0.025, color: 'steelblue'}}>
+                    Aktivera
+                  </Text>
+                </TouchableOpacity>
+              }
+            </View> 
+            :
+            null
+          }
           {
             count.parked ? <TouchableOpacity
               onPress={() => {
@@ -314,11 +340,14 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: Dimensions.get('screen').height * 0.025,
+    fontSize: 20,
+    fontWeight: '500',
+    // fontSize: Dimensions.get('screen').height * 0.025,
     color: '#001E39'
   },
   panelHeader: {
-    fontSize: Dimensions.get('screen').height * 0.04,
+    fontSize: 32,
+    // fontSize: Dimensions.get('screen').height * 0.04,
     fontWeight: 'bold',
     color: '#001E39'
   },
@@ -337,8 +366,8 @@ const styles = StyleSheet.create({
   slidingUpPanel: {
     backgroundColor: '#fff',
     position: 'relative',
-    bottom: '15%',
-    height: "40%",
+    bottom: '14%',
+    height: "60%",
     width: "100%",
     borderWidth: 0,
     borderColor: '#F56',
@@ -358,10 +387,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#001E39',
     borderRadius: 34,
     borderWidth: 1,
-    // marginHorizontal: '5%',
-    height: '14%',
-    // position:'absolute',
-    // bottom: '28%',
+    height: 60,
+    position: 'absolute',
+    left: 20,
+    top: 340,
     width: '100%',
     justifyContent: 'center'
   },
