@@ -43,11 +43,13 @@ function sendNotification(message) {
   });
 }
 
-function sendScheduledNotification(startTime, min) {
+function sendScheduledNotification(startTime, min, message) {
+  let start = Date.parse(startTime)
   PushNotification.localNotificationSchedule({
     title: "Dags att flytta bilen?", // (optional)
-    message: `Din parkering upphör snart att vara tillåten.`, // (required)
-    date: new Date(Date.now() + 0.1 * 60000) // in 60 secs
+    message: `Din parkering upphör att vara tillåten. ${message}`, // (required)
+    date: new Date(Date.now() + 0.03 * 60000) // use this for demo
+    //date: new Date(start - min * 60000) // use this for production
   });
 }
 
@@ -132,11 +134,11 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
 
   function checkTaxa(omrade) {
     if (taxa2.includes(omrade)) {
-      return ['Taxa 2','26kr/h 07-21','26kr/h 09-19','15kr/h'];
+      return ['Taxa 2', '26kr/h 07-21', '26kr/h 09-19', '15kr/h'];
     } else if (taxa3.includes(omrade)) {
-      return ['Taxa 3','15kr/h 07-19','10kr/h 11-17','ingen avgift'];
+      return ['Taxa 3', '15kr/h 07-19', '10kr/h 11-17', 'ingen avgift'];
     } else if (taxa4.includes(omrade)) {
-      return ['Taxa 4','10kr/h 07-19','10kr/h 11-17','ingen avgift'];
+      return ['Taxa 4', '10kr/h 07-19', '10kr/h 11-17', 'ingen avgift'];
     }
     return 'Okänt'
   }
@@ -144,9 +146,9 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
     let date = new Date().getDay()
     if (date > 0 && date < 6) {
       return checkTaxa(omrade)[1]
-    }else if(date == 6){
+    } else if (date == 6) {
       return checkTaxa(omrade)[2]
-    }else if(date == 0){
+    } else if (date == 0) {
       return checkTaxa(omrade)[3]
     }
   }
@@ -178,7 +180,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           await axios.get(`${apiUrl}${newPosition.adress}`)
             .then(res => {
               console.log(res.data.length)
-              let dayString = res.data[0].day.slice(0,3)
+              let dayString = res.data[0].day.slice(0, 3)
               setPanelData(res.data.length ? `${dayString} kl. ${res.data[0].hours}-${res.data[0].endHours}` : '')
               setTimeData(res.data[0].durationObj)
               setOngoing(res.data[0].onGoing)
@@ -208,7 +210,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           <Image source={require('../images/person.png')} style={{ height: 60, width: 60, resizeMode: 'contain' }} />
         </Marker>
         {count.parked ? <Marker coordinate={count.parked ? count.parkedPosition : currentPosition}>
-          <Image source={require('../images/parked_car2x.png')} style={{ height: 50, width: 50, resizeMode: 'contain', position: 'relative', bottom:20 }} />
+          <Image source={require('../images/parked_car2x.png')} style={{ height: 50, width: 50, resizeMode: 'contain', position: 'relative', bottom: 20 }} />
         </Marker> : null}
 
       </MapView>
@@ -240,22 +242,22 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
         <View style={styles.slidingUpPanel}>
           <View style={{ alignItems: "center" }}>
             <View style={{ marginTop: 6, marginBottom: 20, height: 4, width: '25%', backgroundColor: 'lightgrey', opacity: 0.4 }} />
-            </View>
-          <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
-          <View>
-            <Text style={styles.panelHeader}>{count.parked ? 'Parkerad' : 'Ej parkerad'}</Text>
           </View>
-            {count.parked ? <Image style={{ marginTop: 9, width: 30, height: 30 }} source={ require('../images/checked.png')} /> : null}
+          <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
+            <View>
+              <Text style={styles.panelHeader}>{count.parked ? 'Parkerad' : 'Ej parkerad'}</Text>
             </View>
-            <Text style={styles.text}>{count.parked ? count.parkedPosition.adress : currentPosition.adress}</Text>
+            {count.parked ? <Image style={{ marginTop: 9, width: 30, height: 30 }} source={require('../images/checked.png')} /> : null}
+          </View>
+          <Text style={styles.text}>{count.parked ? count.parkedPosition.adress : currentPosition.adress}</Text>
           <View style={{ marginTop: 20, marginBottom: 15, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
 
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
             <View style={{ flexDirection: "row" }} >
-              <Image style={{ height: 24, width: 19, marginRight: 13, marginTop: 2 }} source={ require('../images/cleaning2x.png') } />
-              <View style={{ display: 'flex'}}>
+              <Image style={{ height: 24, width: 19, marginRight: 13, marginTop: 2 }} source={require('../images/cleaning2x.png')} />
+              <View style={{ display: 'flex' }}>
                 <Text style={styles.text}>{panelData ? 'Städgata' : 'Parkering tillåten'}</Text>
-                {timeData ? <Text>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m`:`Börjar om ${timeData.days}d ${timeData.hours}h` }</Text>:null}
+                {timeData ? <Text>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m` : `Börjar om ${timeData.days}d ${timeData.hours}h`}</Text> : null}
               </View>
             </View>
             <Text style={styles.text}>{panelData ? panelData : ''}</Text>
@@ -266,24 +268,24 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           {
             taxeomrade ?
               <View>
-                
+
                 <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
                   <View style={{ flexDirection: "row" }}>
-                    <Image 
-                      style={{  height: 22, width: 22, marginRight: 13, marginTop: 2 }} 
-                      source={ require('../images/taxa2x.png') } 
-                      />
+                    <Image
+                      style={{ height: 22, width: 22, marginRight: 13, marginTop: 2 }}
+                      source={require('../images/taxa2x.png')}
+                    />
                     <View style={{ display: 'flex' }}>
-                    <Text style={styles.text}>Taxeområde</Text>
-                    {<Text>
-                    {checkAvgif(taxeomrade)}
-                    </Text>}
+                      <Text style={styles.text}>Taxeområde</Text>
+                      {<Text>
+                        {checkAvgif(taxeomrade)}
+                      </Text>}
+                    </View>
                   </View>
-                  </View>
-                  <Text style={styles.text}>{checkTaxa(taxeomrade)[0]}</Text>  
+                  <Text style={styles.text}>{checkTaxa(taxeomrade)[0]}</Text>
                 </View>
-                
-                <View style={{ marginTop: 20, marginBottom: 15,  height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
+
+                <View style={{ marginTop: 20, marginBottom: 15, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
 
               </View>
               :
@@ -292,30 +294,29 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
 
           {
             count.parked && panelData !== '' ?
-            <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
-              <View style={{ flexDirection: "row" }}>
-                <Image style={{ height: 23, width: 19, marginRight: 13 }} source={ require('../images/reminder2x.png') } />
-                <Text style={styles.text}>Påminnelse</Text>
-              </View>
-              {count.reminderInvalidParking ?
-                <Text style={styles.text}>{count.remindTime} min innan</Text> 
-              :
-                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-                  <Text style={{ fontSize: Dimensions.get('screen').height * 0.025, color: 'steelblue'}}>
-                    Aktivera
+              <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
+                <View style={{ flexDirection: "row" }}>
+                  <Image style={{ height: 23, width: 19, marginRight: 13 }} source={require('../images/reminder2x.png')} />
+                  <Text style={styles.text}>Påminnelse</Text>
+                </View>
+                {count.reminderInvalidParking ?
+                  <Text style={styles.text}>{count.remindTime} min innan</Text>
+                  :
+                  <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                    <Text style={{ fontSize: Dimensions.get('screen').height * 0.025, color: 'steelblue' }}>
+                      Aktivera
                   </Text>
-                </TouchableOpacity>
-              }
-            </View> 
-            :
-            null
+                  </TouchableOpacity>
+                }
+              </View>
+              :
+              null
           }
           {
             count.parked ? <TouchableOpacity
               onPress={() => {
                 changeCount(false)
                 PushNotificationIOS.cancelAllLocalNotifications();
-                setInvalidTime(undefined)
               }
               }
               style={styles.parkingButton}>
@@ -325,7 +326,10 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
                 onPress={() => {
                   changeCount(true)
                   changeParkedPos(currentPosition);
-                  if (count.invalidParkingTime && count.reminderInvalidParking) { sendScheduledNotification() }
+                  if (count.invalidParkingTime && count.reminderInvalidParking) {
+                    sendScheduledNotification(count.invalidParkingTime,
+                      count.reminderInvalidParking, count.invalidParkingTime)
+                  }
                   changeCarConnection(true);
                 }}
                 style={styles.parkingButton}
