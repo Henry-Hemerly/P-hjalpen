@@ -183,17 +183,21 @@ function calculateWhen(results) {
         startTimeObject.setDate(startTimeObject.getDate() + sortWeek().indexOf(daysIndex[0]))
         endTimeObject.setDate(endTimeObject.getDate() + sortWeek().indexOf(daysIndex[0]))
         nowTimeObj.setHours(new Date().getHours() + 2, new Date().getMinutes());
-
+          //during
         if (endTimeObject > nowTimeObj && startTimeObject < nowTimeObj) {
           durationObj = duration(nowTimeObj, endTimeObject)
           resultsArr.push({
             startTimeObject,
             endTimeObject,
             day: 'idag',
-            hours: startTimeObject.getHours() - 2,
-            minutes: startTimeObject.getMinutes(),
+            hours: formatHoursAndMinutes(startTimeObject.getHours() - 2),
+            minutes: formatHoursAndMinutes(startTimeObject.getMinutes()),
+            endHours: formatHoursAndMinutes(endTimeObject.getHours() - 2),
+            endMinutes: formatHoursAndMinutes(endTimeObject.getMinutes()),
             cityDistrict,
-            parkingDistrict
+            parkingDistrict,
+            durationObj,
+            onGoing: true
           });
           return resultsArr;
         }
@@ -207,11 +211,16 @@ function calculateWhen(results) {
               day: daysIndex[0],
               hours: formatHoursAndMinutes(startTimeObject.getHours() - 2),
               minutes: formatHoursAndMinutes(startTimeObject.getMinutes()),
+              endHours: formatHoursAndMinutes(endTimeObject.getHours() - 2),
+              endMinutes: formatHoursAndMinutes(endTimeObject.getMinutes()),
               cityDistrict,
-              parkingDistrict
+              parkingDistrict,
+              durationObj,
+              onGoing: false
             });
             return resultsArr
           } else {
+            //time to start
             startTimeObject.setDate(startTimeObject.getDate() + sortWeek().indexOf(daysIndex[1]))
             durationObj = duration(nowTimeObj, startTimeObject)
             resultsArr.push({
@@ -220,12 +229,16 @@ function calculateWhen(results) {
               day: daysIndex[1],
               hours: formatHoursAndMinutes(startTimeObject.getHours() - 2),
               minutes: formatHoursAndMinutes(startTimeObject.getMinutes()),
+              endHours: formatHoursAndMinutes(endTimeObject.getHours() - 2),
+              endMinutes: formatHoursAndMinutes(endTimeObject.getMinutes()),
               cityDistrict,
-              parkingDistrict
+              parkingDistrict,
+              durationObj,
+              onGoing: false
             });
             return resultsArr
           }
-        }
+        }//time to start
         durationObj = duration(nowTimeObj, startTimeObject)
         resultsArr.push({
           startTimeObject,
@@ -233,8 +246,12 @@ function calculateWhen(results) {
           day: sortWeek()[i],
           hours: formatHoursAndMinutes(startTimeObject.getHours() - 2),
           minutes: formatHoursAndMinutes(startTimeObject.getMinutes()),
+          endHours: formatHoursAndMinutes(endTimeObject.getHours() - 2),
+          endMinutes: formatHoursAndMinutes(endTimeObject.getMinutes()),
           cityDistrict,
-          parkingDistrict
+          parkingDistrict,
+          durationObj,
+          onGoing: false
         });
       }
     }

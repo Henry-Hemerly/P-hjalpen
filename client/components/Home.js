@@ -13,9 +13,26 @@ import { initialLineCoords } from '../constants/coords'
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 
-const taxa2 = [ 'Norrmalm', 'Gamla Stan' ]
-const taxa3 = [ 'Kungsholmen', 'Vasastaden', 'Östermalm', 'Södermalm', 'Södra Hammarbyhamnen', 'Hjorthagen', 'Kristineberg', 'Marieberg', 'Reimersholme', 'Lilla Essingen' ]
-const taxa4 = [ 'Traneberg', 'Ulvsunda', 'Stora Essingen', 'Gröndal', 'Aspudden', 'Midsommarkransen', 'Liljeholmen', 'Västberga', 'Årsta', 'Östberga', 'Enskedefältet', 'Enskede gård', 'Johanneshov', 'Gamla Enskede', 'Hammarbyhöjden', 'Kärrtorp', 'Enskededalen', 'Björkhagen']
+const taxa2 = ['Norrmalm', 'Gamla Stan']
+const taxa3 = ['Kungsholmen', 'Vasastaden', 'Östermalm', 'Södermalm', 'Södra Hammarbyhamnen', 'Hjorthagen', 'Kristineberg', 'Marieberg', 'Reimersholme', 'Lilla Essingen']
+const taxa4 = ['Traneberg', 'Ulvsunda', 'Stora Essingen', 'Gröndal', 'Aspudden', 'Midsommarkransen', 'Liljeholmen', 'Västberga', 'Årsta', 'Östberga', 'Enskedefältet', 'Enskede gård', 'Johanneshov', 'Gamla Enskede', 'Hammarbyhöjden', 'Kärrtorp', 'Enskededalen', 'Björkhagen']
+
+const taxa1Avgift='50kr 00-24'
+const taxa2Avgift= {
+  weekday:'26kr/h 07-21',
+  weekend:'26kr/h 09-19',
+  other: '15kr/h'
+}
+const taxa3Avgift= {
+  weekday:'15kr/h 07-19',
+  weekend:'10kr/h 11-17',
+  other: 'ingen avgift'
+}
+const taxa4Avgift= {
+  weekday:'10kr/h 07-19',
+  weekend:'10kr/h 11-17',
+  other: 'ingen avgift'
+}
 
 PushNotification.configure({
   onRegister: function (token) {
@@ -67,6 +84,8 @@ const initialPosition = {
 function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCarConnection, setInvalidTime }) {
   const [region, setRegion] = React.useState(initialPosition);
   const [panelData, setPanelData] = React.useState("");
+  const [timeData, setTimeData] = React.useState("");
+  const [onGoing, setOngoing] = React.useState(false);
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
   const [lineCoords, setLineCoords] = React.useState(initialLineCoords)
   const [justUpdated, setJustUpdated] = React.useState(false);
@@ -166,7 +185,10 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           await axios.get(`${apiUrl}${newPosition.adress}`)
             .then(res => {
               console.log(res.data.length)
-              setPanelData(res.data.length ? `${res.data[0].day} kl. ${res.data[0].hours}:${res.data[0].minutes}` : '')
+              let dayString = res.data[0].day.slice(0,3)
+              setPanelData(res.data.length ? `${dayString} kl. ${res.data[0].hours}-${res.data[0].endHours}` : '')
+              setTimeData(res.data[0].durationObj)
+              setOngoing(res.data[0].onGoing)
               setInvalidTime(res.data[0].startTimeObject ? res.data[0].startTimeObject : undefined)
             })
             .catch(err => console.log(err));
@@ -190,11 +212,12 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           />
         ))}
         <Marker draggable coordinate={currentPosition}>
-          <Image source={require('../images/marker.png')} style={{ height: 50, width: 50, resizeMode: 'contain' }} />
+          <Image source={require('../images/person.png')} style={{ height: 60, width: 60, resizeMode: 'contain' }} />
         </Marker>
-        <Marker coordinate={count.parked ? count.parkedPosition : currentPosition}>
-          <Image source={require('../images/parked_car2x.png')} style={{ height: 50, width: 50, resizeMode: 'contain', position: 'relative', bottom: 40 }} />
-        </Marker>
+        {count.parked ? <Marker coordinate={count.parked ? count.parkedPosition : currentPosition}>
+          <Image source={require('../images/parked_car2x.png')} style={{ height: 50, width: 50, resizeMode: 'contain', position: 'relative', bottom:20 }} />
+        </Marker> : null}
+
       </MapView>
       <View style={{ backgroundColor: 'white', position: "absolute", top: '7%', right: '5%', width: 50, height: 50, alignContent: "center", justifyContent: "center", borderRadius: 9 }}>
         <TouchableOpacity onPress={() => userLocation()}>
@@ -228,28 +251,34 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           <Text style={styles.panelHeader}>{count.parked ? 'Parkerad' : 'Ej parkerad'}</Text>
           <Text style={styles.text}>{count.parked ? count.parkedPosition.adress : currentPosition.adress}</Text>
           <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
-          
+
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
-            <Text style={styles.text}>{panelData ? 'Flytta senast' : 'Parkering tillåten'}</Text>
+            <View style={{ display: 'flex', flexDirection: "column" }}>
+            <Text style={styles.text}>{panelData ? 'Städgata' : 'Parkering tillåten'}</Text>
+            {timeData ? <Text>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m`:`Börjar om ${timeData.days}d ${timeData.hours}h` }</Text>:null}
+            </View>
             <Text style={styles.text}>{panelData ? panelData : ''}</Text>
           </View>
-          
+
           <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
 
           {
-            taxeomrade ? 
-            <View>
-            <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
-              <Text style={styles.text}>Taxeområde</Text>
-              <Text style={styles.text}>{checkTaxa(taxeomrade)}</Text>
-            </View>
-            
-            <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
-            </View>
-            :
-            null
+            taxeomrade ?
+              <View>
+                <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
+                <View style={{ display: 'flex', flexDirection: "column" }}>
+                  <Text style={styles.text}>Taxeområde</Text>
+                  {timeData ? <Text>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m`:`Börjar om ${timeData.days}d ${timeData.hours}h` }</Text>:null}
+                  </View>
+                  <Text style={styles.text}>{checkTaxa(taxeomrade)}</Text>
+                </View>
+
+                <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />
+              </View>
+              :
+              null
           }
-          
+
           {
             count.parked && panelData !== '' ? <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={styles.text}>Påminnelse</Text>
