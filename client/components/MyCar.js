@@ -56,7 +56,7 @@ function MyCarScreen({ navigation, count, changeRegNumber, changeCarConnection, 
             <View style={{borderColor: '#1E2657', borderWidth: 1, opacity: 0.05, marginBottom: 30}}></View>
             <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
               <Image
-                style={{ height: Dimensions.get('screen').height * 0.07, width: Dimensions.get('screen').height * 0.04, position: 'relative', top: 20, borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
+                style={{ height: 61, width: 32, position: 'relative', top: 19, borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
                 source={require('../images/sweden.png')} />
               <TextInput style={style.regNumInput} ref={c => this.text = c} maxLength={6}
                 style={{ height: 60, backgroundColor: 'white', width: '70%', marginVertical: 20,borderColor:"black",borderWidth:1, borderTopRightRadius: 10, borderBottomRightRadius: 10, fontSize: 45, fontWeight: 'bold', textAlign: 'center' }}

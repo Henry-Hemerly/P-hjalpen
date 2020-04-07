@@ -45,7 +45,7 @@ export function CustomHeader({ isHome, navigation }) {
               onPress={() => navigation.goBack()}>
               <Image
                 source={require('./images/arrow.png')}
-                style={{ height: 40, width: 30, resizeMode: 'center', left: 25, top: 10 }} />
+                style={{ height: 40, width: 35, resizeMode: 'center', left: 25, top: 10 }} />
             </TouchableOpacity>
         }
         <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'center' }}>
