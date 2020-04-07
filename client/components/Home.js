@@ -17,23 +17,6 @@ const taxa2 = ['Norrmalm', 'Gamla Stan']
 const taxa3 = ['Kungsholmen', 'Vasastaden', 'Östermalm', 'Södermalm', 'Södra Hammarbyhamnen', 'Hjorthagen', 'Kristineberg', 'Marieberg', 'Reimersholme', 'Lilla Essingen']
 const taxa4 = ['Traneberg', 'Ulvsunda', 'Stora Essingen', 'Gröndal', 'Aspudden', 'Midsommarkransen', 'Liljeholmen', 'Västberga', 'Årsta', 'Östberga', 'Enskedefältet', 'Enskede gård', 'Johanneshov', 'Gamla Enskede', 'Hammarbyhöjden', 'Kärrtorp', 'Enskededalen', 'Björkhagen']
 
-const taxa1Avgift='50kr 00-24'
-const taxa2Avgift= {
-  weekday:'26kr/h 07-21',
-  weekend:'26kr/h 09-19',
-  other: '15kr/h'
-}
-const taxa3Avgift= {
-  weekday:'15kr/h 07-19',
-  weekend:'10kr/h 11-17',
-  other: 'ingen avgift'
-}
-const taxa4Avgift= {
-  weekday:'10kr/h 07-19',
-  weekend:'10kr/h 11-17',
-  other: 'ingen avgift'
-}
-
 PushNotification.configure({
   onRegister: function (token) {
     console.log("TOKEN:", token);
@@ -89,7 +72,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
   const [lineCoords, setLineCoords] = React.useState(initialLineCoords)
   const [justUpdated, setJustUpdated] = React.useState(false);
-  const [taxeomrade, setTaxeomrade] = React.useState(undefined);
+  const [taxeomrade, setTaxeomrade] = React.useState();
 
   React.useEffect(() => {
     if (count.parked) {
@@ -149,13 +132,23 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
 
   function checkTaxa(omrade) {
     if (taxa2.includes(omrade)) {
-      return 'Taxa 2';
+      return ['Taxa 2','26kr/h 07-21','26kr/h 09-19','15kr/h'];
     } else if (taxa3.includes(omrade)) {
-      return 'Taxa 3';
+      return ['Taxa 3','15kr/h 07-19','10kr/h 11-17','ingen avgift'];
     } else if (taxa4.includes(omrade)) {
-      return 'Taxa 4';
+      return ['Taxa 4','10kr/h 07-19','10kr/h 11-17','ingen avgift'];
     }
     return 'Okänt'
+  }
+  function checkAvgif(omrade) {
+    let date = new Date().getDay()
+    if (date > 0 && date < 6) {
+      return checkTaxa(omrade)[1]
+    }else if(date == 6){
+      return checkTaxa(omrade)[2]
+    }else if(date == 0){
+      return checkTaxa(omrade)[3]
+    }
   }
 
   async function getLocation(lat, long) {
@@ -268,9 +261,12 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
                 <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
                 <View style={{ display: 'flex', flexDirection: "column" }}>
                   <Text style={styles.text}>Taxeområde</Text>
-                  {timeData ? <Text>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m`:`Börjar om ${timeData.days}d ${timeData.hours}h` }</Text>:null}
+                  {<Text>
+                    {checkAvgif(taxeomrade)}
+                    </Text>}
                   </View>
-                  <Text style={styles.text}>{checkTaxa(taxeomrade)}</Text>
+                  <Text style={styles.text}>{checkTaxa(taxeomrade)[0]}</Text>
+                  
                 </View>
 
                 <View style={{ marginVertical: 10, height: 2, backgroundColor: 'lightgrey', opacity: 0.3 }} />

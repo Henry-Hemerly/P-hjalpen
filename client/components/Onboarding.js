@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View, Image, Dimensions, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
-import { changeRegNumber, changeCarConnection, setBluetooth } from '../actions/counts.js';
-import rem from 'pr-unit';
+import { changeRegNumber } from '../actions/counts.js';
 
 ////////// New pages in onboarding
 
@@ -94,47 +93,45 @@ function Onboarding5({ navigation, changeRegNumber }) {
   const [value, setValue] = React.useState("")
   return (
     <SafeAreaView style={style.background}>
-          <KeyboardAvoidingView
-              behavior={'padding'}
-              style={{flex:1}}
-              >
-      <ScrollView style={{ marginTop: 50 }}>
-        <Text style={style.headingTwoLast}>Fyll i din bils registreringsnummer
+      <KeyboardAvoidingView
+        behavior={'padding'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView style={{ marginTop: 50 }}>
+          <Text style={style.headingTwoLast}>Fyll i din bils registreringsnummer
         </Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <Image
-            style={{ height: 61, width: 32, position: 'relative', top: 19, borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
-            source={require('../images/sweden.png')} />
-          <TextInput style={style.regNumInput} ref={c => this.text = c} maxLength={6}
-            style={{ height: 60, backgroundColor: 'white', width: '70%', marginVertical: 20, borderTopRightRadius: 10, borderBottomRightRadius: 10, fontSize: 45, fontWeight: 'bold', textAlign: 'center' }}
-            onChangeText={(text) => {
-              setValue(text);
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Image
+              style={{ height: 61, width: 32, position: 'relative', top: 19, borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
+              source={require('../images/sweden.png')} />
+            <TextInput style={style.regNumInput} ref={c => this.text = c} maxLength={6}
+              style={{ height: 60, backgroundColor: 'white', width: '70%', marginVertical: 20, borderTopRightRadius: 10, borderBottomRightRadius: 10, fontSize: 45, fontWeight: 'bold', textAlign: 'center' }}
+              onChangeText={(text) => {
+                setValue(text);
+              }}
+            >
+            </TextInput>
+          </View>
+        </ScrollView>
+        <View style={{ marginBottom: 20 }}>
+          <TouchableOpacity
+            style={style.nextButton}
+            placeholder="REGNR"
+            onPress={() => {
+              changeRegNumber(value)
+              navigation.navigate('HomeApp')
             }}
           >
-          </TextInput>
-        </View>
-      </ScrollView>
-      <View style={{ marginBottom: 20 }}>
-        <TouchableOpacity
-          style={style.nextButton}
-          placeholder="REGNR"
-          onPress={() => {
-            changeRegNumber(value)
-            navigation.navigate('HomeApp')
-          }}
-        >
-          <Text style={style.nextButtonText} >
-            Spara och fortsätt
+            <Text style={style.nextButtonText} >
+              Spara och fortsätt
             </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('HomeApp')}
-        >
-          <Text style={style.skipButton}>
-            Hoppa över
-</Text>
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('HomeApp')}
+          >
+            <Text style={style.skipButton}>Hoppa över</Text>
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
