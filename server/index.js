@@ -192,7 +192,7 @@ function calculateWhen(results) {
             day: 'idag',
             hours: startTimeObject.getHours() - 2,
             minutes: startTimeObject.getMinutes(),
-            cityDistrict, 
+            cityDistrict,
             parkingDistrict
           });
           return resultsArr;
@@ -205,9 +205,9 @@ function calculateWhen(results) {
               startTimeObject,
               endTimeObject,
               day: daysIndex[0],
-              hours: startTimeObject.getHours() - 2,
-              minutes: startTimeObject.getMinutes(),
-              cityDistrict, 
+              hours: formatHoursAndMinutes(startTimeObject.getHours() - 2),
+              minutes: formatHoursAndMinutes(startTimeObject.getMinutes()),
+              cityDistrict,
               parkingDistrict
             });
             return resultsArr
@@ -218,9 +218,9 @@ function calculateWhen(results) {
               startTimeObject,
               endTimeObject,
               day: daysIndex[1],
-              hours: (startTimeObject.getHours() - 2),
-              minutes: startTimeObject.getMinutes(),
-              cityDistrict, 
+              hours: formatHoursAndMinutes(startTimeObject.getHours() - 2),
+              minutes: formatHoursAndMinutes(startTimeObject.getMinutes()),
+              cityDistrict,
               parkingDistrict
             });
             return resultsArr
@@ -231,9 +231,9 @@ function calculateWhen(results) {
           startTimeObject,
           endTimeObject,
           day: sortWeek()[i],
-          hours: startTimeObject.getHours() - 2,
-          minutes: startTimeObject.getMinutes(),
-          cityDistrict, 
+          hours: formatHoursAndMinutes(startTimeObject.getHours() - 2),
+          minutes: formatHoursAndMinutes(startTimeObject.getMinutes()),
+          cityDistrict,
           parkingDistrict
         });
       }
@@ -254,4 +254,12 @@ function duration(t0, t1) {
   ['weekdays', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'].forEach(q => { if (eval(q) > 0) { t[q] = eval(q); } });
   return t;
 }
+function formatHoursAndMinutes(digit) {
+  if (digit.toString().length === 2) {
+    return digit;
+  } else if (digit.toString().length === 1) {
+    return '0' + digit;
+  }
+}
+
 app.listen(8080, () => console.log('server running on port 8080'));

@@ -13,7 +13,9 @@ import { initialLineCoords } from '../constants/coords'
 var PushNotification = require("react-native-push-notification");
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 
-const taxa2 = [ 'Norrmalm', 'Vasastaden', 'Kungsholmen' ]
+const taxa2 = [ 'Norrmalm', 'Gamla Stan' ]
+const taxa3 = [ 'Kungsholmen', 'Vasastaden', 'Östermalm', 'Södermalm', 'Södra Hammarbyhamnen', 'Hjorthagen', 'Kristineberg', 'Marieberg', 'Reimersholme', 'Lilla Essingen' ]
+const taxa4 = [ 'Traneberg', 'Ulvsunda', 'Stora Essingen', 'Gröndal', 'Aspudden', 'Midsommarkransen', 'Liljeholmen', 'Västberga', 'Årsta', 'Östberga', 'Enskedefältet', 'Enskede gård', 'Johanneshov', 'Gamla Enskede', 'Hammarbyhöjden', 'Kärrtorp', 'Enskededalen', 'Björkhagen']
 
 PushNotification.configure({
   onRegister: function (token) {
@@ -129,6 +131,10 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
   function checkTaxa(omrade) {
     if (taxa2.includes(omrade)) {
       return 'Taxa 2';
+    } else if (taxa3.includes(omrade)) {
+      return 'Taxa 3';
+    } else if (taxa4.includes(omrade)) {
+      return 'Taxa 4';
     }
     return 'Okänt'
   }
