@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { changeRegNumber, changeCarConnection, setBluetooth } from '../actions/counts.js';
 import { connect } from 'react-redux';
-import { Button, View, Text, SafeAreaView, Image, Dimensions, TouchableOpacity, TextInput, KeyboardAvoidingView,StyleSheet } from 'react-native';
+import { Button, View, Text, SafeAreaView, Image, Dimensions, TouchableOpacity, TextInput, KeyboardAvoidingView,StyleSheet, ScrollView } from 'react-native';
 import { CustomHeader } from '../App'
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
@@ -47,7 +47,11 @@ function MyCarScreen({ navigation, count, changeRegNumber, changeCarConnection, 
       const [value, setValue] = React.useState("")
       return (
         <SafeAreaView style={style.background}>
-          <View style={{ marginTop: '5%' }}>
+              <KeyboardAvoidingView
+              behavior={'padding'}
+              style={{flex:1}}
+              >
+          <ScrollView style={{ marginTop: '5%' ,paddingHorizontal: 20}}>
             <Text style={{fontSize: 30, fontWeight: '700', letterSpacing: 0.75, marginHorizontal: 25, marginTop: 1, marginBottom: 20, color: '#1E2657'}}>Ange reg-nummer</Text>
             <View style={{borderColor: '#1E2657', borderWidth: 1, opacity: 0.05, marginBottom: 30}}></View>
             <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -62,22 +66,30 @@ function MyCarScreen({ navigation, count, changeRegNumber, changeCarConnection, 
               >
               </TextInput>
             </View>
-          </View>
+            </ScrollView>
           <View style={{ marginBottom: 20 }}>
-          <KeyboardAvoidingView>
+   
+            
             <TouchableOpacity
               style={style.nextButton}
               onPress={() => {
                 changeRegNumber(value)
                 navigation.navigate('HomeApp')
               }}
-            >
+              >
               <Text style={style.nextButtonText} >
                 Spara och fortsätt
                       </Text>
             </TouchableOpacity>
-          </KeyboardAvoidingView>
+            <TouchableOpacity
+          onPress={() => navigation.navigate('HomeApp')}
+          >
+          <Text style={style.skipButton}>
+            Hoppa över
+            </Text>
+        </TouchableOpacity>
           </View>
+          </KeyboardAvoidingView>
         </SafeAreaView>
         
       );
@@ -211,7 +223,7 @@ const style = StyleSheet.create({
     marginHorizontal: 22,
     height: 68,
     position: "relative",
-    bottom: 200
+    bottom: 170
   },
   nextButtonText: {
     alignSelf: 'center',
@@ -221,11 +233,13 @@ const style = StyleSheet.create({
     fontSize: Dimensions.get('screen').height * 0.022,
   },
   skipButton: {
-    color: '#fff',
+    color: 'steelblue',
     fontSize: 16,
     alignSelf: 'center',
     lineHeight: 30,
-    marginTop: 22
+    marginTop: 22,
+    position: "relative",
+    bottom: 170
   },
   regNumInput: {
     height: '20%',

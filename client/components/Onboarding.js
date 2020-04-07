@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View, Image, Dimensions } from 'react-native';
+import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View, Image, Dimensions, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { changeRegNumber, changeCarConnection, setBluetooth } from '../actions/counts.js';
 import rem from 'pr-unit';
@@ -94,7 +94,11 @@ function Onboarding5({ navigation, changeRegNumber }) {
   const [value, setValue] = React.useState("")
   return (
     <SafeAreaView style={style.background}>
-      <View style={{ marginTop: 50 }}>
+          <KeyboardAvoidingView
+              behavior={'padding'}
+              style={{flex:1}}
+              >
+      <ScrollView style={{ marginTop: 50 }}>
         <Text style={style.headingTwoLast}>Fyll i din bils registreringsnummer
         </Text>
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -109,7 +113,7 @@ function Onboarding5({ navigation, changeRegNumber }) {
           >
           </TextInput>
         </View>
-      </View>
+      </ScrollView>
       <View style={{ marginBottom: 20 }}>
         <TouchableOpacity
           style={style.nextButton}
@@ -131,6 +135,7 @@ function Onboarding5({ navigation, changeRegNumber }) {
 </Text>
         </TouchableOpacity>
       </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
