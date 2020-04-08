@@ -59,8 +59,8 @@ const apiUrl = 'http://localhost:8080/api/adresses/';
 const apiRegionUrl = 'http://localhost:8080/api/regions/';
 
 const initialPosition = {
-  latitude: 59.3324,
-  longitude: 18.0645,
+  latitude: 59.336200,
+  longitude: 18.085480,
   latitudeDelta: 0.006,
   longitudeDelta: 0.004,
   adress: ''
@@ -107,6 +107,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
       latitudeDelta: 0.005,
       longitudeDelta: 0.005
     })
+    setTimeout(() => getLineCoords(currentPosition.latitude, currentPosition.longitude), 500);
   }
 
   function carLocation() {
@@ -116,6 +117,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
       latitudeDelta: 0.005,
       longitudeDelta: 0.005
     });
+    setTimeout(() => getLineCoords(count.parkedPosition.latitude, count.parkedPosition.longitude), 500);
   }
 
   async function getLineCoords(lat, long) {
@@ -179,12 +181,13 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           setCurrentPosition(newPosition);
           await axios.get(`${apiUrl}${newPosition.adress}`)
             .then(res => {
-              console.log(res.data.length)
-              let dayString = res.data[0].day.slice(0, 3)
-              setPanelData(res.data.length ? `${dayString} kl. ${res.data[0].hours}-${res.data[0].endHours}` : '')
-              setTimeData(res.data[0].durationObj)
-              setOngoing(res.data[0].onGoing)
-              setInvalidTime(res.data[0].startTimeObject ? res.data[0].startTimeObject : undefined)
+              if (res.data && res.data[0]) {
+                let dayString = res.data[0].day.slice(0, 3);
+                setPanelData(`${dayString} kl. ${res.data[0].hours}-${res.data[0].endHours}`)
+                setTimeData(res.data[0].durationObj)
+                setOngoing(res.data[0].onGoing)
+                setInvalidTime(res.data[0].startTimeObject)
+              }
             })
             .catch(err => console.log(err));
         }}
@@ -202,7 +205,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
         {lineCoords.map((c, i) => (
           <Polyline key={i}
             coordinates={c}
-            strokeColor="rgb(235, 141, 141)"
+            strokeColor="#2EA6D7"
             strokeWidth={4}
           />
         ))}
@@ -255,10 +258,16 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
           <View style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between" }}>
             <View style={{ flexDirection: "row" }} >
               <Image style={{ height: 24, width: 19, marginRight: 13, marginTop: 2 }} source={require('../images/cleaning2x.png')} />
+              { panelData && timeData.days !== undefined ?
               <View style={{ display: 'flex' }}>
                 <Text style={styles.text}>{panelData ? 'Städgata' : 'Parkering tillåten'}</Text>
-                {timeData ? <Text>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m` : `Börjar om ${timeData.days}d ${timeData.hours}h`}</Text> : null}
+                {timeData ? <Text style={{ marginTop: 5, color: '#767C9F' }}>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m` : `Börjar om ${timeData.days}d ${timeData.hours}h`}</Text> : null}
               </View>
+              :
+              <View style={{ display: 'flex' }}>
+                <Text style={styles.text}>{panelData ? 'Städgata' : 'Parkering tillåten'}</Text>
+                {timeData ? <Text style={{ marginTop: 5, color: '#767C9F' }}>{onGoing ? `Slutar om ${timeData.hours}h ${timeData.minutes}m` : `Börjar om ${timeData.hours}h`}</Text> : null}
+              </View>}
             </View>
             <Text style={styles.text}>{panelData ? panelData : ''}</Text>
           </View>
@@ -277,7 +286,7 @@ function HomeScreen({ navigation, count, changeCount, changeParkedPos, changeCar
                     />
                     <View style={{ display: 'flex' }}>
                       <Text style={styles.text}>Taxeområde</Text>
-                      {<Text>
+                      {<Text style={{ marginTop: 5, color: '#767C9F'}}>
                         {checkAvgif(taxeomrade)}
                       </Text>}
                     </View>

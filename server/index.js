@@ -94,7 +94,7 @@ app.get('/api/regions/:region', async (req, res) => {
   const lat = req.params.region.split(',')[0]
   const long = req.params.region.split(',')[1]
 
-  const locUrl = `https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/within?radius=300&lat=${lat}&lng=${long}&maxFeatures=50&outputFormat=json&apiKey=${process.env.openStreet}`
+  const locUrl = `https://openparking.stockholm.se/LTF-Tolken/v1/servicedagar/within?radius=300&lat=${lat}&lng=${long}&maxFeatures=300&outputFormat=json&apiKey=${process.env.openStreet}`
 
   const response = await axios.get(locUrl).catch((error) => console.log(error))
   const responses = []
