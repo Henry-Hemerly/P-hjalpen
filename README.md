@@ -1,5 +1,5 @@
 # P-Hjälpen iOS application
-# Graduation Project - School of Applied Technology
+# Graduation Project - School of Applied Technology </SALT>
 
 Teck stack:
 - React Native
