@@ -1,134 +1,59 @@
 import * as React from 'react';
-import { Text, TextInput, SafeAreaView, StyleSheet, TouchableOpacity, View, Image, Dimensions, ScrollView, KeyboardAvoidingView } from 'react-native';
-import { connect } from 'react-redux';
-import { changeRegNumber } from '../actions/counts.js';
+import {
+  Text,
+  TextInput,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Image,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+} from 'react-native';
+import {connect} from 'react-redux';
+import {changeRegNumber, seenOnboarding} from '../actions/counts.js';
 
-////////// New pages in onboarding
-
-export function Onboarding1({ navigation }) {
+function Onboarding5({navigation, changeRegNumber}) {
+  const [value, setValue] = React.useState('');
   return (
     <SafeAreaView style={style.background}>
-      <View style={{ marginTop: 50 }}>
-        <Text style={style.heading}>Nu är det slut på{"\n"}P-böter!</Text>
-        <Text style={style.description}>Våra tester som vi utfört på bilägare i Stockholm visar att de minskade risken för att få P-böter upp till 70%.</Text>
-      </View>
-      <View style={{ marginBottom: 20 }}>
-        <TouchableOpacity
-          style={style.nextButton}
-          onPress={() => navigation.navigate('Onboarding2')}>
-          <Text style={style.nextButtonText} >
-            Nästa
-            </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('HomeApp')}
-        >
-          <Text style={style.skipButton}>
-            Hoppa över
+      <KeyboardAvoidingView behavior={'padding'} style={{flex: 1}}>
+        <ScrollView style={{marginTop: 50}}>
+          <Text style={style.headingTwoLast}>
+            Fyll i din bils registreringsnummer
           </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-}
-
-export function Onboarding2({ navigation }) {
-  return (
-    <SafeAreaView style={style.background}>
-      <View style={{ marginTop: 50 }}>
-        <Text style={style.heading}>Glömt städgata igen?</Text>
-        <Text style={style.description}>P-hjälpen glömmer inte när det är dags att flytta på bilen. Välj när du vill bli påmind.</Text>
-      </View>
-      <View style={{ marginBottom: 20 }}>
-        <TouchableOpacity
-          style={style.nextButton}
-          onPress={() => navigation.navigate('Onboarding3')}>
-          <Text style={style.nextButtonText}>
-            Nästa
-            </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('HomeApp')}
-        >
-          <Text style={style.skipButton}>
-            Hoppa över
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-};
-
-export function Onboarding3({ navigation }) {
-  return (
-    <SafeAreaView style={style.background}>
-      <View style={{ marginTop: 50 }}>
-        <Text style={style.heading}>P-hjälpen påminner dig när det är dags!
-        </Text>
-        <Text style={style.description}>P-hjälpen är skapad av bilägare för bilägare i syfte spara dina pengar till något vettigare.
-        </Text>
-      </View>
-      <View style={{ marginBottom: 20 }}>
-        <TouchableOpacity
-          style={style.nextButton}
-          onPress={() => navigation.navigate('Onboarding4')}>
-          <Text style={style.nextButtonText} >
-            Nästa
-            </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('HomeApp')}
-        >
-          <Text style={style.skipButton}>
-            Hoppa över
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-}
-
-function Onboarding5({ navigation, changeRegNumber }) {
-
-  const [value, setValue] = React.useState("")
-  return (
-    <SafeAreaView style={style.background}>
-      <KeyboardAvoidingView
-        behavior={'padding'}
-        style={{ flex: 1 }}
-      >
-        <ScrollView style={{ marginTop: 50 }}>
-          <Text style={style.headingTwoLast}>Fyll i din bils registreringsnummer
-        </Text>
-          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Image
-              style={{ height: 61, width: 32, position: 'relative', top: 19, borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
-              source={require('../images/sweden.png')} />
-            <TextInput style={style.regNumInput} ref={c => this.text = c} maxLength={6}
-              style={{ height: 60, backgroundColor: 'white', width: '70%', marginVertical: 20, borderTopRightRadius: 10, borderBottomRightRadius: 10, fontSize: 45, fontWeight: 'bold', textAlign: 'center' }}
-              onChangeText={(text) => {
+              style={style.image}
+              source={require('../images/sweden.png')}
+            />
+            <TextInput
+              ref={c => (this.text = c)}
+              maxLength={6}
+              style={style.regNumInput}
+              onChangeText={text => {
                 setValue(text);
               }}
-            >
-            </TextInput>
+            />
           </View>
         </ScrollView>
-        <View style={{ marginBottom: 20 }}>
+        <View style={{marginBottom: 20}}>
           <TouchableOpacity
             style={style.nextButton}
             placeholder="REGNR"
             onPress={() => {
-              changeRegNumber(value)
-              navigation.navigate('HomeApp')
-            }}
-          >
-            <Text style={style.nextButtonText} >
-              Spara och fortsätt
-            </Text>
+              changeRegNumber(value);
+              navigation.replace('HomeApp');
+              seenOnboarding(true);
+            }}>
+            <Text style={style.nextButtonText}>Spara och fortsätt</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('HomeApp')}
-          >
+            onPress={() => {
+              navigation.replace('HomeApp');
+              seenOnboarding(true);
+            }}>
             <Text style={style.skipButton}>Hoppa över</Text>
           </TouchableOpacity>
         </View>
@@ -160,23 +85,19 @@ const style = StyleSheet.create({
     lineHeight: 36,
     marginTop: '20%',
   },
-  descriptionBil: {
-    color: 'white',
-    fontSize: 22,
-    marginHorizontal: '7%',
-    lineHeight: 36,
-    marginBottom: '5%',
+  image: {
+    height: 61,
+    width: 32,
+    position: 'relative',
+    top: 19,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
   },
-  descriptionAdd: {
-    color: '#F5C932',
-    fontSize: 22,
-    marginHorizontal: '10%',
-    lineHeight: 36,
-  },
+
   background: {
     backgroundColor: '#001736',
     flex: 1,
-    justifyContent: "space-between"
+    justifyContent: 'space-between',
   },
   nextButton: {
     alignSelf: 'stretch',
@@ -198,30 +119,33 @@ const style = StyleSheet.create({
     fontSize: 16,
     alignSelf: 'center',
     lineHeight: 30,
-    marginTop: 22
+    marginTop: 22,
   },
   regNumInput: {
-    height: '20%',
+    height: 60,
     backgroundColor: 'white',
-    width: '80%',
-    alignSelf: 'center',
-    marginTop: '20%',
-    borderRadius: 50,
-    borderColor: 'black',
-    borderWidth: 2,
-  }
+    width: '70%',
+    marginVertical: 20,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    fontSize: 45,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
 
 function mapStateToProps(state) {
   return {
-    count: state,
-  }
+    count: state.count,
+  };
 }
 const mapDispatchToProps = dispatch => ({
   changeRegNumber: regNumber => dispatch(changeRegNumber(regNumber)),
-})
+  seenOnboarding: hasSeenOnboarding =>
+    dispatch(seenOnboarding(hasSeenOnboarding)),
+});
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
-)(Onboarding5)
+  mapDispatchToProps,
+)(Onboarding5);

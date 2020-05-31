@@ -1,201 +1,264 @@
 import * as React from 'react';
-import { changeRegNumber, changeCarConnection, setBluetooth } from '../actions/counts.js';
-import { connect } from 'react-redux';
-import { Button, View, Text, SafeAreaView, Image, Dimensions, TouchableOpacity, TextInput, KeyboardAvoidingView,StyleSheet, ScrollView } from 'react-native';
-import { CustomHeader } from '../App'
+import {
+  changeRegNumber,
+  changeCarConnection,
+  setBluetooth,
+} from '../actions/counts.js';
+import {connect} from 'react-redux';
+import {
+  Button,
+  View,
+  Text,
+  SafeAreaView,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
+import {CustomHeader} from '../App';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
-function MyCarScreen({ navigation, count, changeRegNumber, changeCarConnection, setBluetooth }) {
+function MyCarScreen({
+  navigation,
+  count,
+  changeRegNumber,
+  changeCarConnection,
+  setBluetooth,
+}) {
   function pair() {
-
     function Bluetooth() {
-      let devices = ['Audi MMI 335', 'Beolit 15', 'Bose Mini Soundlink']
+      let devices = ['Audi MMI 335', 'Beolit 15', 'Bose Mini Soundlink'];
       return (
         <SafeAreaView style={style.background}>
-          <View style={{ marginTop: '5%' }}>
-            <Text style={{fontSize: 32, fontWeight: '700', letterSpacing: 0.75, marginHorizontal: 25, marginTop: 1, marginBottom: 20, color: '#1E2657'}}>Välj din bil</Text>
-            <View style={{borderColor: '#1E2657', borderWidth: 1, opacity: 0.05, marginBottom: 30}}></View>
+          <View style={{marginTop: '5%'}}>
+            <Text style={style.heading}>Välj din bil</Text>
+            <View style={style.line} />
             {devices.map((dev, index) => (
-              <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text ref={c => this.text = c}
-                  style={style.descriptionBil}>{dev}
+              <View key={index} style={style.rows}>
+                <Text ref={c => (this.text = c)} style={style.descriptionBil}>
+                  {dev}
                 </Text>
-                <TouchableOpacity onPress={() => {
-                  changeCarConnection(true)
-                  setBluetooth(dev)
-                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    changeCarConnection(true);
+                    setBluetooth(dev);
+                  }}>
                   <Text style={style.descriptionAdd}>Lägg till</Text>
                 </TouchableOpacity>
               </View>
             ))}
           </View>
-          {/* <View style={{ marginBottom: 20 }}>
-            <TouchableOpacity
-              style={style.nextButton}
-              onPress={() => navigation.navigate('Onboarding5')}>
-              <Text style={style.nextButtonText} >Nästa</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('HomeApp')}>
-              <Text style={style.skipButton}>Hoppa över</Text>
-            </TouchableOpacity>
-          </View> */}
         </SafeAreaView>
       );
     }
     function RegNumber() {
-      const [value, setValue] = React.useState("")
+      const [value, setValue] = React.useState('');
       return (
         <SafeAreaView style={style.background}>
-              <KeyboardAvoidingView
-              behavior={'padding'}
-              style={{flex:1}}
-              >
-          <ScrollView style={{ marginTop: '5%' ,paddingHorizontal: 20}}>
-            <Text style={{fontSize: 30, fontWeight: '700', letterSpacing: 0.75, marginHorizontal: 25, marginTop: 1, marginBottom: 20, color: '#1E2657'}}>Ange reg-nummer</Text>
-            <View style={{borderColor: '#1E2657', borderWidth: 1, opacity: 0.05, marginBottom: 30}}></View>
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <Image
-                style={{ height: 61, width: 32, position: 'relative', top: 19, borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
-                source={require('../images/sweden.png')} />
-              <TextInput style={style.regNumInput} ref={c => this.text = c} maxLength={6}
-                style={{ height: 60, backgroundColor: 'white', width: '70%', marginVertical: 20,borderColor:"black",borderWidth:1, borderTopRightRadius: 10, borderBottomRightRadius: 10, fontSize: 45, fontWeight: 'bold', textAlign: 'center' }}
-                onChangeText={(text) => {
-                  setValue(text);
-                }}
-              >
-              </TextInput>
-            </View>
+          <KeyboardAvoidingView behavior={'padding'} style={{flex: 1}}>
+            <ScrollView style={{marginTop: '5%', paddingHorizontal: 20}}>
+              <Text style={style.heading}>Ange reg-nummer</Text>
+              <View style={style.line} />
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Image
+                  style={style.image}
+                  source={require('../images/sweden.png')}
+                />
+                <TextInput
+                  style={style.regNumInput}
+                  ref={c => (this.text = c)}
+                  maxLength={6}
+                  onChangeText={text => {
+                    setValue(text);
+                  }}
+                />
+              </View>
             </ScrollView>
-          <View style={{ marginBottom: 20 }}>
-   
-            
-            <TouchableOpacity
-              style={style.nextButton}
-              onPress={() => {
-                changeRegNumber(value)
-                navigation.navigate('HomeApp')
-              }}
-              >
-              <Text style={style.nextButtonText} >
-                Spara och fortsätt
-                      </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-          onPress={() => navigation.navigate('HomeApp')}
-          >
-          <Text style={style.skipButton}>
-            Hoppa över
-            </Text>
-        </TouchableOpacity>
-          </View>
+            <View style={{marginBottom: 20}}>
+              <TouchableOpacity
+                style={style.nextButton}
+                onPress={() => {
+                  changeRegNumber(value);
+                  navigation.navigate('HomeApp');
+                }}>
+                <Text style={style.nextButtonText}>Spara och fortsätt</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('HomeApp')}>
+                <Text style={style.skipButton}>Hoppa över</Text>
+              </TouchableOpacity>
+            </View>
           </KeyboardAvoidingView>
         </SafeAreaView>
-        
       );
     }
 
     return (
       <View>
-            <View>
-              <Image style={{alignSelf: 'center', marginBottom: 25, marginTop: '25%'}} source={require('../images/my_car3x.png')}/>
-                <Text style={{fontSize: 20, fontWeight: '500', color: '#1E2657', marginLeft: 25, marginRight: 25, textAlign: 'center', lineHeight: 30}}>För att den här tjänsten ska fungera så behöver du välja din bils blåtandsuppkoppling.
-                </Text>
-            </View>
-          
-            <View style={{marginTop: 30}}>
-              <TouchableOpacity style={style.parkingButton} title='Lägg till din bil' onPress={() => this._panel.show()}>
-                  <Text style={style.parkingButtonText}>
-                    Lägg till din bil
-                  </Text>
-                </TouchableOpacity>
-            </View>
+        <View>
+          <Image
+            style={style.icon}
+            source={require('../images/my_car3x.png')}
+          />
+          <Text style={style.text}>
+            För att den här tjänsten ska fungera så behöver du välja din bils
+            blåtandsuppkoppling.
+          </Text>
+        </View>
+        <View style={{marginTop: 30}}>
+          <TouchableOpacity
+            style={style.parkingButton}
+            title="Lägg till din bil"
+            onPress={() => this._panel.show()}>
+            <Text style={style.parkingButtonText}>Lägg till din bil</Text>
+          </TouchableOpacity>
+        </View>
         <SlidingUpPanel
           draggableRange={{
-            top: Dimensions.get('screen').height * 0.80,
-            bottom: 0
+            top: Dimensions.get('screen').height * 0.8,
+            bottom: 0,
           }}
           backdropOpacity={0}
           allowDragging={false}
-          ref={c => this._panel = c}>
+          ref={c => (this._panel = c)}>
           <View style={style.slide}>
             {count.bluetoothName == '' ? <Bluetooth /> : <RegNumber />}
           </View>
         </SlidingUpPanel>
       </View>
-    )
+    );
   }
   function remove() {
     return (
       <View style={{flex: 1, alignItems: 'flex-start'}}>
-      <Text style={{fontSize: 14, fontWeight: '700', color: '#4878D3', letterSpacing: 1.5, marginBottom: 20, marginBottom: 25, marginHorizontal: 25, marginTop: 50}}>PARKOPPLAD BIL</Text>
-      <View style={{flexDirection: 'row', marginLeft: 25, justifyContent: 'space-between', width: '90%', alignContent: 'center'}}>
-        <Text style={{fontSize: 40, fontWeight: '700', letterSpacing: 1.5, color: '#1E2657'}}>{count.registrationNumber.toUpperCase()}</Text>
-        <View style={{paddingTop: '1%'}}>
-          <Button title="Ta bort" onPress={() => {
-              changeRegNumber("")
-              setBluetooth("")
-            }
-          }/>
+        <Text style={style.removeText}>PARKOPPLAD BIL</Text>
+        <View style={style.removeView}>
+          <Text style={style.removeSmall}>
+            {count.registrationNumber.toUpperCase()}
+          </Text>
+          <View style={{paddingTop: '1%'}}>
+            <Button
+              title="Ta bort"
+              onPress={() => {
+                changeRegNumber('');
+                setBluetooth('');
+              }}
+            />
+          </View>
         </View>
+        <Text style={style.btName}>{count.bluetoothName}</Text>
       </View>
-        <Text style={{marginHorizontal: 25, color: '#767C9F', fontSize: 14}}>
-          {count.bluetoothName}
-        </Text>
-  </View>
-    )
+    );
   }
   return (
-    <SafeAreaView style={{ flex: 1}}>
-    <CustomHeader navigation={navigation}/>
-    <Text style={{fontSize: 35, fontWeight: '700', letterSpacing: 0.75, marginHorizontal: 25, marginTop: 30, marginBottom: 20, color: '#1E2657'}}>Min bil</Text>
-    <View style={{borderColor: '#1E2657', borderWidth: 1, opacity: 0.05}}></View>
-    <View style={{flex: 1,}}>
-        {count.registrationNumber === "" ? pair() : remove() }
-    </View>
-  </SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
+      <CustomHeader navigation={navigation} />
+      <Text style={style.headingTwoLast}>Min bil</Text>
+      <View style={{borderColor: '#1E2657', borderWidth: 1, opacity: 0.05}} />
+      <View style={{flex: 1}}>
+        {count.registrationNumber === '' ? pair() : remove()}
+      </View>
+    </SafeAreaView>
   );
 }
 
 function mapStateToProps(state) {
   return {
     count: state.count,
-  }
+  };
 }
 
 const mapDispatchToProps = dispatch => ({
   changeRegNumber: regNumber => dispatch(changeRegNumber(regNumber)),
-  changeCarConnection: isConnected => dispatch(changeCarConnection(isConnected)),
+  changeCarConnection: isConnected =>
+    dispatch(changeCarConnection(isConnected)),
   setBluetooth: connection => dispatch(setBluetooth(connection)),
-})
+});
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
-)(MyCarScreen)
-
+  mapDispatchToProps,
+)(MyCarScreen);
 
 const style = StyleSheet.create({
   heading: {
-    color: '#F5C932',
-    fontSize: 57,
-    textAlign: 'left',
+    fontSize: 32,
     fontWeight: '700',
-    marginLeft: 28,
-    marginRight: 90,
+    letterSpacing: 0.75,
+    marginHorizontal: 25,
+    marginTop: 1,
+    marginBottom: 20,
+    color: '#1E2657',
+  },
+  rows: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  line: {
+    borderColor: '#1E2657',
+    borderWidth: 1,
+    opacity: 0.05,
+    marginBottom: 30,
+  },
+  icon: {
+    alignSelf: 'center',
+    marginBottom: 25,
+    marginTop: '25%',
+  },
+  image: {
+    height: 61,
+    width: 32,
+    position: 'relative',
+    top: 19,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#1E2657',
+    marginLeft: 25,
+    marginRight: 25,
+    textAlign: 'center',
+    lineHeight: 30,
+  },
+  removeText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4878D3',
+    letterSpacing: 1.5,
+    marginBottom: 20,
+    marginBottom: 25,
+    marginHorizontal: 25,
+    marginTop: 50,
+  },
+  removeView: {
+    flexDirection: 'row',
+    marginLeft: 25,
+    justifyContent: 'space-between',
+    width: '90%',
+    alignContent: 'center',
+  },
+  removeSmall: {
+    fontSize: 40,
+    fontWeight: '700',
+    letterSpacing: 1.5,
+    color: '#1E2657',
+  },
+  btName: {
+    marginHorizontal: 25,
+    color: '#767C9F',
+    fontSize: 14,
   },
   headingTwoLast: {
-    color: '#F5C932',
-    fontSize: 32,
-    textAlign: 'center',
+    fontSize: 35,
     fontWeight: '700',
-    marginBottom: '20%',
-  },
-  description: {
-    color: 'white',
-    fontSize: 22,
-    marginHorizontal: '7%',
-    lineHeight: 36,
-    marginTop: '20%',
+    letterSpacing: 0.75,
+    marginHorizontal: 25,
+    marginTop: 30,
+    marginBottom: 20,
+    color: '#1E2657',
   },
   descriptionBil: {
     color: '#1E2657',
@@ -203,7 +266,7 @@ const style = StyleSheet.create({
     marginHorizontal: '7%',
     lineHeight: 36,
     marginBottom: '5%',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   descriptionAdd: {
     color: 'steelblue',
@@ -213,7 +276,7 @@ const style = StyleSheet.create({
   },
   background: {
     flex: 1,
-    justifyContent: "space-between"
+    justifyContent: 'space-between',
   },
   nextButton: {
     alignSelf: 'stretch',
@@ -222,8 +285,8 @@ const style = StyleSheet.create({
     borderWidth: 1,
     marginHorizontal: 22,
     height: 68,
-    position: "relative",
-    bottom: 170
+    position: 'relative',
+    bottom: 170,
   },
   nextButtonText: {
     alignSelf: 'center',
@@ -238,29 +301,32 @@ const style = StyleSheet.create({
     alignSelf: 'center',
     lineHeight: 30,
     marginTop: 22,
-    position: "relative",
-    bottom: 170
+    position: 'relative',
+    bottom: 170,
   },
   regNumInput: {
-    height: '20%',
+    height: 60,
     backgroundColor: 'white',
-    width: '80%',
-    alignSelf: 'center',
-    marginTop: '20%',
-    borderRadius: 50,
+    width: '70%',
+    marginVertical: 20,
     borderColor: 'black',
-    borderWidth: 2,
+    borderWidth: 1,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    fontSize: 45,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   slide: {
     backgroundColor: '#fff',
     position: 'relative',
     top: '31%',
-    height: "100%",
-    width: "100%",
+    height: '100%',
+    width: '100%',
     borderWidth: 0,
     borderColor: '#F56',
     borderTopLeftRadius: 30,
-    borderTopRightRadius:30,
+    borderTopRightRadius: 30,
     paddingVertical: 5,
   },
   parkingButton: {
@@ -271,12 +337,12 @@ const style = StyleSheet.create({
     marginHorizontal: '10%',
     height: 70,
     width: '80%',
-    justifyContent: 'center'  
+    justifyContent: 'center',
   },
-    parkingButtonText: {
+  parkingButtonText: {
     alignSelf: 'center',
     fontSize: 22,
     color: '#F5C932',
     fontWeight: '500',
-    }
+  },
 });

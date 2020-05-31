@@ -1,7 +1,7 @@
 # P-Hjälpen iOS application
 # Graduation Project - School of Applied Technology </SALT>
 
-Teck stack:
+Tech stack:
 - React Native
 - Node.js
 - Express JS

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   Text,
+  TextInput,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
@@ -8,47 +9,23 @@ import {
   Dimensions,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {
-  changeCarConnection,
-  setBluetooth,
-  seenOnboarding,
-} from '../actions/counts.js';
+import {changeRegNumber, seenOnboarding} from '../actions/counts.js';
+import {setStringValue} from '../utils/asyncStorage';
 
-function Onboarding4({
-  navigation,
-  count,
-  changeCarConnection,
-  setBluetooth,
-  seenOnboarding,
-}) {
-  let devices = ['Audi MMI 335', 'Beolit 15', 'Bose Mini Sound'];
+function Onboarding1({navigation, seenOnboarding, count}) {
   return (
     <SafeAreaView style={style.background}>
-      <View style={{marginTop: '15%'}}>
-        <Text style={style.headingTwoLast}>
-          Välj din bils Bluetooth uppkoppling
+      <View style={{marginTop: 50}}>
+        <Text style={style.heading}>Nu är det slut på{'\n'}P-böter!</Text>
+        <Text style={style.description}>
+          Våra tester som vi utfört på bilägare i Stockholm visar att de
+          minskade risken för att få P-böter upp till 70%.
         </Text>
-        {devices.map((dev, index) => (
-          <View key={index} style={style.rows}>
-            <Text ref={c => (this.text = c)} style={style.descriptionBil}>
-              {dev}
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                changeCarConnection(true);
-                setBluetooth(dev);
-                console.log(count);
-                navigation.navigate('Onboarding5');
-              }}>
-              <Text style={style.descriptionAdd}>Lägg till ></Text>
-            </TouchableOpacity>
-          </View>
-        ))}
       </View>
       <View style={{marginBottom: 20}}>
         <TouchableOpacity
           style={style.nextButton}
-          onPress={() => navigation.navigate('Onboarding5')}>
+          onPress={() => navigation.navigate('Onboarding2')}>
           <Text style={style.nextButtonText}>Nästa</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -63,30 +40,22 @@ function Onboarding4({
   );
 }
 const style = StyleSheet.create({
-  headingTwoLast: {
+  heading: {
     color: '#F5C932',
-    fontSize: 32,
-    textAlign: 'center',
+    fontSize: 57,
+    textAlign: 'left',
     fontWeight: '700',
-    marginBottom: '20%',
+    marginLeft: 28,
+    marginRight: 90,
   },
-  rows: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  descriptionBil: {
+  description: {
     color: 'white',
     fontSize: 22,
     marginHorizontal: '7%',
     lineHeight: 36,
-    marginBottom: '5%',
+    marginTop: '20%',
   },
-  descriptionAdd: {
-    color: '#F5C932',
-    fontSize: 22,
-    marginHorizontal: '10%',
-    lineHeight: 36,
-  },
+
   background: {
     backgroundColor: '#001736',
     flex: 1,
@@ -115,15 +84,13 @@ const style = StyleSheet.create({
     marginTop: 22,
   },
 });
+
 function mapStateToProps(state) {
   return {
     count: state.count,
   };
 }
 const mapDispatchToProps = dispatch => ({
-  changeCarConnection: isConnected =>
-    dispatch(changeCarConnection(isConnected)),
-  setBluetooth: connection => dispatch(setBluetooth(connection)),
   seenOnboarding: hasSeenOnboarding =>
     dispatch(seenOnboarding(hasSeenOnboarding)),
 });
@@ -131,4 +98,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Onboarding4);
+)(Onboarding1);

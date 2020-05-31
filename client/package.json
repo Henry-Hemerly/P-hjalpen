@@ -10,12 +10,14 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.10.3",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.7",
     "@react-native-community/push-notification-ios": "^1.1.1",
     "@react-navigation/drawer": "^5.4.0",
     "@react-navigation/native": "^5.1.3",
     "@react-navigation/stack": "^5.2.9",
+    "@testing-library/react": "^10.0.4",
     "axios": "^0.19.2",
     "geolib": "^3.2.1",
     "pr-unit": "^1.0.5",
@@ -23,11 +25,11 @@
     "react-native": "0.61.5",
     "react-native-ble-plx": "^1.1.1",
     "react-native-dotenv": "^0.2.0",
-    "react-native-picker-select": "^6.6.0",
     "react-native-extended-stylesheet": "^0.12.0",
     "react-native-geocoding": "^0.4.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-maps": "^0.27.1",
+    "react-native-picker-select": "^6.6.0",
     "react-native-push-notification": "^3.1.9",
     "react-native-reanimated": "^1.7.1",
     "react-native-safe-area-context": "^0.7.3",
@@ -35,6 +37,8 @@
     "react-native-vector-icons": "^6.6.0",
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
     "rn-sliding-up-panel": "^2.4.0"
   },
   "devDependencies": {
@@ -45,6 +49,7 @@
     "eslint": "^6.5.1",
     "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.56.0",
+    "react-native-mock-render": "^0.1.9",
     "react-test-renderer": "16.9.0"
   },
   "jest": {

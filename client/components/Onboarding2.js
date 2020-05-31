@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   Text,
+  TextInput,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
@@ -8,52 +9,28 @@ import {
   Dimensions,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {
-  changeCarConnection,
-  setBluetooth,
-  seenOnboarding,
-} from '../actions/counts.js';
+import {seenOnboarding} from '../actions/counts.js';
 
-function Onboarding4({
-  navigation,
-  count,
-  changeCarConnection,
-  setBluetooth,
-  seenOnboarding,
-}) {
-  let devices = ['Audi MMI 335', 'Beolit 15', 'Bose Mini Sound'];
+export function Onboarding2({navigation, seenOnboarding, count}) {
   return (
     <SafeAreaView style={style.background}>
-      <View style={{marginTop: '15%'}}>
-        <Text style={style.headingTwoLast}>
-          Välj din bils Bluetooth uppkoppling
+      <View style={{marginTop: 50}}>
+        <Text style={style.heading}>Glömt städgata igen?</Text>
+        <Text style={style.description}>
+          P-hjälpen glömmer inte när det är dags att flytta på bilen. Välj när
+          du vill bli påmind.
         </Text>
-        {devices.map((dev, index) => (
-          <View key={index} style={style.rows}>
-            <Text ref={c => (this.text = c)} style={style.descriptionBil}>
-              {dev}
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                changeCarConnection(true);
-                setBluetooth(dev);
-                console.log(count);
-                navigation.navigate('Onboarding5');
-              }}>
-              <Text style={style.descriptionAdd}>Lägg till ></Text>
-            </TouchableOpacity>
-          </View>
-        ))}
       </View>
       <View style={{marginBottom: 20}}>
         <TouchableOpacity
           style={style.nextButton}
-          onPress={() => navigation.navigate('Onboarding5')}>
+          onPress={() => navigation.navigate('Onboarding3')}>
           <Text style={style.nextButtonText}>Nästa</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             seenOnboarding(true);
+            console.log(count.hasSeenOnboarding);
             navigation.replace('HomeApp');
           }}>
           <Text style={style.skipButton}>Hoppa över</Text>
@@ -63,29 +40,20 @@ function Onboarding4({
   );
 }
 const style = StyleSheet.create({
-  headingTwoLast: {
+  heading: {
     color: '#F5C932',
-    fontSize: 32,
-    textAlign: 'center',
+    fontSize: 57,
+    textAlign: 'left',
     fontWeight: '700',
-    marginBottom: '20%',
+    marginLeft: 28,
+    marginRight: 90,
   },
-  rows: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  descriptionBil: {
+  description: {
     color: 'white',
     fontSize: 22,
     marginHorizontal: '7%',
     lineHeight: 36,
-    marginBottom: '5%',
-  },
-  descriptionAdd: {
-    color: '#F5C932',
-    fontSize: 22,
-    marginHorizontal: '10%',
-    lineHeight: 36,
+    marginTop: '20%',
   },
   background: {
     backgroundColor: '#001736',
@@ -115,15 +83,13 @@ const style = StyleSheet.create({
     marginTop: 22,
   },
 });
+
 function mapStateToProps(state) {
   return {
     count: state.count,
   };
 }
 const mapDispatchToProps = dispatch => ({
-  changeCarConnection: isConnected =>
-    dispatch(changeCarConnection(isConnected)),
-  setBluetooth: connection => dispatch(setBluetooth(connection)),
   seenOnboarding: hasSeenOnboarding =>
     dispatch(seenOnboarding(hasSeenOnboarding)),
 });
@@ -131,4 +97,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Onboarding4);
+)(Onboarding2);
