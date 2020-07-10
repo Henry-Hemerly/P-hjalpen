@@ -24,7 +24,7 @@ function Onboarding4({
   let devices = ['Audi MMI 335', 'Beolit 15', 'Bose Mini Sound'];
   return (
     <SafeAreaView style={style.background}>
-      <View style={{marginTop: '15%'}}>
+      <View>
         <Text style={style.headingTwoLast}>
           Välj din bils Bluetooth uppkoppling
         </Text>
@@ -36,8 +36,8 @@ function Onboarding4({
             <TouchableOpacity
               onPress={() => {
                 changeCarConnection(true);
+                seenOnboarding(true);
                 setBluetooth(dev);
-                console.log(count);
                 navigation.navigate('Onboarding5');
               }}>
               <Text style={style.descriptionAdd}>Lägg till ></Text>
@@ -45,7 +45,7 @@ function Onboarding4({
           </View>
         ))}
       </View>
-      <View style={{marginBottom: 20}}>
+      <View>
         <TouchableOpacity
           style={style.nextButton}
           onPress={() => navigation.navigate('Onboarding5')}>
@@ -65,10 +65,11 @@ function Onboarding4({
 const style = StyleSheet.create({
   headingTwoLast: {
     color: '#F5C932',
-    fontSize: 32,
+    fontSize: 30,
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: '20%',
+    marginTop: '15%',
   },
   rows: {
     flexDirection: 'row',
@@ -76,14 +77,14 @@ const style = StyleSheet.create({
   },
   descriptionBil: {
     color: 'white',
-    fontSize: 22,
+    fontSize: Dimensions.get('screen').height * 0.030,
     marginHorizontal: '7%',
     lineHeight: 36,
     marginBottom: '5%',
   },
   descriptionAdd: {
     color: '#F5C932',
-    fontSize: 22,
+    fontSize: Dimensions.get('screen').height * 0.030,
     marginHorizontal: '10%',
     lineHeight: 36,
   },
@@ -93,19 +94,20 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nextButton: {
+    position: 'relative',
     alignSelf: 'stretch',
     backgroundColor: '#F5C932',
     borderRadius: 34,
     borderWidth: 1,
     marginHorizontal: 22,
-    height: 68,
+    height: Dimensions.get('screen').height * 0.075,
   },
   nextButtonText: {
     alignSelf: 'center',
-    paddingVertical: 21,
-    fontSize: 22,
+    position: 'absolute',
+    top: '25%',
+    fontSize: Dimensions.get('screen').height * 0.03,
     color: '#1E2657',
-    fontSize: Dimensions.get('screen').height * 0.022,
   },
   skipButton: {
     color: '#fff',
@@ -113,6 +115,7 @@ const style = StyleSheet.create({
     alignSelf: 'center',
     lineHeight: 30,
     marginTop: 22,
+    marginBottom: 20,
   },
 });
 function mapStateToProps(state) {

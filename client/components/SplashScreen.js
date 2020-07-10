@@ -14,9 +14,10 @@ import {getMyStringValue} from '../utils/asyncStorage';
 
 function SplashScreen({navigation, seenOnboarding, count}) {
   setTimeout(() => {
-    count.hasSeenOnboarding
-      ? navigation.navigate('HomeApp')
-      : navigation.navigate('Onboarding1');
+    // count.hasSeenOnboarding
+    //   ? navigation.replace('HomeApp')
+    //   : navigation.replace('Onboarding1');
+    navigation.replace('Onboarding1');
     return;
   }, 3000);
   return (

@@ -14,16 +14,18 @@ import {
 import {connect} from 'react-redux';
 import {changeRegNumber, seenOnboarding} from '../actions/counts.js';
 
-function Onboarding5({navigation, changeRegNumber}) {
+// Onboarding4 is in the Bluetooth.js file
+
+function Onboarding5({navigation, seenOnboarding, changeRegNumber}) {
   const [value, setValue] = React.useState('');
   return (
     <SafeAreaView style={style.background}>
       <KeyboardAvoidingView behavior={'padding'} style={{flex: 1}}>
-        <ScrollView style={{marginTop: 50}}>
+        <ScrollView>
           <Text style={style.headingTwoLast}>
             Fyll i din bils registreringsnummer
           </Text>
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <View style={style.regNumWrapper}>
             <Image
               style={style.image}
               source={require('../images/sweden.png')}
@@ -38,7 +40,7 @@ function Onboarding5({navigation, changeRegNumber}) {
             />
           </View>
         </ScrollView>
-        <View style={{marginBottom: 20}}>
+        <View>
           <TouchableOpacity
             style={style.nextButton}
             placeholder="REGNR"
@@ -63,27 +65,13 @@ function Onboarding5({navigation, changeRegNumber}) {
 }
 
 const style = StyleSheet.create({
-  heading: {
-    color: '#F5C932',
-    fontSize: 57,
-    textAlign: 'left',
-    fontWeight: '700',
-    marginLeft: 28,
-    marginRight: 90,
-  },
   headingTwoLast: {
     color: '#F5C932',
     fontSize: 32,
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: '20%',
-  },
-  description: {
-    color: 'white',
-    fontSize: 22,
-    marginHorizontal: '7%',
-    lineHeight: 36,
-    marginTop: '20%',
+    marginTop: 50,
   },
   image: {
     height: 61,
@@ -100,19 +88,20 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nextButton: {
+    position: 'relative',
     alignSelf: 'stretch',
     backgroundColor: '#F5C932',
     borderRadius: 34,
     borderWidth: 1,
     marginHorizontal: 22,
-    height: 68,
+    height: Dimensions.get('screen').height * 0.075,
   },
   nextButtonText: {
     alignSelf: 'center',
-    paddingVertical: 21,
-    fontSize: 22,
+    position: 'absolute',
+    top: '25%',
+    fontSize: Dimensions.get('screen').height * 0.03,
     color: '#1E2657',
-    fontSize: Dimensions.get('screen').height * 0.022,
   },
   skipButton: {
     color: '#fff',
@@ -120,6 +109,7 @@ const style = StyleSheet.create({
     alignSelf: 'center',
     lineHeight: 30,
     marginTop: 22,
+    marginBottom: 20,
   },
   regNumInput: {
     height: 60,
@@ -131,6 +121,10 @@ const style = StyleSheet.create({
     fontSize: 45,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  regNumWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });
 

@@ -11,7 +11,7 @@ import {
 import MapView, {Marker, Polyline} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import {API_KEY} from 'react-native-dotenv';
-// import Geolocation from '@react-native-community/geolocation';
+import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import {getDistance} from 'geolib';
@@ -29,11 +29,14 @@ import {
 } from '../utils/notifications';
 import {taxa2, taxa3, taxa4, checkTaxa, checkAvgif} from '../utils/taxaData';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-
+//TODO: replace API_KEY with your own api key from google for the geocoder api.
 Geocoder.init(API_KEY);
-
-const apiUrl = 'http://localhost:8080/api/adresses/';
-const apiRegionUrl = 'http://localhost:8080/api/regions/';
+//TODO: CLOUD SERVER HEROKU, set this up and you dont need to worry about running a local server
+const apiUrl = 'https://damp-everglades-43130.herokuapp.com/api/adresses/';
+const apiRegionUrl = 'https://damp-everglades-43130.herokuapp.com/api/regions/';
+//TODO: LOCAL SERVER if you use these then you have to run your local server
+// const apiUrl = 'http://192.168.8.125:8080/api/adresses/';
+// const apiRegionUrl = 'http://192.168.8.125:8080/api/regions/';
 
 const taxa2Arr = [
   'Sveavägen',
@@ -64,12 +67,15 @@ const taxa1Arr = [
 ];
 
 const initialPosition = {
-  latitude: 59.3362,
-  longitude: 18.08548,
   latitudeDelta: 0.006,
   longitudeDelta: 0.004,
   adress: '',
 };
+
+Geolocation.getCurrentPosition(gps => {
+  initialPosition.latitude = gps.coords.latitude;
+  initialPosition.longitude = gps.coords.longitude;
+});
 
 // TODO: Create helper file for the mapview
 function HomeScreen({
@@ -85,6 +91,7 @@ function HomeScreen({
   const [timeData, setTimeData] = React.useState('');
   const [onGoing, setOngoing] = React.useState(false);
   const [currentPosition, setCurrentPosition] = React.useState(initialPosition);
+  const [carPosition, setCarPosition] = React.useState(initialPosition);
   const [lineCoords, setLineCoords] = React.useState(initialLineCoords);
   const [justUpdated, setJustUpdated] = React.useState(false);
   const [taxeomrade, setTaxeomrade] = React.useState('');
@@ -93,14 +100,14 @@ function HomeScreen({
   React.useEffect(() => {
     if (count.parked) {
       if (count.connectedToCar && distanceToCar() > 60) {
+        changeCarConnection(false);
         if (count.reminderTopay) {
-          changeCarConnection(false);
           sendNotification(`Du har väl inte glömt att betala p-avgiften?`);
         }
       }
       if (!count.connectedToCar && distanceToCar() < 40) {
+        changeCarConnection(true);
         if (count.reminderStoppay) {
-          changeCarConnection(true);
           sendNotification('Du har väl inte glömt att avsluta p-avgiften?');
         }
       }
@@ -135,17 +142,13 @@ function HomeScreen({
 
   function carLocation() {
     this.map.animateToRegion({
-      latitude: count.parkedPosition.latitude,
-      longitude: count.parkedPosition.longitude,
+      latitude: carPosition.latitude,
+      longitude: carPosition.longitude,
       latitudeDelta: 0.005,
       longitudeDelta: 0.005,
     });
     setTimeout(
-      () =>
-        getLineCoords(
-          count.parkedPosition.latitude,
-          count.parkedPosition.longitude,
-        ),
+      () => getLineCoords(carPosition.latitude, carPosition.longitude),
       500,
     );
   }
@@ -196,14 +199,55 @@ function HomeScreen({
     return address;
   }
 
+  async function getPanelData(adress) {
+    await axios
+      .get(`${apiUrl}${adress}`)
+      .then(res => {
+        if (res.data && res.data[0]) {
+          let dayString = res.data[0].day.slice(0, 3);
+          console.log(adress.replace(/[0-9-]/g, ''));
+          setPanelData(
+            `${dayString} kl. ${res.data[0].hours}-${res.data[0].endHours}`,
+          );
+          setTimeData(res.data[0].durationObj);
+          setOngoing(res.data[0].onGoing);
+          setInvalidTime(res.data[0].startTimeObject);
+          if (taxa1Arr.includes(adress.replace(/[0-9-]/g, '').trim())) {
+            setTaxeomrade('Taxa1');
+          } else if (taxa2Arr.includes(adress.replace(/[0-9-]/g, '').trim())) {
+            setTaxeomrade('City');
+          } else {
+            setTaxeomrade(res.data[0].parkingDistrict);
+          }
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.flexOne}>
       <MapView
         ref={c => (this.map = c)}
         style={styles.mapView}
         showsPointsOfInterest={false}
-        initialRegion={region}
-        onMarkerDragEnd={async e => {
+        showsUserLocation={true}
+        onMapReady={async () => {
+          const newPosition = {...currentPosition};
+          newPosition.adress = await getLocation(
+            newPosition.latitude,
+            newPosition.longitude,
+          );
+          setCurrentPosition(newPosition);
+          setCarPosition(
+            count.parkedPosition ? count.parkedPosition : newPosition,
+          );
+          this.region = {region};
+          const adress = count.parkedPosition
+            ? count.parkedPosition.adress
+            : carPosition.adress;
+          await getPanelData(adress);
+        }}
+        onUserLocationChange={async e => {
           const newPosition = {...currentPosition};
           newPosition.latitude = e.nativeEvent.coordinate.latitude;
           newPosition.longitude = e.nativeEvent.coordinate.longitude;
@@ -212,47 +256,19 @@ function HomeScreen({
             newPosition.longitude,
           );
           setCurrentPosition(newPosition);
-          await axios
-            .get(`${apiUrl}${newPosition.adress}`)
-            .then(res => {
-              if (res.data && res.data[0]) {
-                let dayString = res.data[0].day.slice(0, 3);
-                console.log(newPosition.adress.replace(/[0-9-]/g, ''));
-                setPanelData(
-                  `${dayString} kl. ${res.data[0].hours}-${
-                    res.data[0].endHours
-                  }`,
-                );
-                setTimeData(res.data[0].durationObj);
-                setOngoing(res.data[0].onGoing);
-                setInvalidTime(res.data[0].startTimeObject);
-                if (
-                  taxa1Arr.includes(
-                    newPosition.adress.replace(/[0-9-]/g, '').trim(),
-                  )
-                ) {
-                  setTaxeomrade('Taxa1');
-                } else if (
-                  taxa2Arr.includes(
-                    newPosition.adress.replace(/[0-9-]/g, '').trim(),
-                  )
-                ) {
-                  setTaxeomrade('City');
-                } else {
-                  setTaxeomrade(res.data[0].parkingDistrict);
-                }
-              }
-            })
-            .catch(err => console.log(err));
         }}
-        onMapReady={async () => {
-          const newPosition = {...currentPosition};
-          newPosition.adress = await getLocation(
-            newPosition.latitude,
-            newPosition.longitude,
+        initialRegion={region}
+        //onmarkerdragend is pointless for now. but we can maybe use it for dragging the car AFTER it's parked
+        onMarkerDragEnd={async e => {
+          const newCarPosition = {...currentPosition};
+          newCarPosition.latitude = e.nativeEvent.coordinate.latitude;
+          newCarPosition.longitude = e.nativeEvent.coordinate.longitude;
+          newCarPosition.adress = await getLocation(
+            newCarPosition.latitude,
+            newCarPosition.longitude,
           );
-          setCurrentPosition(newPosition);
-          this.region = {region};
+          setCarPosition(newCarPosition);
+          await getPanelData(newCarPosition.adress);
         }}
         onRegionChangeComplete={region => {
           setRegion(region);
@@ -266,73 +282,45 @@ function HomeScreen({
             strokeWidth={4}
           />
         ))}
-        <Marker draggable coordinate={currentPosition}>
-          <Image
-            source={require('../images/person.png')}
-            style={{height: 60, width: 60, resizeMode: 'contain'}}
-          />
-        </Marker>
         {count.parked ? (
-          <Marker
-            coordinate={count.parked ? count.parkedPosition : currentPosition}>
+          <Marker coordinate={count.parkedPosition}>
             <Image
               source={require('../images/parked_car2x.png')}
-              style={{
-                height: 50,
-                width: 50,
-                resizeMode: 'contain',
-                position: 'relative',
-                bottom: 20,
-              }}
+              style={styles.parkedCarIcon}
             />
           </Marker>
-        ) : null}
+        ) : (
+          <Marker draggable coordinate={currentPosition}>
+            <Image
+              source={require('../images/parked_car2x.png')}
+              style={styles.parkedCarIcon}
+            />
+          </Marker>
+        )}
       </MapView>
-      <View
-        style={{
-          backgroundColor: 'white',
-          position: 'absolute',
-          top: '7%',
-          right: '5%',
-          width: 50,
-          height: 50,
-          alignContent: 'center',
-          justifyContent: 'center',
-          borderRadius: 9,
-        }}>
+      <View style={styles.myPositionButtonContainer}>
         <TouchableOpacity onPress={() => userLocation()}>
           <Image
             source={require('../images/position2x.png')}
-            style={{width: '50%', alignSelf: 'center', resizeMode: 'contain'}}
+            style={styles.positionIcons}
           />
         </TouchableOpacity>
       </View>
-      {count.parked ? (
-        <View
-          style={{
-            backgroundColor: 'white',
-            position: 'absolute',
-            top: '15%',
-            right: '5%',
-            width: 50,
-            height: 50,
-            alignContent: 'center',
-            justifyContent: 'center',
-            borderRadius: 9,
-          }}>
-          <TouchableOpacity onPress={() => carLocation()}>
-            <Image
-              source={require('../images/car2x.png')}
-              style={{alignSelf: 'center', resizeMode: 'contain', width: '50%'}}
-            />
-          </TouchableOpacity>
-        </View>
-      ) : null}
-      <View style={styles.drawerIcon}>
+
+      <View style={styles.carPositionButtonContainer}>
+        <TouchableOpacity onPress={() => carLocation()}>
+          <Image
+            source={require('../images/car2x.png')}
+            style={styles.positionIcons}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.drawerIconContainer}>
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <Image
             source={require('../images/hamburger2x.png')}
-            style={{width: 50, height: 50}}
+            style={styles.drawerIcon}
           />
         </TouchableOpacity>
       </View>
@@ -344,24 +332,8 @@ function HomeScreen({
         }}
         backdropOpacity={0}>
         <View style={styles.slidingUpPanel}>
-          <View style={{alignItems: 'center'}}>
-            <View
-              style={{
-                marginTop: 6,
-                marginBottom: 20,
-                height: 4,
-                width: '25%',
-                backgroundColor: 'lightgrey',
-                opacity: 0.4,
-              }}
-            />
-          </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
+          <View style={styles.panelTopBoarder} />
+          <View style={styles.panelItemsPlacement}>
             <View>
               <Text style={styles.panelHeader}>
                 {count.parked ? 'Parkerad' : 'Ej parkerad'}
@@ -369,44 +341,28 @@ function HomeScreen({
             </View>
             {count.parked ? (
               <Image
-                style={{marginTop: 9, width: 30, height: 30}}
+                style={styles.checkedIcon}
                 source={require('../images/checked.png')}
               />
             ) : null}
           </View>
           <Text style={styles.text}>
-            {count.parked
-              ? count.parkedPosition.adress
-              : currentPosition.adress}
+            {carPosition ? carPosition.adress : currentPosition.adress}
           </Text>
-          <View
-            style={{
-              marginTop: 20,
-              marginBottom: 15,
-              height: 2,
-              backgroundColor: 'lightgrey',
-              opacity: 0.3,
-            }}
-          />
-
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View style={{flexDirection: 'row'}}>
+          <View style={styles.panelFullWidthBoarders} />
+          <View style={styles.panelItemsPlacement}>
+            <View style={styles.itemRowWrapper}>
               <Image
-                style={{height: 24, width: 19, marginRight: 13, marginTop: 2}}
+                style={styles.cleaningIcon}
                 source={require('../images/cleaning2x.png')}
               />
               {panelData && timeData.days !== undefined ? (
-                <View style={{display: 'flex'}}>
+                <View style={styles.displayFlex}>
                   <Text style={styles.text}>
                     {panelData ? 'Städgata' : 'Parkering tillåten'}
                   </Text>
                   {timeData ? (
-                    <Text style={{marginTop: 5, color: '#767C9F'}}>
+                    <Text style={styles.feeAndCleaningInfo}>
                       {onGoing
                         ? `Slutar om ${timeData.hours}h ${timeData.minutes}m`
                         : `Börjar om ${timeData.days}d ${timeData.hours}h`}
@@ -414,12 +370,12 @@ function HomeScreen({
                   ) : null}
                 </View>
               ) : (
-                <View style={{display: 'flex'}}>
+                <View style={styles.displayFlex}>
                   <Text style={styles.text}>
                     {panelData ? 'Städgata' : 'Parkering tillåten'}
                   </Text>
                   {timeData ? (
-                    <Text style={{marginTop: 5, color: '#767C9F'}}>
+                    <Text style={styles.feeAndCleaningInfo}>
                       {onGoing
                         ? `Slutar om ${timeData.hours}h ${timeData.minutes}m`
                         : `Börjar om ${timeData.hours}h`}
@@ -430,125 +386,55 @@ function HomeScreen({
             </View>
             <Text style={styles.text}>{panelData ? panelData : ''}</Text>
           </View>
-
-          <View
-            style={{
-              marginTop: 20,
-              marginBottom: 15,
-              height: 2,
-              backgroundColor: 'lightgrey',
-              opacity: 0.3,
-            }}
-          />
-
-          {taxeomrade ? (
-            <View>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{flexDirection: 'row'}}>
-                  <Image
-                    style={{
-                      height: 22,
-                      width: 22,
-                      marginRight: 13,
-                      marginTop: 2,
-                    }}
-                    source={require('../images/taxa2x.png')}
-                  />
-                  <View style={{display: 'flex'}}>
-                    <Text style={styles.text}>Taxeområde</Text>
-                    {
-                      <Text style={{marginTop: 5, color: '#767C9F'}}>
-                        {checkAvgif(taxeomrade)}
-                      </Text>
-                    }
-                  </View>
-                </View>
-                <Text style={styles.text}>{checkTaxa(taxeomrade)[0]}</Text>
-              </View>
-
-              <View
-                style={{
-                  marginTop: 20,
-                  marginBottom: 15,
-                  height: 2,
-                  backgroundColor: 'lightgrey',
-                  opacity: 0.3,
-                }}
-              />
-            </View>
-          ) : (
-            <View>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{flexDirection: 'row'}}>
-                  <Image
-                    style={{
-                      height: 22,
-                      width: 22,
-                      marginRight: 13,
-                      marginTop: 2,
-                    }}
-                    source={require('../images/taxa2x.png')}
-                  />
-                  <View style={{display: 'flex'}}>
-                    <Text style={styles.text}>Taxeområde</Text>
-                    {
-                      <Text style={{marginTop: 5, color: '#767C9F'}}>
-                        {checkAvgif(taxeomradeB)}
-                      </Text>
-                    }
-                  </View>
-                </View>
-                <Text style={styles.text}>{checkTaxa(taxeomradeB)[0]}</Text>
-              </View>
-
-              <View
-                style={{
-                  marginTop: 20,
-                  marginBottom: 15,
-                  height: 2,
-                  backgroundColor: 'lightgrey',
-                  opacity: 0.3,
-                }}
-              />
-            </View>
-          )}
-
-          {count.parked && panelData !== '' ? (
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <View style={{flexDirection: 'row'}}>
+          <View style={styles.panelFullWidthBoarders} />
+          <View>
+            <View style={styles.panelItemsPlacement}>
+              <View style={styles.itemRowWrapper}>
                 <Image
-                  style={{height: 23, width: 19, marginRight: 13}}
+                  style={styles.taxeomradeIcon}
+                  source={require('../images/taxa2x.png')}
+                />
+                <View style={styles.displayFlex}>
+                  <Text style={styles.text}>Taxeområde</Text>
+                  {
+                    <Text style={styles.feeAndCleaningInfo}>
+                      {taxeomrade
+                        ? checkAvgif(taxeomrade)
+                        : checkAvgif(taxeomradeB)}
+                    </Text>
+                  }
+                </View>
+              </View>
+              <Text style={styles.text}>
+                {taxeomrade
+                  ? checkTaxa(taxeomrade)[0]
+                  : checkTaxa(taxeomradeB)[0]}
+              </Text>
+            </View>
+            <View style={styles.panelFullWidthBoarders} />
+          </View>
+          {count.parked && panelData !== '' ? (
+            <View style={styles.panelItemsPlacement}>
+              <View style={styles.itemRowWrapper}>
+                <Image
+                  style={styles.reminderIcon}
                   source={require('../images/reminder2x.png')}
                 />
                 <Text style={styles.text}>Påminnelse</Text>
               </View>
               {count.reminderInvalidParking ? (
-                <Text style={styles.text}>{count.remindTime} min innan</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Settings')}>
+                  <Text style={styles.text}>
+                    {count.remindTime
+                      ? `${count.remindTime} min innan`
+                      : 'Välj antal min'}
+                  </Text>
+                </TouchableOpacity>
               ) : (
                 <TouchableOpacity
                   onPress={() => navigation.navigate('Settings')}>
-                  <Text
-                    style={{
-                      fontSize: Dimensions.get('screen').height * 0.025,
-                      color: 'steelblue',
-                    }}>
-                    Aktivera
-                  </Text>
+                  <Text style={styles.activateReminderButton}>Aktivera</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -556,6 +442,7 @@ function HomeScreen({
           {count.parked ? (
             <TouchableOpacity
               onPress={() => {
+                setCarPosition(currentPosition);
                 changeCount(false);
                 PushNotificationIOS.cancelAllLocalNotifications();
               }}
@@ -566,7 +453,7 @@ function HomeScreen({
             <TouchableOpacity
               onPress={() => {
                 changeCount(true);
-                changeParkedPos(currentPosition);
+                changeParkedPos(carPosition);
                 if (count.invalidParkingTime && count.reminderInvalidParking) {
                   sendScheduledNotification(
                     count.invalidParkingTime,
@@ -585,27 +472,52 @@ function HomeScreen({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   text: {
-    fontSize: 20,
+    fontSize: Dimensions.get('screen').height * 0.021,
     fontWeight: '500',
     // fontSize: Dimensions.get('screen').height * 0.025,
     color: '#001E39',
   },
   panelHeader: {
-    fontSize: 32,
+    fontSize: Dimensions.get('screen').height * 0.031,
     // fontSize: Dimensions.get('screen').height * 0.04,
     fontWeight: 'bold',
     color: '#001E39',
   },
-  container: {
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '50%',
-    position: 'relative',
-    bottom: '22%',
+  panelItemsPlacement: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  itemRowWrapper: {
+    flexDirection: 'row',
+  },
+  checkedIcon: {
+    marginTop: 9,
+    width: 30,
+    height: 30,
+  },
+  cleaningIcon: {
+    height: 24,
+    width: 19,
+    marginRight: 13,
+    marginTop: 2,
+  },
+  taxeomradeIcon: {
+    height: 22,
+    width: 22,
+    marginRight: 13,
+    marginTop: 2,
+  },
+  reminderIcon: {
+    height: 23,
+    width: 19,
+    marginRight: 13,
+  },
+  feeAndCleaningInfo: {
+    marginTop: 5,
+    color: '#767C9F',
   },
   mapView: {
     flex: 1,
@@ -614,7 +526,7 @@ const styles = StyleSheet.create({
   slidingUpPanel: {
     backgroundColor: '#fff',
     position: 'relative',
-    bottom: '14%',
+    bottom: '15%',
     height: '60%',
     width: '100%',
     borderWidth: 0,
@@ -623,6 +535,22 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 20,
   },
+  panelTopBoarder: {
+    marginTop: 6,
+    marginBottom: Dimensions.get('screen').height * 0.02,
+    height: Dimensions.get('screen').height * 0.004,
+    width: '25%',
+    backgroundColor: 'lightgrey',
+    opacity: 0.4,
+    alignSelf: 'center',
+  },
+  panelFullWidthBoarders: {
+    marginTop: Dimensions.get('screen').height * 0.02,
+    marginBottom: Dimensions.get('screen').height * 0.015,
+    height: 2,
+    backgroundColor: 'lightgrey',
+    opacity: 0.3,
+  },
   userLocation: {
     backgroundColor: '#fff',
     position: 'absolute',
@@ -630,27 +558,79 @@ const styles = StyleSheet.create({
     right: '10%',
     alignSelf: 'flex-end',
   },
+  activateReminderButton: {
+    fontSize: Dimensions.get('screen').height * 0.025,
+    color: 'steelblue',
+  },
   parkingButton: {
     alignSelf: 'stretch',
     backgroundColor: '#001E39',
     borderRadius: 34,
     borderWidth: 1,
-    height: 60,
-    position: 'absolute',
-    left: 20,
-    top: 340,
+    height: Dimensions.get('screen').height * 0.065,
+    margin: 'auto',
+    marginTop: Dimensions.get('screen').height * 0.025,
     width: '100%',
     justifyContent: 'center',
   },
   parkingButtonText: {
     alignSelf: 'center',
-    fontSize: 22,
+    fontSize: Dimensions.get('screen').height * 0.022,
     color: '#F5C932',
   },
-  drawerIcon: {
+  drawerIconContainer: {
     position: 'absolute',
     top: '7%',
     left: '5%',
+  },
+  drawerIcon: {
+    width: 50,
+    height: 50,
+  },
+  displayFlex: {
+    display: 'flex',
+  },
+  flexOne: {
+    flex: 1,
+  },
+  draggablePersonIcon: {
+    height: 60,
+    width: 60,
+    resizeMode: 'contain',
+  },
+  parkedCarIcon: {
+    height: 50,
+    width: 50,
+    resizeMode: 'contain',
+    position: 'relative',
+    bottom: 20,
+  },
+  myPositionButtonContainer: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: '7%',
+    right: '5%',
+    width: 50,
+    height: 50,
+    alignContent: 'center',
+    justifyContent: 'center',
+    borderRadius: 9,
+  },
+  carPositionButtonContainer: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: '16%',
+    right: '5%',
+    width: 50,
+    height: 50,
+    alignContent: 'center',
+    justifyContent: 'center',
+    borderRadius: 9,
+  },
+  positionIcons: {
+    width: '50%',
+    alignSelf: 'center',
+    resizeMode: 'contain',
   },
 });
 

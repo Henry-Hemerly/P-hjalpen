@@ -33,7 +33,7 @@ function MyCarScreen({
       let devices = ['Audi MMI 335', 'Beolit 15', 'Bose Mini Soundlink'];
       return (
         <SafeAreaView style={style.background}>
-          <View style={{marginTop: '5%'}}>
+          <View>
             <Text style={style.heading}>Välj din bil</Text>
             <View style={style.line} />
             {devices.map((dev, index) => (
@@ -59,10 +59,10 @@ function MyCarScreen({
       return (
         <SafeAreaView style={style.background}>
           <KeyboardAvoidingView behavior={'padding'} style={{flex: 1}}>
-            <ScrollView style={{marginTop: '5%', paddingHorizontal: 20}}>
+            <ScrollView style={style.panelWrapper}>
               <Text style={style.heading}>Ange reg-nummer</Text>
               <View style={style.line} />
-              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <View style={style.licensePlateWrapper}>
                 <Image
                   style={style.image}
                   source={require('../images/sweden.png')}
@@ -77,7 +77,7 @@ function MyCarScreen({
                 />
               </View>
             </ScrollView>
-            <View style={{marginBottom: 20}}>
+            <View>
               <TouchableOpacity
                 style={style.nextButton}
                 onPress={() => {
@@ -107,7 +107,7 @@ function MyCarScreen({
             blåtandsuppkoppling.
           </Text>
         </View>
-        <View style={{marginTop: 30}}>
+        <View>
           <TouchableOpacity
             style={style.parkingButton}
             title="Lägg till din bil"
@@ -138,7 +138,7 @@ function MyCarScreen({
           <Text style={style.removeSmall}>
             {count.registrationNumber.toUpperCase()}
           </Text>
-          <View style={{paddingTop: '1%'}}>
+          <View style={style.removeBtnWrapper}>
             <Button
               title="Ta bort"
               onPress={() => {
@@ -153,11 +153,11 @@ function MyCarScreen({
     );
   }
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={style.flexOne}>
       <CustomHeader navigation={navigation} />
       <Text style={style.headingTwoLast}>Min bil</Text>
-      <View style={{borderColor: '#1E2657', borderWidth: 1, opacity: 0.05}} />
-      <View style={{flex: 1}}>
+      <View style={style.border} />
+      <View style={style.flexOne}>
         {count.registrationNumber === '' ? pair() : remove()}
       </View>
     </SafeAreaView>
@@ -182,6 +182,10 @@ export default connect(
 )(MyCarScreen);
 
 const style = StyleSheet.create({
+  panelWrapper: {
+    marginTop: '5%',
+    paddingHorizontal: 20,
+  },
   heading: {
     fontSize: 32,
     fontWeight: '700',
@@ -190,6 +194,15 @@ const style = StyleSheet.create({
     marginTop: 1,
     marginBottom: 20,
     color: '#1E2657',
+    marginTop: '5%',
+  },
+  border: {
+    borderColor: '#1E2657',
+    borderWidth: 1,
+    opacity: 0.05,
+  },
+  flexOne: {
+    flex: 1,
   },
   rows: {
     flexDirection: 'row',
@@ -205,6 +218,10 @@ const style = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 25,
     marginTop: '25%',
+  },
+  licensePlateWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   image: {
     height: 61,
@@ -246,6 +263,9 @@ const style = StyleSheet.create({
     letterSpacing: 1.5,
     color: '#1E2657',
   },
+  removeBtnWrapper: {
+    paddingTop: '2%',
+  },
   btName: {
     marginHorizontal: 25,
     color: '#767C9F',
@@ -284,25 +304,25 @@ const style = StyleSheet.create({
     borderRadius: 34,
     borderWidth: 1,
     marginHorizontal: 22,
-    height: 68,
+    height: Dimensions.get('screen').height * 0.075,
     position: 'relative',
-    bottom: 170,
+    bottom: Dimensions.get('screen').height * 0.3,
   },
   nextButtonText: {
     alignSelf: 'center',
-    paddingVertical: 21,
-    fontSize: 22,
+    position: 'absolute',
+    top: '25%',
     color: '#F5C932',
-    fontSize: Dimensions.get('screen').height * 0.022,
+    fontSize: Dimensions.get('screen').height * 0.03,
   },
   skipButton: {
     color: 'steelblue',
-    fontSize: 16,
+    fontSize: Dimensions.get('screen').height * 0.025,
     alignSelf: 'center',
     lineHeight: 30,
     marginTop: 22,
     position: 'relative',
-    bottom: 170,
+    bottom: Dimensions.get('screen').height * 0.32,
   },
   regNumInput: {
     height: 60,
@@ -335,13 +355,14 @@ const style = StyleSheet.create({
     borderRadius: 34,
     borderWidth: 1,
     marginHorizontal: '10%',
-    height: 70,
+    height: Dimensions.get('screen').height * 0.075,
     width: '80%',
     justifyContent: 'center',
+    marginTop: 30,
   },
   parkingButtonText: {
     alignSelf: 'center',
-    fontSize: 22,
+    fontSize: Dimensions.get('screen').height * 0.03,
     color: '#F5C932',
     fontWeight: '500',
   },

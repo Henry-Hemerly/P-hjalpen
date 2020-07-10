@@ -182,10 +182,8 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
-  - react-native-ble-plx (1.1.1):
+  - react-native-ble-manager (7.2.0):
     - React
-    - react-native-ble-plx-swift
-  - react-native-ble-plx-swift (1.1.1)
   - react-native-geolocation (2.0.2):
     - React
   - react-native-maps (0.27.1):
@@ -260,8 +258,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
-  - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
-  - react-native-ble-plx-swift (from `../node_modules/react-native-ble-plx`)
+  - react-native-ble-manager (from `../node_modules/react-native-ble-manager`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -286,7 +283,7 @@ DEPENDENCIES:
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - boost-for-react-native
 
 EXTERNAL SOURCES:
@@ -318,10 +315,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
-  react-native-ble-plx:
-    :path: "../node_modules/react-native-ble-plx"
-  react-native-ble-plx-swift:
-    :path: "../node_modules/react-native-ble-plx"
+  react-native-ble-manager:
+    :path: "../node_modules/react-native-ble-manager"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-maps:
@@ -381,8 +376,7 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-ble-plx: 304c7bee074a05581672c9990f375b3906808718
-  react-native-ble-plx-swift: eb64f02b988becb84a60164aba9fab5d6ddb6dc8
+  react-native-ble-manager: fda5f6b20092f2b2d356676bd1f3dc7065bb4329
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-safe-area-context: 8260e5157617df4b72865f44006797f895b2ada7
@@ -405,6 +399,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: cca9a046a4a1f81e9cebef852740729ce039a450
+PODFILE CHECKSUM: af8dd83bf80614b299e92da698669d0899a01436
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.9.3

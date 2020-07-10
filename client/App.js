@@ -1,11 +1,10 @@
 import * as React from 'react';
-import {Text, View, Dimensions, Image} from 'react-native';
+import {Text, View, Dimensions, Image, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-
 import Onboarding1 from './components/Onboarding1';
 import Onboarding2 from './components/Onboarding2';
 import Onboarding3 from './components/Onboarding3';
@@ -18,31 +17,20 @@ import HowScreen from './components/How';
 import ContactsScreen from './components/Contacts';
 import SplashScreen from './components/SplashScreen';
 import {connect} from 'react-redux';
+import {absoluteFill} from 'react-native-extended-stylesheet';
 
 export function CustomHeader({isHome, navigation}) {
   return (
-    <View style={{flexDirection: 'row', height: 50}}>
-      <View style={{flex: 1, justifyContent: 'center'}}>
+    <View style={style.headerContainer}>
+      <View style={style.BackButtonContainer}>
         {isHome ? null : (
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
               source={require('./images/arrow.png')}
-              style={{
-                height: 40,
-                width: 35,
-                resizeMode: 'center',
-                left: 25,
-                top: 10,
-              }}
+              style={style.arrowIcon}
             />
           </TouchableOpacity>
         )}
-        <View
-          style={{flex: 1.5, justifyContent: 'center', alignItems: 'center'}}
-        />
-        <View
-          style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-        />
       </View>
     </View>
   );
@@ -66,114 +54,50 @@ function HomeStack() {
 const Drawer = createDrawerNavigator();
 function CutomDrawerContent(props) {
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: 'space-between',
-        backgroundColor: 'white',
-      }}>
-      <View style={{marginLeft: '10%', top: '20%'}}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    <SafeAreaView style={style.drawerNavContainer}>
+      <View style={style.contentWrapper}>
+        <View style={style.menuItemWrapper}>
           <Image
             source={require('./images/settings2x.png')}
-            style={{resizeMode: 'contain', width: '10%'}}
+            style={style.icon}
           />
           <TouchableOpacity
             onPress={() => props.navigation.navigate('Settings')}>
-            <Text
-              style={{
-                fontSize: Dimensions.get('screen').height * 0.02,
-                fontWeight: '500',
-                marginBottom: '5%',
-                color: '#001E39',
-                marginLeft: '15%',
-                paddingTop: '5%',
-              }}>
-              Inställningar
-            </Text>
+            <Text style={style.listItemSettings}>Inställningar</Text>
           </TouchableOpacity>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image
-            source={require('./images/my_car2x.png')}
-            style={{resizeMode: 'contain', width: '10%'}}
-          />
+        <View style={style.menuItemWrapper}>
+          <Image source={require('./images/my_car2x.png')} style={style.icon} />
           <TouchableOpacity onPress={() => props.navigation.navigate('MyCar')}>
-            <Text
-              style={{
-                fontSize: Dimensions.get('screen').height * 0.02,
-                fontWeight: '500',
-                marginBottom: '5%',
-                color: '#001E39',
-                marginLeft: '20%',
-                paddingTop: '5%',
-              }}>
-              Min bil
-            </Text>
+            <Text style={style.listItemMyCar}>Min bil</Text>
           </TouchableOpacity>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={style.menuItemWrapper}>
           <Image
             source={require('./images/how_does_it_work2x.png')}
-            style={{resizeMode: 'contain', width: '10%'}}
+            style={style.icon}
           />
           <TouchableOpacity onPress={() => props.navigation.navigate('How')}>
-            <Text
-              style={{
-                fontSize: Dimensions.get('screen').height * 0.02,
-                fontWeight: '500',
-                marginBottom: '5%',
-                color: '#001E39',
-                marginLeft: '12%',
-                paddingTop: '5%',
-              }}>
-              Hur fungerar det?
-            </Text>
+            <Text style={style.listItemHow}>Hur fungerar det?</Text>
           </TouchableOpacity>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={style.menuItemWrapper}>
           <Image
             source={require('./images/contact2x.png')}
-            style={{resizeMode: 'contain', width: '10%'}}
+            style={style.icon}
           />
           <TouchableOpacity
             onPress={() => props.navigation.navigate('Contacts')}>
-            <Text
-              style={{
-                fontSize: Dimensions.get('screen').height * 0.02,
-                fontWeight: '500',
-                marginBottom: '5%',
-                color: '#001E39',
-                marginLeft: '20%',
-              }}>
-              Kontakt
-            </Text>
+            <Text style={style.listItemContact}>Kontakt</Text>
           </TouchableOpacity>
         </View>
-        <View />
-        <View
-          style={{
-            marginRight: '17%',
-            marginTop: '60%',
-            alignContent: 'center',
-          }}>
-          <Image
-            source={require('./images/logo2x.png')}
-            style={{alignSelf: 'center', resizeMode: 'center'}}
-          />
-          <Text style={{textAlign: 'center', lineHeight: 21, color: '#767C9F'}}>
+        <View style={style.lowerPartWrapper}>
+          <Image source={require('./images/logo2x.png')} style={style.logo} />
+          <Text style={style.text}>
             P-hjälpen är skapad av bilägare för bilägare i syfte att spara dina
             pengar till något vettigare.
           </Text>
-          <Text
-            style={{
-              textAlign: 'center',
-              marginTop: '10%',
-              lineHeight: 21,
-              color: '#767C9F',
-            }}>
-            v. 1.0.1
-          </Text>
+          <Text style={style.version}>v. 1.0.1</Text>
         </View>
       </View>
     </SafeAreaView>
@@ -241,4 +165,113 @@ function App() {
     </NavigationContainer>
   );
 }
+
+const style = StyleSheet.create({
+  splashContainer: {
+    backgroundColor: '#001736',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoBigP: {
+    fontSize: 130,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  logoBorder: {
+    backgroundColor: '#F5C932',
+    height: 11,
+    width: 138,
+    marginBottom: 25,
+  },
+  logoHjalpen: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    height: 50,
+  },
+  BackButtonContainer: {
+    flex: 1,
+  },
+  arrowIcon: {
+    height: 40,
+    width: 35,
+    resizeMode: 'center',
+    left: 25,
+    top: 10,
+  },
+  drawerNavContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  contentWrapper: {
+    marginLeft: '10%',
+    top: '20%',
+  },
+  menuItemWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    resizeMode: 'contain',
+    width: '10%',
+  },
+  listItemSettings: {
+    fontSize: Dimensions.get('screen').height * 0.02,
+    fontWeight: '500',
+    marginBottom: '5%',
+    color: '#001E39',
+    marginLeft: '15%',
+    paddingTop: '5%',
+  },
+  listItemMyCar: {
+    fontSize: Dimensions.get('screen').height * 0.02,
+    fontWeight: '500',
+    marginBottom: '5%',
+    color: '#001E39',
+    marginLeft: '20%',
+    paddingTop: '5%',
+  },
+  listItemHow: {
+    fontSize: Dimensions.get('screen').height * 0.02,
+    fontWeight: '500',
+    marginBottom: '5%',
+    color: '#001E39',
+    marginLeft: '12%',
+    paddingTop: '5%',
+  },
+  listItemContact: {
+    fontSize: Dimensions.get('screen').height * 0.02,
+    fontWeight: '500',
+    marginBottom: '5%',
+    color: '#001E39',
+    marginLeft: '19%',
+    paddingTop: '1,5%',
+  },
+  lowerPartWrapper: {
+    position: 'relative',
+    marginRight: '17%',
+    top: Dimensions.get('screen').height * 0.1,
+    alignContent: 'center',
+  },
+  logo: {
+    alignSelf: 'center',
+    resizeMode: 'center',
+  },
+  text: {
+    textAlign: 'center',
+    lineHeight: 21,
+    color: '#767C9F',
+    marginTop: '1%',
+  },
+  version: {
+    textAlign: 'center',
+    marginTop: '4%',
+    lineHeight: 21,
+    color: '#767C9F',
+  },
+});
 export default connect()(App);

@@ -201,10 +201,7 @@ function calculateWhen(results) {
       }
     }
   }
-  console.log('====================================');
-  console.log(parkingDistrict);
-  console.log('====================================');
   return resultsArr;
 }
 
-module.exports = { calculateWhen };
+module.exports = { calculateWhen, weekdayArr };

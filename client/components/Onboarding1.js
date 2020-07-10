@@ -42,7 +42,7 @@ function Onboarding1({navigation, seenOnboarding, count}) {
 const style = StyleSheet.create({
   heading: {
     color: '#F5C932',
-    fontSize: 57,
+    fontSize: Dimensions.get('screen').height * 0.06,
     textAlign: 'left',
     fontWeight: '700',
     marginLeft: 28,
@@ -62,19 +62,20 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nextButton: {
+    position: 'relative',
     alignSelf: 'stretch',
     backgroundColor: '#F5C932',
     borderRadius: 34,
     borderWidth: 1,
     marginHorizontal: 22,
-    height: 68,
+    height: Dimensions.get('screen').height * 0.075,
   },
   nextButtonText: {
     alignSelf: 'center',
-    paddingVertical: 21,
-    fontSize: 22,
+    position: 'absolute',
+    top: '25%',
+    fontSize: Dimensions.get('screen').height * 0.03,
     color: '#1E2657',
-    fontSize: Dimensions.get('screen').height * 0.022,
   },
   skipButton: {
     color: '#fff',
